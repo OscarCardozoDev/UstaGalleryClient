@@ -1,0 +1,234 @@
+/* ============================================================
+   Slider.module.css
+   Responsive: mobile · tablet · desktop
+   ============================================================ */
+
+.wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  /* Touch hint — sutil pulse en el borde al cargar */
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+/* ── Track container ─────────────────────────────────────── */
+.sliderContainer {
+  width: 100%;
+  height: 100%;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+.sliderTrack {
+  display: flex;
+  flex-direction: row-reverse;
+  overflow-x: auto;
+  overflow-y: hidden;
+  gap: clamp(10px, 1.5vw, 20px);
+  height: 100%;
+  border-radius: var(--radius-lg);
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  /* Mejora el scroll táctil en móviles */
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ── Slide item ──────────────────────────────────────────── */
+.sliderItem {
+  flex: 0 0 auto;
+  aspect-ratio: 5 / 4;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--color-bg-subtle);  /* se adapta al tema */
+  scroll-snap-align: start;
+  /* Hover sutil en desktop */
+  transition: transform var(--duration-normal) var(--ease-spring),
+              box-shadow var(--duration-normal) var(--ease-smooth);
+
+  &:hover {
+    transform: scale(1.025);
+    box-shadow: var(--shadow-lg);
+  }
+}
+
+.sliderImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Micro-zoom en hover */
+  transition: transform var(--duration-slow) var(--ease-smooth);
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.sliderItem:hover .sliderImage {
+  transform: scale(1.06);
+}
+
+/* ── Arrow buttons ───────────────────────────────────────── */
+.arrowLeft,
+.arrowRight {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: var(--z-above);
+
+  width: 32px;
+  height: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  border: none;
+  border-radius: 20px 0 0 20px;
+  background: rgba(245, 243, 238, 0.55);
+  color: var(--color-gray-800);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
+  font-size: 22px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease-smooth),
+              color var(--duration-fast) var(--ease-smooth),
+              transform var(--duration-fast) var(--ease-spring);
+
+  /* Ocultos por defecto, aparecen en hover del wrapper */
+  opacity: 0;
+}
+
+.wrapper:hover .arrowLeft,
+.wrapper:hover .arrowRight {
+  opacity: 1;
+}
+
+.arrowLeft {
+  left: 0;
+  transform: translateY(-50%) rotate(180deg);
+}
+
+.arrowRight {
+  right: 0;
+  border-radius: 20px 0 0 20px;
+}
+
+.arrowLeft:hover,
+.arrowRight:hover {
+  background: rgba(245, 243, 238, 0.95);
+  color: var(--color-black);
+}
+
+.arrowLeft:active,
+.arrowRight:active {
+  background: var(--color-white-pure);
+}
+
+/* ── Drag cursor state ───────────────────────────────────── */
+.sliderTrack.isDragging {
+  cursor: grabbing;
+  scroll-behavior: auto; /* evita conflicto con el drag */
+}
+
+.sliderTrack:not(.isDragging) {
+  cursor: grab;
+}
+
+/* ── Swipe indicator (mobile) ────────────────────────────── */
+.swipeHint {
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: none;
+  gap: 4px;
+  z-index: var(--z-above);
+}
+
+.swipeDot {
+  width: 5px;
+  height: 5px;
+  border-radius: var(--radius-full);
+  background: rgba(245, 243, 238, 0.35);
+  transition: background var(--duration-normal) var(--ease-smooth),
+              transform var(--duration-normal) var(--ease-spring);
+}
+
+.swipeDot.active {
+  background: var(--color-accent-gold);
+  transform: scaleX(2.5);
+}
+
+/* ============================================================
+   TABLET  ≤ 1024px
+   Botones siempre visibles (no hay hover táctil)
+   ============================================================ */
+@media (max-width: 1024px) {
+  .arrowLeft,
+  .arrowRight {
+    opacity: 1;
+    width: 28px;
+    height: 28px;
+    font-size: 18px;
+  }
+
+  .sliderItem:hover {
+    transform: none; /* sin hover-scale en touch */
+  }
+
+  .sliderItem:hover .sliderImage {
+    transform: none;
+  }
+}
+
+/* ============================================================
+   MOBILE  ≤ 768px
+   Flechas compactas — dots indicator visibles
+   ============================================================ */
+@media (max-width: 768px) {
+  .arrowLeft,
+  .arrowRight {
+    width: 24px;
+    height: 24px;
+    font-size: 16px;
+    background: rgba(245, 243, 238, 0.45);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .sliderTrack {
+    gap: 8px;
+    scroll-snap-type: x mandatory;
+  }
+
+  .sliderItem {
+    scroll-snap-align: center;
+    border-radius: var(--radius-sm);
+  }
+
+  /* Dots visibles en mobile */
+  .swipeHint {
+    display: flex;
+  }
+}
+
+/* ============================================================
+   MOBILE SMALL  ≤ 480px
+   ============================================================ */
+@media (max-width: 480px) {
+  .arrowLeft,
+  .arrowRight {
+    opacity: 0.7;
+  }
+
+  .sliderTrack {
+    gap: 6px;
+  }
+}

@@ -1,0 +1,61 @@
+/* ============================================================
+   app.css — USTA Gallery
+   Los colores y tokens viven en tailwind.config.ts
+   ============================================================ */
+
+/* ── Google Fonts ────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Forum&display=swap');
+
+/* ── Tailwind ────────────────────────────────────────────── */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Base reset ──────────────────────────────────────────── */
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply font-sans bg-brand-50 text-brand-950 antialiased;
+    @apply dark:bg-brand-950 dark:text-brand-50;
+    @apply transition-colors duration-600 ease-smooth;
+  }
+
+  h1, h2 {
+    @apply font-serif;
+  }
+
+  h3, h4, h5, h6 {
+    @apply font-sans;
+  }
+
+  img, video {
+    max-width: 100%;
+    display: block;
+  }
+
+  button {
+    cursor: pointer;
+  }
+}
+
+/* ── Utilidades personalizadas ───────────────────────────── */
+@layer utilities {
+  .text-gold {
+    background: linear-gradient(135deg, #c9a84c 0%, #f0d080 50%, #c9a84c 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}

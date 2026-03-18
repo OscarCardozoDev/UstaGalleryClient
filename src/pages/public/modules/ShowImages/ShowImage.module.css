@@ -1,0 +1,365 @@
+.pinterestImage {
+  display: flex;
+  width: 100vw;
+  height: 95vh;
+  margin-top: 59px;
+  background-color: #f0f0f0;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.4s ease-in-out;
+}
+
+.imageContainer {
+  width: 50%;
+  position: relative;
+}
+
+.imagePlaceholder {
+  background-color: #e0e0e0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.descriptionContainer {
+  width: 50%;
+  padding: 24px;
+  background-color: black;
+  color: white;
+  display: flex;
+  position: relative;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* ========================================
+   RESPONSIVE - 768px
+   ======================================== */
+@media (max-width: 768px) {
+  /* El wrapper principal deja de ser un contenedor cerrado */
+  .pinterestImage {
+    flex-direction: column;
+    height: 100dvh;
+    margin-top: 59px;
+    overflow-y: scroll;
+    box-shadow: none;
+  }
+
+  /* La imagen ocupa su altura natural */
+  .imageContainer {
+    width: 100%;
+    height: auto;
+    flex-shrink: 0;
+  }
+
+  .imagePlaceholder {
+    width: 100%;
+    height: auto;
+    min-height: 200px;
+  }
+
+  /* El contenedor de info necesita altura explícita porque
+     sus hijos son position:absolute y no empujan el layout */
+  .descriptionContainer {
+    width: 100%;
+    height: auto;
+    min-height: 100vh;
+    padding: 0;
+    align-items: flex-start;
+    overflow: hidden; /* mantiene el slide lateral */
+    position: relative;
+  }
+
+  .mainInfo {
+    width: 100%;
+    min-height: 100vh;
+    padding: 20px 16px 80px 16px;
+    overflow: visible;
+  }
+
+  .artistInfo {
+    width: 100%;
+    min-height: 100vh;
+    padding: 20px 16px;
+    overflow-y: auto;
+  }
+
+  .artistInfo .authorAvatarImage {
+    left: 15%;
+    width: 70%;
+    margin: 16px 0;
+  }
+
+  .title {
+    font-size: 1.3em;
+  }
+
+  .description {
+    font-size: 0.95em;
+  }
+
+  .imgContainer {
+    width: 100%;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    grid-auto-rows: 100px;
+    gap: 10px;
+  }
+
+  .artistButton {
+    position: absolute;
+    bottom: 10%;
+    left: 0;
+    right: 0;
+    width: 100%;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    padding: 14px 16px;
+    z-index: 20;
+    background-color: #111;
+  }
+}
+
+.mainInfo,
+.artistInfo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 25px 5vw;
+  transition: transform 0.4s ease-in-out;
+}
+
+.title {
+  display: flex;
+  justify-content: center;
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.description {
+  text-align: center;
+  font-size: 1em;
+  margin-bottom: 16px;
+  line-height: 1.5;
+  text-wrap: balance;
+}
+
+.price {
+  text-align: center;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #4caf50;
+  margin-bottom: 16px;
+}
+
+.mainInfo {
+  display: flex;
+  height: 85%;
+  align-items: center;
+  flex-direction: column;
+  transform: translateX(0);
+}
+
+.categories {
+  max-width: 750px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+  margin-bottom: 25px;
+}
+
+.categoryChip {
+  display: inline-block;
+  color: white;
+  background-color: #616161;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: default;
+  user-select: none;
+}
+
+.imgContainer {
+  width: 80%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-auto-rows: 150px;
+  gap: 16px;
+  overflow-y: scroll;
+  grid-auto-flow: dense;
+  scrollbar-width: none;
+}
+
+.artistInfo {
+  transform: translateX(100%);
+  color: white;
+}
+
+.artistInfo .authorAvatarImage {
+  margin: 25px 0;
+  position: relative;
+  left: 25%;
+  width: 50%;
+  border-radius: 5px;
+}
+
+.showArtistInfo .mainInfo {
+  transform: translateX(-100%);
+}
+
+.showArtistInfo .artistInfo {
+  transform: translateX(0);
+}
+
+.artistButton {
+  width: 500px;
+  margin-bottom: 15px;
+  padding: 8px 16px;
+  color: #ffffff;
+  background-color: transparent;
+  border: 1px solid #ffffff;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.artistButton:hover {
+  border-color: #e0e0e0;
+  background-color: #333333;
+}
+
+.arrowIcon {
+  transition: transform 0.4s ease-in-out;
+}
+
+.showArtistInfo .arrowIcon {
+  transform: scaleX(-1);
+}
+/* ═══════════════════════════════════════════════════════════════════
+   AUTHOR PANEL
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Cabecera: foto circular a la izquierda, meta a la derecha */
+.authorHeader {
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Foto circular */
+.authorAvatar {
+  flex-shrink: 0;
+  width: 125px;
+  height: 125px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  background: #2a2a2a;
+}
+
+.authorAvatar img {
+  /* override del estilo global de artistInfo img */
+  position: static !important;
+  left: auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  object-fit: cover;
+}
+
+/* Fallback inicial cuando no hay foto */
+.authorAvatarFallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Columna derecha: nombre, username, descripción */
+.authorMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  padding-top: 4px;
+}
+
+.authorName {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.authorUsername {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin: 0;
+}
+
+.authorDescription {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.5;
+  margin: 6px 0 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Separador horizontal */
+.authorDivider {
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 20px 0 16px;
+}
+
+/* Label "Otras obras" */
+.authorWorksLabel {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.35);
+  margin: 0 0 12px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .authorHeader {
+    gap: 14px;
+  }
+
+  .authorAvatar {
+    width: 64px;
+    height: 64px;
+  }
+
+  .authorName {
+    font-size: 1rem;
+  }
+}

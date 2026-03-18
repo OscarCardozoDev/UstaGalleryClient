@@ -1,0 +1,429 @@
+/* AuthLayout.module.css
+   Breakpoints:
+     Desktop  : > 1020px  — sliding cover + two side-by-side forms
+     Tablet   : 768–1020px — Grainient bg + tabs + single form panel
+     Mobile   : < 768px   — same as tablet, tighter spacing
+*/
+
+/* ═══════════════════════════════════════════════════════════
+   BASE / SHARED
+═══════════════════════════════════════════════════════════ */
+
+.root {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Full-screen Grainient — visible on tablet/mobile; on desktop Grainient lives inside .coverGrainient */
+.grainientBg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+@media (min-width: 1021px) {
+  .grainientBg { display: none; }
+}
+
+/* Snackbar */
+.snackbar {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 200;
+}
+
+.snackbarInner {
+  background: #dc2626;
+  color: #fff;
+  padding: 14px 18px;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  max-width: 380px;
+}
+
+.snackbarMessages {
+  flex: 1;
+  font-family: 'Forum', serif;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.snackbarClose {
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+.snackbarClose:hover { opacity: 1; }
+
+/* Stepper (post-login) */
+.stepperWrapper {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  animation: stepperFadeIn 0.6s ease 1.2s forwards;
+}
+
+@keyframes stepperFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Fade animations */
+.fadeOut {
+  opacity: 0 !important;
+  pointer-events: none;
+}
+.fadeIn {
+  opacity: 1 !important;
+}
+
+/* Tab bar — hidden on desktop, shown on tablet/mobile */
+.tabBar {
+  display: none;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   DESKTOP  > 1020px
+   Original two-panel layout with sliding cover
+═══════════════════════════════════════════════════════════ */
+
+@media (min-width: 1021px) {
+
+  .formsArea {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    opacity: 1;
+    transition: opacity 0.6s ease;
+  }
+
+  /* White background under the forms (the Grainient is visible only
+     through the cover panel) */
+  .formsArea::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: #fff;
+    z-index: 0;
+  }
+
+  /* Each form panel takes half the screen */
+  .formPanel {
+    position: relative;
+    z-index: 1;
+    width: 50%;
+    height: 100%;
+    /* On desktop panelHidden has no effect — both panels are visible */
+  }
+  .panelHidden {
+    /* No-op on desktop — both login + register always rendered */
+  }
+
+  /* The sliding Grainient cover */
+  .desktopCover {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    z-index: 10;
+    border-radius: 100px 0 0 100px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: right 1.5s ease,
+                width 1.5s ease,
+                border-radius 1.5s ease;
+  }
+
+  /* Cover slides to the left */
+  .coverActive {
+    right: 50%;
+    border-radius: 0 100px 100px 0;
+  }
+
+  /* Cover expands to fill 100% of the screen */
+  .coverExpanded {
+    right: 0 !important;
+    width: 100vw !important;
+    border-radius: 0 !important;
+  }
+
+  /* Grainient fills the cover panel */
+  .coverGrainient {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  /* Hero image that fades in after cover expands */
+  .heroImage {
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    z-index: 5;
+    opacity: 0;
+    animation: heroFadeIn 1s ease-in-out 1s forwards;
+  }
+
+  .heroImage img {
+    height: 100%;
+    width: auto;
+    object-fit: contain;
+    object-position: right center;
+  }
+
+  @keyframes heroFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  .coverActive {
+    right: 50%;
+    border-radius: 0 100px 100px 0;
+  }
+
+  .coverText {
+    position: relative;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2.5rem;
+    padding: 2rem;
+    opacity: 1;
+    z-index: 10;
+    transition: opacity 0.75s ease;
+    text-align: center;
+  }
+
+  .coverText h1 {
+    font-size: 2.5rem;
+    font-family: 'Forum', serif;
+    margin: 0;
+  }
+
+  .coverText p {
+    font-size: 1.1rem;
+    width: 65%;
+    font-family: 'Forum', serif;
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  /* Tab bar invisible on desktop */
+  .tabBar {
+    display: none;
+  }
+
+  /* Vertical logo decorations are handled inside the form components */
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TABLET  768px – 1020px
+   Grainient full-screen bg + tabs at top + one form at a time
+═══════════════════════════════════════════════════════════ */
+
+@media (min-width: 768px) and (max-width: 1020px) {
+
+  .formsArea {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    opacity: 1;
+    transition: opacity 0.6s ease;
+  }
+
+  /* No white bg on tablet — Grainient shows through */
+  .formsArea::before { display: none; }
+
+  /* Hide the desktop sliding cover */
+  .desktopCover { display: none; }
+
+  /* Tab bar */
+  .tabBar {
+    display: flex;
+    flex-shrink: 0;
+    width: 100%;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    background: rgba(0,0,0,0.25);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    z-index: 10;
+  }
+
+  .tab {
+    flex: 1;
+    padding: 20px 0;
+    background: none;
+    border: none;
+    font-family: 'Forum', serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+    cursor: pointer;
+    transition: color 0.3s ease;
+    position: relative;
+  }
+
+  .tab::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 15%;
+    width: 70%;
+    height: 2px;
+    background: #fff;
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 0.35s ease;
+  }
+
+  .tabActive {
+    color: #fff;
+  }
+
+  .tabActive::after {
+    transform: scaleX(1);
+  }
+
+  /* Form panels */
+  .formPanel {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+  }
+
+  /* Hide inactive panel on tablet */
+  .panelHidden {
+    display: none;
+  }
+
+  /* loginPanel / registerPanel take full width */
+  .loginPanel,
+  .registerPanel {
+    width: 100%;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MOBILE  < 768px
+   Same as tablet but more compact
+═══════════════════════════════════════════════════════════ */
+
+@media (max-width: 767px) {
+
+  .formsArea {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    opacity: 1;
+    transition: opacity 0.6s ease;
+  }
+
+  .formsArea::before { display: none; }
+
+  .desktopCover { display: none; }
+
+  /* Tab bar */
+  .tabBar {
+    display: flex;
+    flex-shrink: 0;
+    width: 100%;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    background: rgba(0,0,0,0.3);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    z-index: 10;
+  }
+
+  .tab {
+    flex: 1;
+    padding: 18px 0;
+    background: none;
+    border: none;
+    font-family: 'Forum', serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+    cursor: pointer;
+    transition: color 0.3s ease;
+    position: relative;
+  }
+
+  .tab::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 15%;
+    width: 70%;
+    height: 2px;
+    background: #fff;
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 0.35s ease;
+  }
+
+  .tabActive {
+    color: #fff;
+  }
+
+  .tabActive::after {
+    transform: scaleX(1);
+  }
+
+  /* Form panels */
+  .formPanel {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  .panelHidden {
+    display: none;
+  }
+
+  .loginPanel,
+  .registerPanel {
+    width: 100%;
+  }
+}

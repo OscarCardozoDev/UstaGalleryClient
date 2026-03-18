@@ -1,0 +1,51 @@
+{
+  "userTypes": [
+    {
+      "uid": "e782a79d-54f2-40d2-b5af-5509bb1e369a",
+      "name": "Estudiante"
+    }
+  ],
+  "degrees": [
+    "Administración de Empresas",
+    "Arquitectura",
+    "Bioingeniería",
+    "Contaduría Pública",
+    "Derecho",
+    "Diseño de Interacción",
+    "Ingeniería Ambiental",
+    "Ingeniería Civil",
+    "Ingeniería de Datos e Inteligencia Artificial",
+    "Ingeniería de Sistemas",
+    "Ingeniería de Telecomunicaciones",
+    "Licenciatura en Educación Infantil Bilingüe",
+    "Licenciatura en Español y Lenguas Extranjeras",
+    "Marketing y Transformación Digital",
+    "Negocios Internacionales"
+  ],
+  "semesters": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10"
+  ],
+  "genders": [
+    {
+      "value": "M",
+      "label": "Masculino"
+    },
+    {
+      "value": "F",
+      "label": "Femenino"
+    },
+    {
+      "value": "O",
+      "label": "Otro"
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+.svgBg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.heroContent {
+    position: relative;
+    width: 100%;
+    height: 100%;
+
+    .sliderContent {
+        width: 60vw;
+        background-color: white;
+        position: absolute;
+        border: 25px solid white;
+        border-radius: 15px;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    .textContent {
+        position: absolute;
+        bottom: 75px;
+        box-sizing: border-box;
+        padding-left: 50px;
+
+        h1 {
+            margin-bottom: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+
+            span {
+                font-family: var(--font-instrument-serif);
+                font-size: 6rem;
+                font-weight: bold;
+                text-transform: uppercase;
+            }
+        }
+
+        p {
+            width: 85%;
+            font-size: 1.2rem;
+        }
+    }
+}

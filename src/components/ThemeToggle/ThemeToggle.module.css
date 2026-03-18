@@ -1,0 +1,50 @@
+/* ============================================================
+   ThemeToggle.module.css
+   Usa clases de Tailwind via @apply para consistencia total
+   ============================================================ */
+
+.toggle {
+  @apply fixed bottom-6 right-6 z-50;
+  @apply flex items-center gap-2;
+  @apply px-3 py-2 rounded-pill cursor-pointer border-none;
+  @apply bg-white dark:bg-brand-800;
+  @apply shadow-brand-md dark:shadow-dark-md;
+  @apply ring-1 ring-brand-200 dark:ring-brand-700;
+  @apply transition-all duration-300 ease-smooth;
+}
+
+/* ── Track ───────────────────────────────────────────────── */
+.track {
+  @apply relative flex items-center;
+  @apply w-[42px] h-[22px] rounded-pill p-[2px] flex-shrink-0;
+}
+
+/* ── Thumb ───────────────────────────────────────────────── */
+.thumb {
+  @apply block w-[18px] h-[18px] rounded-pill flex-shrink-0;
+}
+
+/* ── Icon ────────────────────────────────────────────────── */
+.icon {
+  @apply relative flex items-center justify-center overflow-hidden;
+  @apply w-5 h-5 text-[15px] leading-none;
+}
+
+.iconInner {
+  @apply absolute flex items-center justify-center;
+}
+
+/* ── Mobile: solo ícono ──────────────────────────────────── */
+@media (max-width: 768px) {
+  .toggle {
+    @apply bottom-5 right-5 p-2 gap-0;
+  }
+
+  .track {
+    @apply hidden;
+  }
+
+  .icon {
+    @apply w-6 h-6 text-lg;
+  }
+}

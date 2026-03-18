@@ -1,0 +1,47 @@
+.header {
+    width: 100%;
+    position: fixed;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 25px 25px 0 25px;
+
+    .headerList {
+        display: flex;
+        gap: 50px;
+        list-style: none;
+        margin: 0;
+        padding-left: 15px;
+
+        li {
+            color: black;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border-radius: 10px;
+        }
+    }
+
+    .headerButton {
+        background-color: black;
+        color: white;
+        height: 50px;
+        margin-bottom: 10px;
+        border: none;
+        border-radius: 15px;
+        cursor: pointer;
+        font-size: 1.2rem;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+    }
+}
+
+.main {
+    height: 100vh;
+    width: 100%;
+}
