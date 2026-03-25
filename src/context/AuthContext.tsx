@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { getCurrentUser } from '../services/users';
 import type { UserSession } from '../interfaces/session';
 import { Logout } from '../services/auth';
@@ -15,6 +14,8 @@ interface AuthContextType {
   error: string | null;
   currentGroup: string | null;
   setCurrentGroup: (groupId: string) => void;
+  isAuthenticated: () => boolean;
+  login: (rawUserData: any) => void;
   logout: () => Promise<void>;
 }
 
@@ -80,10 +81,10 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // ═══════════════════════════════════════════════════════════════════════════
 // PROVIDER
+// Sin useNavigate aquí — cada consumidor maneja su propia navegación
 // ═══════════════════════════════════════════════════════════════════════════
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const navigate = useNavigate();
   const [user, setUser] = useState<UserSession | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -100,9 +101,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return defaultGroup;
   };
 
+  // Carga inicial: sessionStorage → backend
   useEffect(() => {
     const init = async () => {
-      // Intentar cargar desde sessionStorage primero
       const cached = getUser();
       if (cached) {
         setUser(cached);
@@ -111,15 +112,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      // Si no hay cache, cargar desde el backend
       try {
         const data = await getCurrentUser();
         const session = transformUser(data);
         saveUser(session);
         setUser(session);
         setCurrentGroupState(resolveGroup(session));
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error al cargar usuario');
+      } catch {
+        // Sin sesión activa, usuario queda null — no es un error real
       } finally {
         setIsLoading(false);
       }
@@ -128,6 +128,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     init();
   }, []);
 
+  // ── login: llamar después de un Login() exitoso ──────────
+  // Recibe los datos crudos del backend, los transforma y guarda en sesión.
+  const login = (rawUserData: any) => {
+    const session = transformUser(rawUserData);
+    saveUser(session);
+    setUser(session);
+    setCurrentGroupState(resolveGroup(session));
+  };
+
+  // ── setCurrentGroup ───────────────────────────────────────
   const setCurrentGroup = (groupId: string) => {
     if (!user) return;
 
@@ -139,12 +149,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const isAuthenticated = (): boolean => {
+    try {
+      const stored = sessionStorage.getItem('user_session');
+      return stored !== null;
+    } catch {
+      return false;
+    }
+  };
+
+  // ── logout ────────────────────────────────────────────────
+  // No navega — quien llame a logout() se encarga del navigate
   const logout = async () => {
     await Logout();
     sessionStorage.removeItem(SESSION_KEY);
     setUser(null);
     setCurrentGroupState(null);
-    navigate("/");
   };
 
   const value: AuthContextType = {
@@ -153,6 +173,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     error,
     currentGroup,
     setCurrentGroup,
+    isAuthenticated,
+    login,
     logout,
   };
 

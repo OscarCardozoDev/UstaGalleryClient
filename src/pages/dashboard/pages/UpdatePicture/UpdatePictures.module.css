@@ -45,6 +45,7 @@
 
 .imageUploaderContainer {
   flex: 1;
+  max-height: 80vh;
   min-height: 500px;
   display: flex;
   flex-direction: column;
@@ -336,6 +337,7 @@
   }
 
   .imageUploaderContainer {
+    max-height: 80vh;
     min-height: 400px;
   }
 

@@ -1,17 +1,9 @@
-import { useState, useEffect } from "react";
-
-interface ImageData {
-  photo: {
-    uid: string;
-    name: string;
-    url: string;
-  };
-  isMain?: boolean;
-}
+import { useState, useEffect, useCallback } from "react";
+import type { ImageData } from "@/interfaces/photos";
 
 interface Props {
   images: ImageData[];
-  baseUrl?: string; // URL base para construir las URLs completas
+  baseUrl?: string;
 }
 
 export default function ImageViewer({ images, baseUrl = "" }: Props) {
@@ -21,18 +13,35 @@ export default function ImageViewer({ images, baseUrl = "" }: Props) {
   const [showTooltip, setShowTooltip] = useState<number | null>(null);
   const [tooltipTimer, setTooltipTimer] = useState<NodeJS.Timeout | null>(null);
 
-  // Ordenar imágenes: la imagen principal primero
   const sortedImages = [...images].sort((a, b) => {
     if (a.isMain) return -1;
     if (b.isMain) return 1;
     return 0;
   });
 
-  // Resetear el índice seleccionado cuando cambian las imágenes
+  const getImageUrl = useCallback(
+    (imageData: ImageData) => `${baseUrl}${imageData.photo.url}`,
+    [baseUrl]
+  );
+
+  // Resetear al cambiar las imágenes
   useEffect(() => {
     setSelectedIndex(0);
     setLoadedImages(new Set());
   }, [images]);
+
+  // Detectar imágenes ya en caché del navegador
+  useEffect(() => {
+    sortedImages.forEach((imageData, index) => {
+      if (loadedImages.has(index)) return; // 👈 ya está cargado, no hacer nada
+
+      const img = new Image();
+      img.src = getImageUrl(imageData);
+      if (img.complete) {
+        setLoadedImages((prev) => new Set([...prev, index]));
+      }
+    });
+  }, [sortedImages, getImageUrl]);
 
   const handleImageLoad = (index: number) => {
     setLoadedImages((prev) => new Set([...prev, index]));
@@ -40,9 +49,7 @@ export default function ImageViewer({ images, baseUrl = "" }: Props) {
 
   const handleMouseEnter = (index: number) => {
     setHoveredIndex(index);
-    const timer = setTimeout(() => {
-      setShowTooltip(index);
-    }, 500); // Mostrar tooltip después de 500ms
+    const timer = setTimeout(() => setShowTooltip(index), 500);
     setTooltipTimer(timer);
   };
 
@@ -53,10 +60,6 @@ export default function ImageViewer({ images, baseUrl = "" }: Props) {
       clearTimeout(tooltipTimer);
       setTooltipTimer(null);
     }
-  };
-
-  const getImageUrl = (imageData: ImageData) => {
-    return `${baseUrl}${imageData.photo.url}`;
   };
 
   if (sortedImages.length === 0) {
@@ -90,7 +93,7 @@ export default function ImageViewer({ images, baseUrl = "" }: Props) {
         padding: "40px",
       }}
     >
-      {/* Vista previa grande de la imagen seleccionada */}
+      {/* Vista previa grande */}
       <div
         style={{
           flex: 1,
@@ -103,7 +106,6 @@ export default function ImageViewer({ images, baseUrl = "" }: Props) {
           justifyContent: "center",
         }}
       >
-        {/* Skeleton loader */}
         {!loadedImages.has(selectedIndex) && (
           <div
             style={{
@@ -116,11 +118,13 @@ export default function ImageViewer({ images, baseUrl = "" }: Props) {
                 "linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%)",
               backgroundSize: "200% 100%",
               animation: "loading 1.5s ease-in-out infinite",
+              borderRadius: "12px",
             }}
           />
         )}
 
         <img
+          key={sortedImages[selectedIndex].photo.uid}
           src={getImageUrl(sortedImages[selectedIndex])}
           alt={sortedImages[selectedIndex].photo.name}
           style={{
@@ -133,9 +137,9 @@ export default function ImageViewer({ images, baseUrl = "" }: Props) {
             transition: "opacity 0.3s ease",
           }}
           onLoad={() => handleImageLoad(selectedIndex)}
+          onError={() => handleImageLoad(selectedIndex)}
         />
 
-        {/* Indicador de imagen principal */}
         {sortedImages[selectedIndex].isMain && (
           <div
             style={{
@@ -156,18 +160,14 @@ export default function ImageViewer({ images, baseUrl = "" }: Props) {
             <img
               src="/logoFav.png"
               alt="logo"
-              style={{
-                width: "20px",
-                height: "20px",
-                objectFit: "contain",
-              }}
+              style={{ width: "20px", height: "20px", objectFit: "contain" }}
             />
             Imagen principal
           </div>
         )}
       </div>
 
-      {/* Miniaturas en slider horizontal */}
+      {/* Miniaturas */}
       {sortedImages.length > 1 && (
         <div
           style={{
@@ -203,9 +203,7 @@ export default function ImageViewer({ images, baseUrl = "" }: Props) {
                       : "0 2px 8px rgba(0,0,0,0.1)",
                   transition: "all 0.3s ease",
                   transform:
-                    hoveredIndex === index
-                      ? "translateY(-4px)"
-                      : "translateY(0)",
+                    hoveredIndex === index ? "translateY(-4px)" : "translateY(0)",
                   cursor: "pointer",
                   backgroundColor: "#e0e0e0",
                 }}
@@ -213,7 +211,6 @@ export default function ImageViewer({ images, baseUrl = "" }: Props) {
                 onMouseEnter={() => handleMouseEnter(index)}
                 onMouseLeave={handleMouseLeave}
               >
-                {/* Skeleton loader para miniatura */}
                 {!loadedImages.has(index) && (
                   <div
                     style={{
@@ -226,11 +223,13 @@ export default function ImageViewer({ images, baseUrl = "" }: Props) {
                         "linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%)",
                       backgroundSize: "200% 100%",
                       animation: "loading 1.5s ease-in-out infinite",
+                      borderRadius: "15px",
                     }}
                   />
                 )}
 
                 <img
+                  key={imageData.photo.uid}
                   src={getImageUrl(imageData)}
                   alt={imageData.photo.name}
                   style={{
@@ -242,9 +241,9 @@ export default function ImageViewer({ images, baseUrl = "" }: Props) {
                     transition: "opacity 0.3s ease",
                   }}
                   onLoad={() => handleImageLoad(index)}
+                  onError={() => handleImageLoad(index)}
                 />
 
-                {/* Indicador de imagen principal en miniatura */}
                 {imageData.isMain && (
                   <div style={{ position: "relative" }}>
                     <div
@@ -266,15 +265,10 @@ export default function ImageViewer({ images, baseUrl = "" }: Props) {
                       <img
                         src="/logoFav.png"
                         alt="main"
-                        style={{
-                          width: "18px",
-                          height: "18px",
-                          objectFit: "contain",
-                        }}
+                        style={{ width: "18px", height: "18px", objectFit: "contain" }}
                       />
                     </div>
 
-                    {/* Tooltip */}
                     {showTooltip === index && (
                       <div
                         style={{
@@ -316,28 +310,13 @@ export default function ImageViewer({ images, baseUrl = "" }: Props) {
 
       <style>{`
         @keyframes loading {
-          0% {
-            background-position: 200% 0;
-          }
-          100% {
-            background-position: -200% 0;
-          }
+          0% { background-position: 200% 0; }
+          100% { background-position: -200% 0; }
         }
-        
-        div::-webkit-scrollbar {
-          height: 8px;
-        }
-        div::-webkit-scrollbar-track {
-          background: #f0f0f0;
-          border-radius: 4px;
-        }
-        div::-webkit-scrollbar-thumb {
-          background: #171717;
-          border-radius: 4px;
-        }
-        div::-webkit-scrollbar-thumb:hover {
-          background: #110f0fff;
-        }
+        div::-webkit-scrollbar { height: 8px; }
+        div::-webkit-scrollbar-track { background: #f0f0f0; border-radius: 4px; }
+        div::-webkit-scrollbar-thumb { background: #171717; border-radius: 4px; }
+        div::-webkit-scrollbar-thumb:hover { background: #110f0fff; }
       `}</style>
     </div>
   );

@@ -106,6 +106,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/user/author/{uid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener información del usuario como autor */
+        get: operations["UserController_getInfoAuthor"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/user/{uid}": {
         parameters: {
             query?: never;
@@ -573,7 +590,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Obtener todas las obras paginadas */
+        /** Obtener todos los productos paginadas */
         get: operations["ProductController_getAll"];
         put?: never;
         post?: never;
@@ -895,6 +912,20 @@ export interface components {
             /** @example La resolución de la imagen es muy baja. */
             feedback?: string;
         };
+        UpdateProductImageDto: {
+            /** @example uuid-foto */
+            uid?: string;
+            /** @example /9j/4AAQSkZJRgAB... */
+            base64?: string;
+            /** @example foto.jpg */
+            name?: string;
+            /** @example products */
+            folder?: string;
+            /** @example true */
+            isMain: boolean;
+            /** @example false */
+            isExisting: boolean;
+        };
         UpdateProductDto: {
             /** @example Nuevo nombre */
             name?: string;
@@ -904,15 +935,11 @@ export interface components {
             price?: number;
             /** @example 2025-07-29 */
             madeAt?: string;
-            /** @example uuid-del-grupo */
-            groupId?: string;
             /** @example false */
             isSold?: boolean;
             styles?: string[];
-            /** @example /9j/4AAQSkZJRgAB... */
-            base64?: string;
-            /** @example true */
-            isMain?: boolean;
+            authors?: components["schemas"]["ProductAuthorDto"][];
+            images?: components["schemas"]["UpdateProductImageDto"][];
         };
     };
     responses: never;
@@ -1025,6 +1052,25 @@ export interface operations {
             query?: never;
             header?: never;
             path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UserController_getInfoAuthor: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                uid: string;
+            };
             cookie?: never;
         };
         requestBody?: never;

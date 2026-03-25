@@ -9,9 +9,10 @@ interface Props {
   onClose: () => void;
 }
 
-export default function Sidebar({ groups, open, onClose }: Props) {
+export default function Sidebar({ open, onClose }: Props) {
   const navigate = useNavigate();
-  const { currentGroup, setCurrentGroup, logout } = useAuth();
+  const { user, currentGroup, setCurrentGroup, logout } = useAuth();
+  const groups = user?.groups || [];
   const [isHovered, setIsHovered] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -37,6 +38,11 @@ export default function Sidebar({ groups, open, onClose }: Props) {
       "Tecnica Vocal": "vocal.jpg",
     };
     return `/groups/${imgName[groupName as keyof typeof imgName]}`;
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/");
   };
 
   return (
@@ -92,46 +98,36 @@ export default function Sidebar({ groups, open, onClose }: Props) {
             </button>
           </li>
 
-          <li>
-            <button
-              className={styles.listItem}
-              onClick={() => handleNavigation("/dashboard/review-art")}
-            >
-              <svg
-                className={styles.icon}
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
+          {user?.userType?.name === "Profesor" && (
+            <li>
+              <button
+                className={styles.listItem}
+                onClick={() => handleNavigation("/dashboard/review-art")}
               >
-                <path d="M12 19v-7a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v7" />
-                <line x1="12" y1="12" x2="12" y2="19" />
-                <line x1="8" y1="12" x2="16" y2="12" />
-              </svg>
-              <span>Revisar obras</span>
-            </button>
-          </li>
+                <img
+                  className={styles.icon}
+                  src="../../../../../public/logos/art_gallery.dashboard.svg"
+                  alt=""
+                  width="20"
+                  height="20"
+                />
+                <span>Revisar obras</span>
+              </button>
+            </li>
+          )}
 
           <li>
             <button
               className={styles.listItem}
               onClick={() => handleNavigation("/dashboard/your-gallery")}
             >
-              <svg
+              <img
                 className={styles.icon}
+                src="../../../../../public/logos/art_gallery.dashboard.svg"
+                alt=""
                 width="20"
                 height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M12 19v-7a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v7" />
-                <line x1="12" y1="12" x2="12" y2="19" />
-                <line x1="8" y1="12" x2="16" y2="12" />
-              </svg>
+              />
               <span>Tu galería</span>
             </button>
           </li>
@@ -163,28 +159,32 @@ export default function Sidebar({ groups, open, onClose }: Props) {
               className={styles.groupsBg}
               alt="gruposBg"
             />
-            <h2 className={`${styles.groupsName} text-[#171717] text-2xl font-semibold`}>{group.name}</h2>
+            <h2
+              className={`${styles.groupsName} text-[#171717] text-2xl font-semibold`}
+            >
+              {group.name}
+            </h2>
           </div>
         ))}
       </div>
 
-      <button className={`${styles.attendanceButton}`} onClick={logout}>
-          <svg
-            className={`${styles.checkIcon}`}
-            version="1.0"
-            xmlns="http://www.w3.org/2000/svg"
-            width="512.000000pt"
-            height="512.000000pt"
-            viewBox="0 0 512.000000 512.000000"
-            preserveAspectRatio="xMidYMid meet"
+      <button className={`${styles.attendanceButton}`} onClick={handleLogout}>
+        <svg
+          className={`${styles.checkIcon}`}
+          version="1.0"
+          xmlns="http://www.w3.org/2000/svg"
+          width="512.000000pt"
+          height="512.000000pt"
+          viewBox="0 0 512.000000 512.000000"
+          preserveAspectRatio="xMidYMid meet"
+        >
+          <g
+            transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)"
+            fill="#000000"
+            stroke="none"
           >
-            <g
-              transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)"
-              fill="#000000"
-              stroke="none"
-            >
-              <path
-                d="M4202 4797 l-262 -262 -608 -229 c-334 -126 -610 -232 -614 -235 -4
+            <path
+              d="M4202 4797 l-262 -262 -608 -229 c-334 -126 -610 -232 -614 -235 -4
                   -4 -80 -216 -169 -471 l-160 -465 -185 -185 -184 -185 -100 100 -100 100 -268
                   -266 -267 -267 -100 -5 c-267 -16 -526 -137 -717 -335 -138 -144 -215 -276
                   -278 -480 -18 -57 -30 -105 -28 -106 1 -2 40 -15 85 -30 102 -34 163 -74 203
@@ -205,10 +205,10 @@ export default function Sidebar({ groups, open, onClose }: Props) {
                   36 84 71 136 17 25 74 90 128 145 166 173 217 275 226 460 10 184 -47 328
                   -180 459 l-80 78 24 45 c91 167 289 321 480 372 100 27 109 28 219 30 l95 1
                   117 -117z"
-              />
-            </g>
-          </svg>
-          <span>Cerrar sesión</span>
+            />
+          </g>
+        </svg>
+        <span>Cerrar sesión</span>
       </button>
     </aside>
   );

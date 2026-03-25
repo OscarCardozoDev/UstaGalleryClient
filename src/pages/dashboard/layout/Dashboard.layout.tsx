@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/siderbar/Sidebar";
 import Topbar from "../components/topbar/Topbar";
 import LoadingScreen from "../components/Loanding/LoadingScreen";
-import { AuthProvider, useAuth } from "../../../context/AuthContext";
+import { useAuth } from "../../../context/AuthContext";
 import styles from "./Dashboard.module.css";
 
 interface Props {
@@ -99,8 +99,8 @@ function DashboardContent({ children }: Props) {
 
 export default function DashboardLayout({ children }: Props) {
   return (
-    <AuthProvider>
+    <>
       <DashboardContent>{children}</DashboardContent>
-    </AuthProvider>
+    </>
   );
 }

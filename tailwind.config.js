@@ -5,7 +5,7 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
 
-  darkMode: "class", // ThemeToggle agrega/quita la clase "dark" en <html>
+  darkMode: "class",
 
   theme: {
     fontFamily: {
@@ -16,71 +16,84 @@ export default {
 
     extend: {
       colors: {
-        // ── Paleta Auth (existente) ──────────────────────────
+        // ── Paleta Principal (Design System USTA Gallery) ────
         primary: {
-          light:   '#b3b3b3',
-          DEFAULT: '#0a0a0a',
-          dark:    '#0a0a0a',
+          50:  '#F5F5F5',
+          100: '#E8E8E8',
+          200: '#D1D1D1',
+          300: '#B0B0B0',
+          400: '#888888',
+          500: '#636363',
+          600: '#4A4A4A',
+          700: '#333333',
+          800: '#242424',
+          900: '#1A1A1A',
+          950: '#0D0D0D',
+          DEFAULT: '#1A1A1A',
+          light:   '#4A4A4A',
+          dark:    '#0D0D0D',
         },
+
+        // ── Secondary — Gris medio ────────────────────────────
         secondary: {
-          light:   '#ff7961',
-          DEFAULT: '#f44336',
-          dark:    '#ba000d',
+          50:  '#F8F8F9',
+          100: '#EDEDEE',
+          200: '#DADADC',
+          300: '#C5C5C7',
+          400: '#B8B8BC',
+          500: '#A8A8AC',
+          600: '#96969A',
+          700: '#808084',
+          800: '#636366',
+          900: '#4A4A4C',
+          950: '#2E2E30',
+          DEFAULT: '#B8B8BC',
+          light:   '#DADADC',
+          dark:    '#96969A',
         },
 
-        // ── Paleta Dashboard (existente) ─────────────────────
+        // ── Tertiary — Gris cálido medio ──────────────────────
+        tertiary: {
+          50:  '#F7F7F7',
+          100: '#EBEBEB',
+          200: '#D8D8D8',
+          300: '#C3C3C4',
+          400: '#B3B3B4',
+          500: '#A3A3A4',
+          600: '#909091',
+          700: '#797979',
+          800: '#5C5C5C',
+          900: '#424242',
+          950: '#282828',
+          DEFAULT: '#A3A3A4',
+          light:   '#C3C3C4',
+          dark:    '#797979',
+        },
+
+        // ── Neutral — Fondos y superficies ───────────────────
+        neutral: {
+          50:  '#FAFBFD',
+          100: '#F2F3F5',
+          200: '#E8E9EB',
+          300: '#D8D9DB',
+          400: '#C4C5C7',
+          500: '#ADADAE',
+          600: '#919293',
+          700: '#717273',
+          800: '#515253',
+          900: '#343535',
+          950: '#1A1B1B',
+          DEFAULT: '#FAFBFD',
+        },
+
+        // ── Paleta Dashboard ─────────────────────────────────
         dashboard: {
-          primary:       '#2563eb',
-          secondary:     '#8b5cf6',
-          background:    '#f8f5f8',
+          primary:       '#1A1A1A',
+          secondary:     '#B8B8BC',
+          background:    '#FAFBFD',
           surface:       '#ffffff',
-          textPrimary:   '#171717',
-          textSecondary: '#6b7280',
-        },
-
-        // ── Paleta Brand — Fondo y texto (azul marino) ───────
-        brand: {
-          50:  '#FAFBFD',
-          100: '#D9E1F0',
-          200: '#B7C5E2',
-          300: '#95AAD5',
-          400: '#728EC7',
-          500: '#5073B9',
-          600: '#3E5D9B',
-          700: '#304979',
-          800: '#233457',
-          900: '#151F35',
-          950: '#070B12',
-        },
-
-        // ── Paleta Sombras (grises neutros) ──────────────────
-        shadow: {
-          50:  '#FAFBFD',
-          100: '#E0E1E3',
-          200: '#C7C8CA',
-          300: '#AFB0B1',
-          400: '#979899',
-          500: '#808181',
-          600: '#6A6A6B',
-          700: '#545455',
-          800: '#3F4040',
-          900: '#2C2C2C',
-          950: '#19191A',
-        },
-
-        // ── Paleta Tonos (grises cálidos) ────────────────────
-        tone: {
-          50:  '#FAFBFD',
-          100: '#EDEEF0',
-          200: '#E0E1E3',
-          300: '#D4D5D6',
-          400: '#C7C8C9',
-          500: '#BBBCBD',
-          600: '#AFAFB0',
-          700: '#A3A3A4',
-          800: '#979798',
-          900: '#8B8C8C',
-          950: '#808080',
+          textPrimary:   '#1A1A1A',
+          textSecondary: '#A3A3A4',
         },
 
         // ── Acento dorado ────────────────────────────────────
@@ -116,17 +129,17 @@ export default {
         '26': '6.5rem',
       },
 
-      // ── Sombras con tinte azul marino ─────────────────────
+      // ── Sombras ───────────────────────────────────────────
       boxShadow: {
-        'brand-sm': '0 2px 8px  rgba(55, 72, 121, 0.10)',
-        'brand-md': '0 8px 24px rgba(55, 72, 121, 0.14)',
-        'brand-lg': '0 20px 60px rgba(55, 72, 121, 0.18)',
-        'brand-xl': '0 32px 80px rgba(55, 72, 121, 0.22)',
+        'brand-sm': '0 2px 8px  rgba(26, 26, 26, 0.08)',
+        'brand-md': '0 8px 24px rgba(26, 26, 26, 0.12)',
+        'brand-lg': '0 20px 60px rgba(26, 26, 26, 0.16)',
+        'brand-xl': '0 32px 80px rgba(26, 26, 26, 0.20)',
         'gold':     '0 4px 24px rgba(201, 168, 76, 0.25)',
-        'dark-sm':  '0 2px 8px  rgba(7, 11, 18, 0.40)',
-        'dark-md':  '0 8px 24px rgba(7, 11, 18, 0.55)',
-        'dark-lg':  '0 20px 60px rgba(7, 11, 18, 0.65)',
-        'dark-xl':  '0 32px 80px rgba(7, 11, 18, 0.75)',
+        'dark-sm':  '0 2px 8px  rgba(13, 13, 13, 0.40)',
+        'dark-md':  '0 8px 24px rgba(13, 13, 13, 0.55)',
+        'dark-lg':  '0 20px 60px rgba(13, 13, 13, 0.65)',
+        'dark-xl':  '0 32px 80px rgba(13, 13, 13, 0.75)',
       },
 
       // ── Transiciones ──────────────────────────────────────

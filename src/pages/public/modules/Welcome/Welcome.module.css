@@ -1,0 +1,311 @@
+/* ── Wrapper ─────────────────────────────────────────────── */
+.root {
+  position: relative;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* ============================================================
+   DESKTOP (≥ 768px)
+   ============================================================ */
+.desktopHero {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Fondo */
+.bgImage {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.bgImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.88;
+}
+
+.bgOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(250, 251, 253, 0.18) 0%,
+    transparent 45%,
+    rgba(250, 251, 253, 0.38) 100%
+  );
+}
+
+/* Título central */
+.centerTitle {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  pointer-events: none;
+  user-select: none;
+}
+
+.mainHeadline {
+  font-size: clamp(5rem, 12vw, 11rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  opacity: 0.92;
+}
+
+.goldLine {
+  display: block;
+  width: 48px;
+  height: 1px;
+  margin: 0.75rem auto 0;
+  background: linear-gradient(90deg, #c9a84c 0%, #f0d080 100%);
+}
+
+/* Panel izquierdo */
+.leftPanel {
+  position: absolute;
+  left: 3rem;
+  bottom: 5.5rem;
+  z-index: 20;
+  width: 20rem;
+}
+
+.glassCard {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(201, 168, 76, 0.15);
+}
+
+.viewAllBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  border-bottom: 1px solid rgba(26, 26, 26, 0.2);
+  padding-bottom: 0.2rem;
+  cursor: pointer;
+  transition: border-color 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.viewAllBtn:hover {
+  border-color: #1A1A1A;
+}
+
+/* Panel derecho */
+.rightPanel {
+  position: absolute;
+  right: 3rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 20;
+  width: 17rem;
+}
+
+.eventsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.eventItem {
+  padding-left: 1.25rem;
+  border-left: 1px solid rgba(201, 168, 76, 0.35);
+}
+
+.reserveBtn::after {
+  content: '';
+  display: block;
+  width: 0;
+  height: 1px;
+  background: #c9a84c;
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-top: 2px;
+}
+
+.reserveBtn:hover::after {
+  width: 100%;
+}
+
+/* Explore anchor */
+.exploreAnchor {
+  position: absolute;
+  bottom: 3rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0.35;
+}
+
+.exploreLine {
+  width: 1px;
+  height: 3rem;
+  background: currentColor;
+}
+
+/* ============================================================
+   MOBILE (< 768px)
+   ============================================================ */
+.mobileHero {
+  position: relative;
+  min-height: 100vh;
+  padding: 2rem 1.5rem 5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.mobileGrid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1rem;
+  width: 100%;
+  max-width: 28rem;
+  margin: 0 auto 3rem;
+}
+
+.primaryImage {
+  grid-column: 1 / 11;
+  position: relative;
+}
+
+.primaryImageFrame {
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+}
+
+.primaryImageFrame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.primaryImageFrame img:hover {
+  transform: scale(1.04);
+}
+
+.exhibitionTag {
+  position: absolute;
+  bottom: -2rem;
+  right: -1rem;
+}
+
+.secondaryImage {
+  grid-column: 8 / 13;
+  grid-row: 1;
+  padding-top: 3rem;
+}
+
+.secondaryImageFrame {
+  aspect-ratio: 1;
+  overflow: hidden;
+}
+
+.secondaryImageFrame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mobileCta {
+  grid-column: 1 / -1;
+  margin-top: 4rem;
+}
+
+.collectionBtn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  transition: background 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.collectionBtn:active {
+  transform: scale(0.98);
+}
+
+.mobileBgDecor {
+  position: absolute;
+  top: 25%;
+  right: -3rem;
+  width: 8rem;
+  height: 16rem;
+  z-index: -1;
+  opacity: 0.5;
+}
+
+.scrollHint {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  opacity: 0.28;
+}
+
+/* Gallery items layout offsets */
+.galleryItemOffset {
+  padding-left: 3rem;
+}
+
+.galleryItemRight {
+  padding-right: 3rem;
+}
+
+.galleryImageFrame {
+  overflow: hidden;
+}
+
+.galleryImageFrame.portrait { aspect-ratio: 4 / 5; }
+.galleryImageFrame.square   { aspect-ratio: 1; }
+.galleryImageFrame.tall     { aspect-ratio: 3 / 4; }
+
+.galleryImageFrame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: filter 1s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.galleryImageFrame img:hover {
+  filter: grayscale(0%) !important;
+  transform: scale(1.03);
+}
+
+/* Gold accent strip */
+.goldAccentStrip {
+  position: fixed;
+  top: 80px;
+  left: 0;
+  width: 3px;
+  height: 3rem;
+  background: linear-gradient(180deg, #c9a84c 0%, #f0d080 100%);
+  z-index: 40;
+}
+
+/* ── Responsive visibility ───────────────────────────────── */
+@media (max-width: 767px) {
+  .desktopHero  { display: none; }
+  .mobileLayout { display: block; }
+}
+
+@media (min-width: 768px) {
+  .desktopHero  { display: flex; }
+  .mobileLayout { display: none; }
+}

@@ -1,38 +1,36 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import ImageUploader from "../../../components/ImageUploader";
 import { useAuth } from "../../../../context/AuthContext";
 import { getStudentsByGroup } from "../../../../services/groups";
 import { getAllStylesByGroup } from "../../../../services/styles";
 import { getProductById, updateProduct } from "../../../../services/products";
-import type { UpdateProductDto } from "../../../../interfaces/products";
+import type { UpdateProductDto, UpdateProductImageDto } from "../../../../interfaces/products";
 import type { GroupStudent } from "../../../../interfaces/groups";
 import type { Style } from "../../../../interfaces/styles";
 import styles from "./UpdatePictures.module.css";
 
 export default function EditProduct() {
   const { uid } = useParams<{ uid: string }>();
+  const navigate = useNavigate();
   const { user, currentGroup } = useAuth();
+  const BASE_URL = import.meta.env.VITE_API_URL; 
 
-  // Estados de datos
+  // ── Estados de datos ──────────────────────────────────────────────────────
   const [availableStyles, setAvailableStyles] = useState<Style[]>([]);
   const [students, setStudents] = useState<GroupStudent[]>([]);
-  const [imageFiles, setImageFiles] = useState<File[]>([]);
-  const [existingImages, setExistingImages] = useState<{ url: string; isMain: boolean }[]>([]);
-  const [mainExistingIndex, setMainExistingIndex] = useState(0);
-  const [replaceImages, setReplaceImages] = useState(false);
+  const [imageItems, setImageItems] = useState<UpdateProductImageDto[]>([]);
+  const [existingImages, setExistingImages] = useState<{ uid: string; url: string; isMain: boolean }[]>([]);
 
-  // Estados de UI
+  // ── Estados de UI ─────────────────────────────────────────────────────────
   const [isStylesOpen, setIsStylesOpen] = useState(false);
   const [isAuthorsOpen, setIsAuthorsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const [uploaderKey, setUploaderKey] = useState(0);
-  const [hoveredImg, setHoveredImg] = useState<number | null>(null);
 
-  // Estado del formulario
+  // ── Estado del formulario ─────────────────────────────────────────────────
   const [form, setForm] = useState({
     name: "",
     description: "",
@@ -69,25 +67,24 @@ export default function EditProduct() {
         setAvailableStyles(stylesData);
         setStudents(groupStudents);
 
-        // Pre-popular formulario con datos del producto
         setForm({
           name: product.name ?? "",
           description: product.description ?? "",
           madeAt: product.madeAt ? product.madeAt.split("T")[0] : "",
           price: product.price != null ? String(product.price) : "",
-          styles: product.styles?.map((s: any) => s.uid ?? s) ?? [],
+          styles: product.styles?.map((s: any) => s.styleId ?? s.uid ?? s) ?? [],
           authors: product.authors?.map((a: any) => a.userId ?? a.user?.uid ?? a) ?? [],
           isSold: product.isSold ?? false,
         });
 
-        // Guardar imágenes existentes
-        const imgs = product.images?.map((img: any) => ({
-          url: img.url ?? img,
-          isMain: img.isMain ?? false,
+        // Guardar imágenes existentes con uid para pasarlas al uploader
+        const imgs = product.photos?.map((p: any) => ({
+          uid: p.photo?.uid ?? p.uid,
+          url: `${BASE_URL}${p.photo?.url ?? p.url}`, 
+          isMain: p.isMain ?? false,
         })) ?? [];
         setExistingImages(imgs);
-        const mainIdx = imgs.findIndex((i: { isMain: boolean }) => i.isMain);
-        setMainExistingIndex(mainIdx >= 0 ? mainIdx : 0);
+
       } catch (err) {
         console.error("Error al cargar el producto:", err);
         setError("No se pudo cargar la información de la obra");
@@ -102,8 +99,6 @@ export default function EditProduct() {
   // ═══════════════════════════════════════════════════════════════════════════
   // HANDLERS
   // ═══════════════════════════════════════════════════════════════════════════
-
-  const handleImages = (files: File[]) => setImageFiles(files);
 
   const handleInputChange = (
     field: keyof typeof form,
@@ -131,24 +126,13 @@ export default function EditProduct() {
     }));
   };
 
-  const convertFilesToBase64 = async (
-    files: File[]
-  ): Promise<{ base64: string; name: string }[]> => {
-    return Promise.all(
-      files.map(
-        (file) =>
-          new Promise<{ base64: string; name: string }>((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => {
-              const base64 = (reader.result as string).split(",")[1];
-              resolve({ base64, name: file.name });
-            };
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
-          })
-      )
-    );
-  };
+  const convertFileToBase64 = (file: File): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
 
   const validateForm = (): string | null => {
     if (!form.name.trim()) return "El nombre es requerido";
@@ -156,8 +140,7 @@ export default function EditProduct() {
     if (!form.madeAt) return "La fecha de creación es requerida";
     if (!currentGroup) return "No se ha seleccionado un grupo";
     if (form.authors.length === 0) return "Debes tener al menos un autor";
-    if (replaceImages && imageFiles.length === 0)
-      return "Debes agregar al menos una imagen nueva";
+    if (imageItems.length === 0 && existingImages.length === 0) return "Debes tener al menos una imagen";
     return null;
   };
 
@@ -174,6 +157,26 @@ export default function EditProduct() {
     setIsLoading(true);
 
     try {
+      // Construir images[] para el backend
+      const imagesPayload = await Promise.all(
+        imageItems.map(async (item) => {
+          if (item.isExisting) {
+            return {
+              uid: item.uid,
+              isMain: item.isMain,
+              isExisting: true as const,
+            };
+          }
+          const base64 = await convertFileToBase64(item.file!);
+          return {
+            base64,
+            name: item.file!.name,
+            folder: "products",
+            isMain: item.isMain,
+            isExisting: false as const,
+          };
+        })
+      );
       const payload: UpdateProductDto = {
         name: form.name.trim(),
         description: form.description.trim(),
@@ -182,24 +185,18 @@ export default function EditProduct() {
         isSold: form.isSold,
         authors: form.authors.map((userId) => ({
           userId,
-          isAuthor: userId === user?.uid,
+          isAuthor: true,
         })),
         styles: form.styles.length > 0 ? form.styles : undefined,
+        images: imagesPayload as UpdateProductDto["images"],
       };
-
-      if (replaceImages && imageFiles.length > 0) {
-        const imagesBase64 = await convertFilesToBase64(imageFiles);
-        (payload as any).images = imagesBase64.map((img, index) => ({
-          base64: img.base64,
-          name: img.name,
-          folder: "products",
-          isMain: index === 0,
-        }));
-      }
-
+      console.log(payload);
       await updateProduct(uid!, payload);
       setSuccess(true);
-      setTimeout(() => setSuccess(false), 3000);
+      setTimeout(() => {
+        setSuccess(false);
+        navigate("/dashboard/your-gallery");
+      }, 2000);
     } catch (err) {
       console.error("Error al actualizar producto:", err);
       setError(err instanceof Error ? err.message : "Error al actualizar la obra");
@@ -243,153 +240,12 @@ export default function EditProduct() {
           {/* ── COLUMNA IZQUIERDA: Imágenes ── */}
           <div className={styles.uploadSection}>
             <p className={styles.sectionTitle}>Imágenes</p>
-
-            {/* Visor de imágenes existentes */}
-            {!replaceImages && existingImages.length > 0 && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "16px", flex: 1 }}>
-
-                {/* Imagen principal grande */}
-                <div style={{
-                  flex: 1,
-                  borderRadius: "12px",
-                  overflow: "hidden",
-                  backgroundColor: "#000",
-                  position: "relative",
-                  minHeight: "300px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}>
-                  <img
-                    src={existingImages[mainExistingIndex]?.url}
-                    alt="imagen-principal"
-                    style={{
-                      maxWidth: "100%",
-                      maxHeight: "100%",
-                      width: "auto",
-                      height: "auto",
-                      objectFit: "contain",
-                    }}
-                  />
-                  <div style={{
-                    position: "absolute",
-                    top: "16px",
-                    left: "16px",
-                    backgroundColor: "rgba(0,0,0,0.7)",
-                    color: "#ffd700",
-                    padding: "8px 16px",
-                    borderRadius: "8px",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
-                    fontSize: "14px",
-                    fontWeight: 500,
-                  }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="#ffd700" stroke="#ffd700" strokeWidth="2">
-                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                    </svg>
-                    Imagen principal
-                  </div>
-                </div>
-
-                {/* Miniaturas */}
-                {existingImages.length > 1 && (
-                  <div style={{
-                    display: "flex",
-                    gap: "12px",
-                    overflowX: "auto",
-                    paddingBottom: "4px",
-                    scrollbarWidth: "thin",
-                    scrollbarColor: "#171717 #f0f0f0",
-                  }}>
-                    {existingImages.map((img, i) => (
-                      <div
-                        key={i}
-                        onClick={() => setMainExistingIndex(i)}
-                        onMouseEnter={() => setHoveredImg(i)}
-                        onMouseLeave={() => setHoveredImg(null)}
-                        style={{
-                          position: "relative",
-                          minWidth: "100px",
-                          width: "100px",
-                          height: "100px",
-                          borderRadius: "10px",
-                          overflow: "hidden",
-                          cursor: "pointer",
-                          flexShrink: 0,
-                          boxShadow: mainExistingIndex === i
-                            ? "0 0 0 3px #171717"
-                            : "0 2px 8px rgba(0,0,0,0.1)",
-                          transform: hoveredImg === i ? "translateY(-4px)" : "translateY(0)",
-                          transition: "all 0.2s ease",
-                        }}
-                      >
-                        <img
-                          src={img.url}
-                          alt={`miniatura-${i}`}
-                          style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                        />
-                        {/* Botón estrella */}
-                        <button
-                          onClick={(e) => { e.stopPropagation(); setMainExistingIndex(i); }}
-                          style={{
-                            position: "absolute",
-                            top: "6px",
-                            left: "6px",
-                            backgroundColor: "rgba(0,0,0,0.6)",
-                            border: "none",
-                            borderRadius: "50%",
-                            width: "28px",
-                            height: "28px",
-                            cursor: "pointer",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            zIndex: 2,
-                          }}
-                        >
-                          <svg width="14" height="14" viewBox="0 0 24 24"
-                            fill={mainExistingIndex === i ? "#ffd700" : "none"}
-                            stroke={mainExistingIndex === i ? "#ffd700" : "white"}
-                            strokeWidth="2"
-                          >
-                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                          </svg>
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Toggle reemplazar imágenes */}
-            <div className={styles.checkboxWrapper} style={{ marginTop: "16px" }}>
-              <input
-                type="checkbox"
-                id="replaceImages"
-                className={styles.checkbox}
-                checked={replaceImages}
-                onChange={(e) => {
-                  setReplaceImages(e.target.checked);
-                  if (!e.target.checked) {
-                    setImageFiles([]);
-                    setUploaderKey((k) => k + 1);
-                  }
-                }}
-                disabled={isLoading}
+            <div className={styles.imageUploaderContainer}>
+              <ImageUploader
+                existingImages={existingImages}
+                onChange={setImageItems}
               />
-              <label htmlFor="replaceImages" style={{ fontSize: "15px", color: "#1a1a1a", cursor: "pointer" }}>
-                Reemplazar imágenes actuales
-              </label>
             </div>
-
-            {/* Uploader — solo si se quieren reemplazar */}
-            {replaceImages && (
-              <div className={styles.imageUploaderContainer} style={{ marginTop: "12px" }}>
-                <ImageUploader key={uploaderKey} onChange={handleImages} />
-              </div>
-            )}
           </div>
 
           {/* ── COLUMNA DERECHA: Formulario ── */}
@@ -443,7 +299,7 @@ export default function EditProduct() {
               />
             </div>
 
-            {/* Select de estilos */}
+            {/* Estilos */}
             <div className={styles.formGroup}>
               <label className={styles.formLabel}>Estilos</label>
               <div className={styles.selectContainer}>
@@ -467,7 +323,6 @@ export default function EditProduct() {
                     <polyline points="6 9 12 15 18 9" />
                   </svg>
                 </div>
-
                 {isStylesOpen && (
                   <div className={styles.selectDropdown}>
                     {availableStyles.length > 0 ? (
@@ -496,7 +351,7 @@ export default function EditProduct() {
               </div>
             </div>
 
-            {/* Select de autores */}
+            {/* Autores */}
             <div className={styles.formGroup}>
               <label className={styles.formLabel}>
                 Autores <span className={styles.required}>*</span>
@@ -519,7 +374,6 @@ export default function EditProduct() {
                     <polyline points="6 9 12 15 18 9" />
                   </svg>
                 </div>
-
                 {isAuthorsOpen && (
                   <div className={styles.selectDropdown}>
                     {students.length > 0 ? (

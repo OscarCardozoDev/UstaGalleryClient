@@ -5,6 +5,7 @@ export type CreateProductDto = components["schemas"]["CreateProductDto"];
 export type UpdateProductDto = components["schemas"]["UpdateProductDto"];
 export type ProductAuthorDto = components["schemas"]["ProductAuthorDto"];
 export type ProductImageDto  = components["schemas"]["ProductImageDto"];
+export type UpdateProductImageDto = components["schemas"]["UpdateProductImageDto"];
 
 // ─── Paginación ───────────────────────────────────────────────────────────────
 export interface GetProductsOptions {
@@ -54,5 +55,8 @@ export interface Product {
   authors: {
     userId: string;
     isAuthor: boolean;
+  }[]
+  styles: {
+    styleId: string;
   }[]
 }

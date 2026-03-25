@@ -1,0 +1,210 @@
+/* ============================================================
+   Header.module.css — USTA Gallery
+   Colores y fuentes via Tailwind en el JSX.
+   Aquí solo viven: layout, posicionamiento y efectos.
+   ============================================================ */
+
+/* ── Barra principal ─────────────────────────────────────── */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(163, 163, 164, 0.15);
+}
+
+/* Línea decorativa dorada inferior */
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: linear-gradient(90deg, #c9a84c 0%, #f0d080 60%, transparent 100%);
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.header:hover::after {
+  width: 40%;
+}
+
+/* ── Logo ────────────────────────────────────────────────── */
+.logo {
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* ── Nav central ─────────────────────────────────────────── */
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.navLink {
+  text-decoration: none;
+  position: relative;
+  padding-bottom: 2px;
+  transition: color 0.25s ease;
+}
+
+.navLink::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: #c9a84c;
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.navLink:hover::after,
+.navLinkActive::after {
+  width: 100%;
+}
+
+/* ── Zona derecha ────────────────────────────────────────── */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Botón Login */
+.loginBtn {
+  text-decoration: none;
+  padding: 0.45rem 1.25rem;
+  border: 1px solid rgba(26, 26, 26, 0.25);
+  cursor: pointer;
+  background: transparent;
+  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+.loginBtn:hover {
+  background: #1A1A1A;
+  border-color: #1A1A1A;
+}
+
+/* ── Avatar / Dropdown ───────────────────────────────────── */
+.avatarWrapper {
+  position: relative;
+}
+
+.avatarBtn {
+  width: 50px;
+  height: 50px;
+  border-radius: 9999px;
+  border: 1.5px solid rgba(163, 163, 164, 0.4);
+  overflow: hidden;
+  cursor: pointer;
+  background: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.25s ease, transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.avatarBtn:hover {
+  border-color: #c9a84c;
+  transform: scale(1.05);
+}
+
+.avatarBtn img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Fallback sin foto */
+.avatarFallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Dropdown */
+.dropdown {
+  position: absolute;
+  top: calc(100% + 0.75rem);
+  right: 0;
+  width: 220px;
+  border: 1px solid rgba(163, 163, 164, 0.2);
+  box-shadow: 0 8px 32px rgba(26, 26, 26, 0.12);
+  overflow: hidden;
+  transform-origin: top right;
+}
+
+/* Triángulo decorativo */
+.dropdown::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  right: 12px;
+  width: 10px;
+  height: 10px;
+  background: inherit;
+  border-left: 1px solid rgba(163, 163, 164, 0.2);
+  border-top: 1px solid rgba(163, 163, 164, 0.2);
+  transform: rotate(45deg);
+}
+
+.dropdownHeader {
+  padding: 1rem 1.25rem 0.75rem;
+  border-bottom: 1px solid rgba(163, 163, 164, 0.15);
+}
+
+.dropdownDivider {
+  height: 1px;
+  margin: 0.25rem 0;
+  background: rgba(163, 163, 164, 0.15);
+}
+
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 1.25rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.18s ease;
+}
+
+.dropdownItem:hover {
+  background: rgba(163, 163, 164, 0.1);
+}
+
+.dropdownItemDanger:hover {
+  background: rgba(186, 26, 26, 0.06);
+}
+
+/* ── Mobile: ocultar nav central ────────────────────────── */
+@media (max-width: 767px) {
+  .nav {
+    display: none;
+  }
+
+  .header {
+    padding: 0 1.25rem;
+  }
+}

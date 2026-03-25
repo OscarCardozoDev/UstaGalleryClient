@@ -220,7 +220,7 @@ export default function UploadPictures() {
           isMain: index === 0,
         })),
       };
-      console.log(payload);
+      
       // Enviar al backend
       await createProduct(payload);
 

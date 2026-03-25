@@ -55,6 +55,13 @@ export default function ShowImage() {
         return;
       }
 
+      setProduct(null);
+      setAuthor(null);
+      setAuthorProducts([]);
+      setError(null);
+      setShowArtistInfo(false);
+
+
       try {
         setLoading(true);
         const [productData, stylesData] = await Promise.all([

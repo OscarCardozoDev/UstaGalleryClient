@@ -1,6 +1,6 @@
 /* ============================================================
    app.css — USTA Gallery
-   Los colores y tokens viven en tailwind.config.ts
+   Los colores y tokens viven en tailwind.config.js
    ============================================================ */
 
 /* ── Google Fonts ────────────────────────────────────────── */
@@ -27,8 +27,8 @@
   }
 
   body {
-    @apply font-sans bg-brand-50 text-brand-950 antialiased;
-    @apply dark:bg-brand-950 dark:text-brand-50;
+    @apply font-sans bg-neutral text-primary antialiased;
+    @apply dark:bg-primary dark:text-neutral;
     @apply transition-colors duration-600 ease-smooth;
   }
 
