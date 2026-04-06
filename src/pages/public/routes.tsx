@@ -2,6 +2,7 @@ import { Routes, Route, useParams } from "react-router-dom";
 import WelcomePage from "./modules/Welcome/Welcome";
 import GalleryPage from "./modules/Gallery/Gallery";
 import ShowImagePage from "./modules/ShowImage/ShowImage";
+import Events from "./modules/Events/Events";
 
 export default function MainPageRoutes() {
   return (
@@ -9,6 +10,7 @@ export default function MainPageRoutes() {
       <Route index element={<WelcomePage />} />
       <Route path="/gallery" element={<GalleryPage/>} />
       <Route path="/show-picture/:uid" element={<ShowImagePageWrapper/>} />
+      <Route path="/events" element={<Events/>} />
 
       {/*
         <Hero 
