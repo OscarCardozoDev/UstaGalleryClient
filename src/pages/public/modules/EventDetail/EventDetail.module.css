@@ -1,0 +1,658 @@
+/* ── Tokens heredados del sistema de diseño ──────────────────────────────────
+   Instrument Serif  → titulares
+   Instrument Sans   → cuerpo, labels
+   #000000           → primary
+   #5d5f5f           → secondary / outline
+   #f8f9fb           → surface
+   #191c1e           → on-surface
+   ──────────────────────────────────────────────────────────────────────────── */
+
+/* ── Wrapper ─────────────────────────────────────────────────────────────── */
+.page {
+  position: relative;
+  width: 100%;
+  overflow-x: hidden;
+  background-color: #f8f9fb;
+  color: #191c1e;
+}
+
+/* ── Estados ─────────────────────────────────────────────────────────────── */
+.loadingMessage,
+.errorMessage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 1.5rem;
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #5d5f5f;
+}
+
+.errorMessage button {
+  background: none;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  padding: 0.75rem 2rem;
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 0.6875rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+}
+
+.errorMessage button:hover {
+  background: #000;
+  color: #fff;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   HERO
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.heroSection {
+  position: relative;
+  width: 100%;
+  height: 870px;
+  overflow: hidden;
+  padding: 0 2rem;
+}
+
+.heroBg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  padding: 1rem 2rem;
+}
+
+.heroBgImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1);
+  opacity: 0.9;
+  transition: transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.heroSection:hover .heroBgImage {
+  transform: scale(1.03);
+}
+
+.heroContent {
+  position: relative;
+  z-index: 10;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  padding-bottom: 3rem;
+}
+
+.heroVeil {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  max-width: 56rem;
+  padding: 3rem;
+  border-left: 1px solid rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Badges */
+.heroBadges {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.typeBadge {
+  background: #000;
+  color: #fff;
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 0.6875rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.75rem;
+}
+
+.locationBadge {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 0.6875rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #5d5f5f;
+}
+
+.locationBadge .material-symbols-outlined {
+  font-size: 0.875rem;
+}
+
+.archiveBadge {
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 0.6875rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #777;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  padding: 0.2rem 0.6rem;
+}
+
+/* Título */
+.heroTitle {
+  font-family: "Instrument Serif", serif;
+  font-size: clamp(3rem, 7vw, 5.5rem);
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  color: #000;
+  margin: 0;
+}
+
+/* Descripción */
+.heroDescription {
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #474747;
+  max-width: 42rem;
+  font-style: italic;
+  margin: 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding-bottom: 1.25rem;
+}
+
+/* Meta row */
+.heroMeta {
+  display: flex;
+  align-items: flex-end;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.heroMetaItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.heroMetaLabel {
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 0.5625rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #777;
+}
+
+.heroMetaValue {
+  font-family: "Instrument Serif", serif;
+  font-size: 1.25rem;
+  color: #000;
+}
+
+.heroMetaDivider {
+  width: 1px;
+  height: 2rem;
+  background: rgba(0, 0, 0, 0.15);
+  flex-shrink: 0;
+}
+
+/* CTAs */
+.heroCtas {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding-top: 0.5rem;
+}
+
+.ctaPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #000;
+  color: #fff;
+  text-decoration: none;
+  padding: 1rem 2.5rem;
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 0.6875rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  transition: background 0.3s;
+}
+
+.ctaPrimary:hover {
+  background: #5d5f5f;
+}
+
+.ctaPrimary .material-symbols-outlined {
+  font-size: 1.125rem;
+  transition: transform 0.3s;
+}
+
+.ctaPrimary:hover .material-symbols-outlined {
+  transform: translateX(4px);
+}
+
+.ctaSecondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  color: #000;
+  text-decoration: none;
+  padding: 1rem 2rem;
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 0.6875rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  transition: background 0.3s, color 0.3s;
+}
+
+.ctaSecondary:hover {
+  background: #000;
+  color: #fff;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CONTEXTO / GRUPOS
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.contextSection {
+  background: #f2f4f6;
+  padding: 5rem 2rem;
+}
+
+.contextInner {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+@media (min-width: 768px) {
+  .contextInner {
+    flex-direction: row;
+    gap: 5rem;
+  }
+}
+
+.contextLeft {
+  flex: 1;
+}
+
+.contextRight {
+  flex: 1;
+  border-left: none;
+  padding-left: 0;
+}
+
+@media (min-width: 768px) {
+  .contextRight {
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+    padding-left: 5rem;
+  }
+}
+
+.contextLabel {
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 0.625rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: #777;
+  margin: 0 0 2rem;
+}
+
+.contextGroups {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.contextGroupItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.contextGroupName {
+  font-family: "Instrument Serif", serif;
+  font-size: 1.875rem;
+  color: #000;
+}
+
+.contextGroupMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.contextGroupLine {
+  display: block;
+  width: 2rem;
+  height: 1px;
+  background: #000;
+}
+
+.contextGroupCategory {
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 0.625rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #5d5f5f;
+}
+
+.contextCoordinator {
+  font-family: "Instrument Serif", serif;
+  font-size: 1.5rem;
+  color: #000;
+  margin: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   OBRAS
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.artworksSection {
+  background: #f8f9fb;
+  padding: 6rem 2rem;
+}
+
+.artworksHeader {
+  max-width: 1400px;
+  margin: 0 auto 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  padding-bottom: 2rem;
+}
+
+@media (min-width: 768px) {
+  .artworksHeader {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+}
+
+.sectionLabel {
+  display: block;
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 0.625rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: #777;
+  margin-bottom: 0.5rem;
+}
+
+.artworksTitle {
+  font-family: "Instrument Serif", serif;
+  font-style: italic;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  color: #000;
+  margin: 0;
+  line-height: 1;
+  font-weight: 300;
+}
+
+.artworksSubtitle {
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 0.625rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #777;
+  margin: 0;
+}
+
+.artworksGrid {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .artworksGrid {
+    grid-template-columns: repeat(12, 1fr);
+    gap: 2rem;
+  }
+}
+
+.artworkCard {
+  cursor: crosshair;
+  grid-column: span 12;
+}
+
+@media (min-width: 768px) {
+  .artworkWide { grid-column: span 8; }
+  .artworkNarrow { grid-column: span 4; }
+}
+
+.artworkImageWrapper {
+  overflow: hidden;
+  background: #edeef0;
+  position: relative;
+}
+
+.artworkImageWide  { aspect-ratio: 16 / 9; }
+.artworkImageNarrow { aspect-ratio: 4 / 5; }
+
+.artworkImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1);
+  transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              filter 0.5s;
+}
+
+.artworkCard:hover .artworkImage {
+  transform: scale(1.06);
+  filter: grayscale(0);
+}
+
+.artworkOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0);
+  transition: background 0.5s;
+}
+
+.artworkCard:hover .artworkOverlay {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.artworkInfo {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.artworkName {
+  font-family: "Instrument Serif", serif;
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  color: #000;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.artworkAuthors {
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 0.6875rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #777;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CARRUSEL
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.carouselSection {
+  padding: 6rem 2rem;
+  background: #f2f4f6;
+  overflow: hidden;
+}
+
+.carouselHeader {
+  max-width: 1400px;
+  margin: 0 auto 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.carouselTitle {
+  font-family: "Instrument Serif", serif;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  color: #000;
+  margin: 0;
+  line-height: 1;
+}
+
+.carouselControls {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.carouselBtn {
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  background: none;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+}
+
+.carouselBtn:hover {
+  background: #000;
+  color: #fff;
+}
+
+.carouselTrack {
+  display: flex;
+  gap: 2rem;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+  cursor: grab;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  user-select: none;
+}
+
+.carouselTrack::-webkit-scrollbar { display: none; }
+.carouselTrack:active { cursor: grabbing; }
+
+.carouselItem {
+  flex: none;
+  width: 70vw;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  position: relative;
+}
+
+@media (min-width: 768px) {
+  .carouselItem { width: 45vw; }
+}
+
+.carouselImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1);
+  transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              filter 0.7s;
+}
+
+.carouselItem:hover .carouselImage {
+  transform: scale(1.04);
+  filter: grayscale(0);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   QUOTE EDITORIAL
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.quoteSection {
+  min-height: 50vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8rem 2rem;
+  background: #f8f9fb;
+}
+
+.quoteInner {
+  max-width: 56rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  align-items: center;
+}
+
+.quoteLabel {
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 0.625rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: #777;
+}
+
+.quoteText {
+  font-family: "Instrument Serif", serif;
+  font-size: clamp(2rem, 5vw, 4rem);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: #000;
+  margin: 0;
+}
+
+.quoteLine {
+  width: 6rem;
+  height: 1px;
+  background: #000;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 767px) {
+  .heroSection {
+    height: auto;
+    min-height: 600px;
+    padding: 0 1rem;
+  }
+
+  .heroVeil {
+    padding: 2rem 1.5rem;
+    gap: 1.25rem;
+  }
+
+  .heroTitle {
+    font-size: 2.75rem;
+  }
+
+  .artworksSection,
+  .carouselSection,
+  .contextSection {
+    padding: 4rem 1.5rem;
+  }
+}

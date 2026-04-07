@@ -719,6 +719,312 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/events/create": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Crear un evento */
+        post: operations["EventController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/events/getAll": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todos los eventos paginados (admin) */
+        get: operations["EventController_getAll"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/events/upcoming": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener eventos próximos aprobados (público) */
+        get: operations["EventController_getUpcoming"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/events/past": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener eventos pasados completados (público) */
+        get: operations["EventController_getPast"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/events/home": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener eventos próximos para la página de inicio (público) */
+        get: operations["EventController_getHome"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/events/getByGroup/{uid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener eventos de un grupo específico (público) */
+        get: operations["EventController_getByGroup"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/events/available-products/{groupId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener obras APPROVED del grupo disponibles para un evento */
+        get: operations["EventController_getAvailableProducts"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/events/invitations/pending": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Ver invitaciones pendientes del profesor autenticado */
+        get: operations["EventController_getPendingInvitations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/events/get/{uid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener detalle completo de un evento (público) */
+        get: operations["EventController_getById"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/events/update/{uid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Editar info general del evento (vuelve a PENDING) */
+        put: operations["EventController_update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/events/status/{uid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Cambiar el status de un evento (admin) */
+        patch: operations["EventController_updateStatus"];
+        trace?: never;
+    };
+    "/events/deactivate/{uid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Desactivar un evento (soft delete, admin) */
+        patch: operations["EventController_deactivate"];
+        trace?: never;
+    };
+    "/events/{uid}/products": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Actualizar obras del grupo en el evento (vuelve a PENDING) */
+        put: operations["EventController_updateProducts"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/events/{uid}/photos": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Agregar foto al evento (HERO/PROMO: coordinador/admin · MEMORY: participante) */
+        post: operations["EventController_addPhoto"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/events/{uid}/photos/{photoId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Eliminar una foto del evento */
+        delete: operations["EventController_removePhoto"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/events/{uid}/invite": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Enviar invitación a un grupo (coordinador/admin) */
+        post: operations["EventController_sendInvitation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/events/invitations/{uid}/respond": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Aceptar o rechazar una invitación (profesor invitado) */
+        patch: operations["EventController_respondInvitation"];
+        trace?: never;
+    };
+    "/events/{uid}/invite/{groupId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Revocar invitación de un grupo (coordinador/admin) */
+        delete: operations["EventController_revokeInvitation"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -940,6 +1246,104 @@ export interface components {
             styles?: string[];
             authors?: components["schemas"]["ProductAuthorDto"][];
             images?: components["schemas"]["UpdateProductImageDto"][];
+        };
+        EventPhotoDto: {
+            /** @example /9j/4AAQSkZJRgAB... */
+            base64: string;
+            /** @example portada.jpeg */
+            name: string;
+            /** @example events */
+            folder: string;
+            /**
+             * @example PROMO
+             * @enum {string}
+             */
+            photoType: "HERO" | "PROMO" | "MEMORY";
+        };
+        CreateEventDto: {
+            /** @example Exposición Semestral 2025 */
+            name: string;
+            /** @example Exhibición de obras del semestre realizada en el auditorio central. */
+            description: string;
+            /**
+             * @example EXHIBITION
+             * @enum {string}
+             */
+            eventType: "EXHIBITION" | "WORKSHOP" | "PERFORMANCE" | "CONFERENCE" | "OTHER";
+            /** @example 2025-10-15T14:00:00.000Z */
+            startDate: string;
+            /** @example 2025-10-15T18:00:00.000Z */
+            endDate?: string;
+            /** @example https://maps.google.com/?q=... */
+            locationUrl?: string;
+            /** @example false */
+            isVirtual: boolean;
+            /** @example https://meet.google.com/abc-xyz */
+            streamingUrl?: string;
+            /** @example aa35ee0c-f81a-4739-aa4c-af4cdfa820d3 */
+            createdById: string;
+            /**
+             * @example [
+             *       "uuid-grupo-1"
+             *     ]
+             */
+            groupIds: string[];
+            /**
+             * @example [
+             *       "uuid-obra-1"
+             *     ]
+             */
+            productIds?: string[];
+            coverPhoto?: components["schemas"]["EventPhotoDto"];
+        };
+        UpdateEventDto: {
+            /** @example Nuevo nombre del evento */
+            name?: string;
+            /** @example Nueva descripción. */
+            description?: string;
+            /** @enum {string} */
+            eventType?: "EXHIBITION" | "WORKSHOP" | "PERFORMANCE" | "CONFERENCE" | "OTHER";
+            /** @example 2025-11-01T14:00:00.000Z */
+            startDate?: string;
+            /** @example 2025-11-01T18:00:00.000Z */
+            endDate?: string;
+            /** @example https://maps.google.com/?q=... */
+            locationUrl?: string;
+            /** @example false */
+            isVirtual?: boolean;
+            /** @example https://meet.google.com/abc-xyz */
+            streamingUrl?: string;
+        };
+        UpdateEventStatusDto: {
+            /**
+             * @example APPROVED
+             * @enum {string}
+             */
+            status: "PENDING" | "APPROVED" | "REJECTED" | "CANCELLED" | "COMPLETED";
+            /** @example La fecha del evento coincide con otro evento aprobado. */
+            feedback?: string;
+        };
+        UpdateEventProductsDto: {
+            /**
+             * @example [
+             *       "uuid-obra-1",
+             *       "uuid-obra-2"
+             *     ]
+             */
+            productIds: string[];
+            /** @example uuid-grupo */
+            groupId: string;
+        };
+        SendInvitationDto: {
+            /** @example uuid-grupo-invitado */
+            groupId: string;
+        };
+        RespondInvitationDto: {
+            /**
+             * @example ACCEPTED
+             * @enum {string}
+             */
+            status: "ACCEPTED" | "REJECTED";
         };
     };
     responses: never;
@@ -1815,6 +2219,393 @@ export interface operations {
                 "application/json": components["schemas"]["UpdateProductDto"];
             };
         };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateEventDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_getAll: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                status?: "PENDING" | "APPROVED" | "REJECTED" | "CANCELLED" | "COMPLETED";
+                eventType?: "EXHIBITION" | "WORKSHOP" | "PERFORMANCE" | "CONFERENCE" | "OTHER";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_getUpcoming: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                status?: "PENDING" | "APPROVED" | "REJECTED" | "CANCELLED" | "COMPLETED";
+                eventType?: "EXHIBITION" | "WORKSHOP" | "PERFORMANCE" | "CONFERENCE" | "OTHER";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_getPast: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                status?: "PENDING" | "APPROVED" | "REJECTED" | "CANCELLED" | "COMPLETED";
+                eventType?: "EXHIBITION" | "WORKSHOP" | "PERFORMANCE" | "CONFERENCE" | "OTHER";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_getHome: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                status?: "PENDING" | "APPROVED" | "REJECTED" | "CANCELLED" | "COMPLETED";
+                eventType?: "EXHIBITION" | "WORKSHOP" | "PERFORMANCE" | "CONFERENCE" | "OTHER";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_getByGroup: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                status?: "PENDING" | "APPROVED" | "REJECTED" | "CANCELLED" | "COMPLETED";
+                eventType?: "EXHIBITION" | "WORKSHOP" | "PERFORMANCE" | "CONFERENCE" | "OTHER";
+            };
+            header?: never;
+            path: {
+                uid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_getAvailableProducts: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                groupId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_getPendingInvitations: {
+        parameters: {
+            query: {
+                profesorId: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_getById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                uid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                uid: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateEventDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_updateStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                uid: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateEventStatusDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_deactivate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                uid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_updateProducts: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                uid: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateEventProductsDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_addPhoto: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                uid: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EventPhotoDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_removePhoto: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                uid: string;
+                photoId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_sendInvitation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                uid: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SendInvitationDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_respondInvitation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                uid: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RespondInvitationDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_revokeInvitation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                uid: string;
+                groupId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             200: {
                 headers: {
