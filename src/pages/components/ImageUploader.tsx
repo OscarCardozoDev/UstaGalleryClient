@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 
 const MAX_SIZE_MB = 2;
-const MAX_FILES = 5;
 
 // ── Tipos exportados para usar en el padre ────────────────────────────────────
 export interface ImageUploaderItem {
@@ -28,9 +27,11 @@ interface PreviewItem {
 interface Props {
   onChange: (items: ImageUploaderItem[]) => void;
   existingImages?: ExistingImage[];
+  /** Número máximo de imágenes permitidas. Por defecto: 5 */
+  limit?: number;
 }
 
-export default function ImageUploader({ onChange, existingImages = [] }: Props) {
+export default function ImageUploader({ onChange, existingImages = [], limit = 5 }: Props) {
   const [items, setItems] = useState<PreviewItem[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
@@ -77,7 +78,7 @@ export default function ImageUploader({ onChange, existingImages = [] }: Props) 
     }
 
     const valid = newFiles.filter((f) => f.size <= MAX_SIZE_MB * 1024 * 1024);
-    const toAdd = valid.slice(0, MAX_FILES - items.length);
+    const toAdd = valid.slice(0, limit - items.length);
     if (toAdd.length === 0) return;
 
     const newItems: PreviewItem[] = toAdd.map((file) => ({
@@ -116,7 +117,7 @@ export default function ImageUploader({ onChange, existingImages = [] }: Props) 
     setLoadedImages((prev) => new Set([...prev, index]));
   };
 
-  const canAddMore = items.length < MAX_FILES;
+  const canAddMore = items.length < limit;
 
   // ─────────────────────────────────────────────────────────────────────────
   // RENDER
@@ -132,7 +133,7 @@ export default function ImageUploader({ onChange, existingImages = [] }: Props) 
             <line x1="12" y1="8" x2="12" y2="12" strokeLinecap="round" />
             <line x1="12" y1="16" x2="12.01" y2="16" strokeLinecap="round" />
           </svg>
-          Máximo {MAX_FILES} imágenes · {MAX_SIZE_MB}MB por imagen
+          Máximo {limit} imágenes · {MAX_SIZE_MB}MB por imagen
         </div>
 
         {sizeError && (
@@ -199,7 +200,7 @@ export default function ImageUploader({ onChange, existingImages = [] }: Props) 
             Subir imágenes
           </div>
           <span style={{ fontSize: "13px", color: "#999" }}>
-            Hasta {MAX_FILES} imágenes · {MAX_SIZE_MB}MB c/u
+            Hasta {limit} imágenes · {MAX_SIZE_MB}MB c/u
           </span>
           <input hidden type="file" multiple accept="image/*"
             onChange={(e) => handleAdd(Array.from(e.target.files ?? []))} />
@@ -432,7 +433,7 @@ export default function ImageUploader({ onChange, existingImages = [] }: Props) 
                     <line x1="5" y1="12" x2="19" y2="12" strokeLinecap="round" />
                   </svg>
                   <span>Agregar</span>
-                  <span style={{ fontSize: "10px", color: "#aaa" }}>({MAX_FILES - items.length} restantes)</span>
+                  <span style={{ fontSize: "10px", color: "#aaa" }}>({limit - items.length} restantes)</span>
                   <input hidden type="file" multiple accept="image/*"
                     onChange={(e) => handleAdd(Array.from(e.target.files ?? []))} />
                 </label>

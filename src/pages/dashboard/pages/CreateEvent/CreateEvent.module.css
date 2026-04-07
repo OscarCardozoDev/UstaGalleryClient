@@ -1,0 +1,424 @@
+.uploadCard {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.uploadCardContent {
+  padding: 32px;
+}
+
+/* ─── Grid principal ──────────────────────────────────────────────────────── */
+
+.uploadGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+}
+
+@media (max-width: 968px) {
+  .uploadGrid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
+
+/* ─── Columna izquierda (imagen) ─────────────────────────────────────────── */
+
+.uploadSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sectionTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.sectionHint {
+  font-size: 13px;
+  color: #888;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.imageUploaderContainer {
+  flex: 1;
+  min-height: 340px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── Columna derecha (formulario) ───────────────────────────────────────── */
+
+.uploadForm {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ─── Grupos de campos ───────────────────────────────────────────────────── */
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.formLabel {
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.required {
+  color: #c33;
+}
+
+.optionalTag {
+  font-size: 11px;
+  font-weight: 500;
+  color: #aaa;
+  background: #f5f5f5;
+  padding: 2px 8px;
+  border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.formInput,
+.formTextarea {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: #fafafa;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  color: #1a1a1a;
+  box-sizing: border-box;
+}
+
+.formInput:focus,
+.formTextarea:focus {
+  outline: none;
+  border-color: #171717;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(23, 23, 23, 0.07);
+}
+
+.formInput::placeholder,
+.formTextarea::placeholder { color: #bbb; }
+
+.formInput:disabled,
+.formTextarea:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.formTextarea {
+  resize: vertical;
+  min-height: 100px;
+  line-height: 1.5;
+}
+
+/* ─── Grid de fechas (2 columnas) ────────────────────────────────────────── */
+
+.dateGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 16px;
+}
+
+@media (max-width: 600px) {
+  .dateGrid { grid-template-columns: 1fr; }
+}
+
+/* ─── Toggle presencial / virtual ────────────────────────────────────────── */
+
+.toggleRow {
+  display: flex;
+  gap: 10px;
+}
+
+.toggleBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 8px;
+  background: #fafafa;
+  color: #777;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toggleBtn:hover:not(:disabled) {
+  border-color: #171717;
+  color: #171717;
+  background: #f5f5f5;
+}
+
+.toggleBtnActive {
+  background: #171717;
+  color: #fff;
+  border-color: #171717;
+}
+
+.toggleBtnActive:hover:not(:disabled) {
+  background: #2a2a2a;
+  color: #fff;
+  border-color: #2a2a2a;
+}
+
+.toggleBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ─── Select personalizado ───────────────────────────────────────────────── */
+
+.selectContainer { position: relative; }
+
+.selectTrigger {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: #fafafa;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s ease;
+  user-select: none;
+  box-sizing: border-box;
+}
+
+.selectTrigger:hover {
+  border-color: #171717;
+  background: #fff;
+}
+
+.selectValue {
+  color: #1a1a1a;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 15px;
+}
+
+.selectIcon {
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+  color: #666;
+}
+
+.selectIcon.rotate { transform: rotate(180deg); }
+
+.selectDropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  max-height: 260px;
+  overflow-y: auto;
+  z-index: 1000;
+  animation: dropdownSlide 0.18s ease;
+}
+
+@keyframes dropdownSlide {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.selectOption {
+  padding: 12px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+  transition: background 0.12s ease;
+}
+
+.selectOption:hover       { background: #f5f5f5; }
+.selectOptionActive       { font-weight: 600; background: #f0f0f0; }
+
+.selectOptionEmpty {
+  padding: 16px;
+  text-align: center;
+  color: #aaa;
+  font-size: 13px;
+}
+
+/* ─── Opción de producto (con thumbnail) ─────────────────────────────────── */
+
+.productOption {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.productOption:hover { background: #f5f5f5; }
+
+.productThumb {
+  width: 36px;
+  height: 36px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+  background: #e8e8e8;
+}
+
+.productName {
+  font-size: 14px;
+  color: #333;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.checkbox {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #171717;
+  flex-shrink: 0;
+}
+
+/* ─── Tags de obras seleccionadas ────────────────────────────────────────── */
+
+.selectedTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f0f0f0;
+  border: 1px solid #e0e0e0;
+  color: #333;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.tagRemove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #999;
+  font-size: 16px;
+  line-height: 1;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  transition: color 0.15s;
+}
+
+.tagRemove:hover { color: #c33; }
+
+/* ─── Submit ─────────────────────────────────────────────────────────────── */
+
+.submitButton {
+  width: 100%;
+  padding: 14px 32px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+  background: #171717;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 4px;
+  font-family: inherit;
+}
+
+.submitButton:hover:not(:disabled) {
+  background: #2a2a2a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.submitButton:active:not(:disabled) { transform: translateY(0); }
+
+.submitButton:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.submitHint {
+  font-size: 12px;
+  color: #aaa;
+  text-align: center;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ─── Feedback messages ──────────────────────────────────────────────────── */
+
+.errorMessage {
+  background: #fee;
+  color: #c33;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border-left: 4px solid #c33;
+  font-size: 14px;
+  animation: slideDown 0.3s ease;
+}
+
+.successMessage {
+  background: #efe;
+  color: #3c3;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border-left: 4px solid #3c3;
+  font-size: 14px;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Scrollbar del dropdown ─────────────────────────────────────────────── */
+
+.selectDropdown::-webkit-scrollbar { width: 6px; }
+.selectDropdown::-webkit-scrollbar-track  { background: #f5f5f5; border-radius: 4px; }
+.selectDropdown::-webkit-scrollbar-thumb  { background: #ccc; border-radius: 4px; }
+.selectDropdown::-webkit-scrollbar-thumb:hover { background: #aaa; }
+
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .uploadCardContent { padding: 24px 16px; }
+  .imageUploaderContainer { min-height: 280px; }
+  .uploadForm { gap: 16px; }
+}
