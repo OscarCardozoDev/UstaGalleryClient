@@ -146,19 +146,17 @@ const UserCreation: React.FC<UserCreationProps> = ({
 
     try {
       const requestData: CreateUserDto = {
-        user: {
-          name: userData.name,
-          lastName: userData.lastName,
-          username: userData.username,
-          description: userData.description || undefined,
-          gender: userData.gender, // Enviar como array
-          idCard: userData.idCard,
-          degree: userData.degree, // Enviar como array con un elemento
-          semester: userData.semester,
-          telNumber: userData.telNumber,
-          userTypeId: formsParams.userTypes[0].uid, // Estudiante por defecto
-          isProfesor: false,
-        }
+        name: userData.name,
+        lastName: userData.lastName,
+        username: userData.username,
+        description: userData.description || undefined,
+        gender: userData.gender,
+        idCard: userData.idCard,
+        degree: userData.degree,
+        semester: userData.semester,
+        telNumber: userData.telNumber,
+        userTypeId: formsParams.userTypes[0].uid, // Estudiante por defecto
+        isProfesor: false,
       };
 
       // Si hay imagen, convertirla a base64
