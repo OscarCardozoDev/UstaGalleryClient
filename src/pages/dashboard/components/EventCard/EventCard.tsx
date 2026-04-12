@@ -341,6 +341,23 @@ export default function EventCard({
                     {event.status === "COMPLETED" && "🏁 Este evento ya ocurrió."}
                   </div>
                 )}
+
+                {/* Botón editar — siempre visible excepto CANCELLED */}
+                {event.status !== "CANCELLED" && (
+                  <a
+                    href={`/dashboard/events/edit/${event.uid}`}
+                    className={styles.editBtn}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path strokeLinecap="round" strokeLinejoin="round"
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5" />
+                      <path strokeLinecap="round" strokeLinejoin="round"
+                        d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                    </svg>
+                    Editar evento
+                  </a>
+                )}
               </div>
             </div>
           </div>

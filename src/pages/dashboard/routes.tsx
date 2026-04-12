@@ -6,6 +6,7 @@ import ReviewArtWorksPage from "./pages/ReviewArtWorks/ReviewArtWorks";
 import YourGalleryReviewPage from "./pages/YourGalleryReview/YourGalleryReview";
 import CreateEventPage from "./pages/CreateEvent/CreateEvent";
 import ReviewEvents from "./pages/ReviewEvents/ReviewEvents";
+import EditEventPage from "./pages/EditEvent/EditEvent";
 
 export default function DashboardRoutes() {
   return (
@@ -19,6 +20,7 @@ export default function DashboardRoutes() {
       <Route path="/your-gallery" element={<YourGalleryReviewPage />} />
       <Route path="/create-event" element={<CreateEventPage />} />
       <Route path="/events/" element={<ReviewEvents />} />
+      <Route path="/events/edit/:uid" element={<EditEventPage />} />
 
       {/* futuras rutas */}
       {/* <Route path="users" element={<UsersPage />} /> */}

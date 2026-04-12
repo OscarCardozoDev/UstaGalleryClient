@@ -15,6 +15,7 @@ export default function Sidebar({ open, onClose }: Props) {
   const groups = user?.groups || [];
   const [isHovered, setIsHovered] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  console.log(user);
 
   const sortedGroups = [...groups].sort((a, b) => {
     if (a.uid === currentGroup) return -1;
@@ -116,6 +117,41 @@ export default function Sidebar({ open, onClose }: Props) {
                 </button>
               </li>
 
+              <li>
+                <button
+                  className={styles.listItem}
+                  onClick={() => handleNavigation("/dashboard/create-event")}
+                >
+                  <img
+                    className={styles.icon}
+                    src="../../../../../public/logos/event.dashboard.svg"
+                    alt=""
+                    width="20"
+                    height="20"
+                  />
+                  <span>Crear Evento</span>
+                </button>
+              </li>
+            </>
+          )}
+
+          {user?.userType?.name === "Administrador" && (
+            <>
+              <li>
+                <button
+                  className={styles.listItem}
+                  onClick={() => handleNavigation("/dashboard/events")}
+                >
+                  <img
+                    className={styles.icon}
+                    src="../../../../../public/logos/event.dashboard.svg"
+                    alt=""
+                    width="20"
+                    height="20"
+                  />
+                  <span>Revisar Eventos</span>
+                </button>
+              </li>
               <li>
                 <button
                   className={styles.listItem}
