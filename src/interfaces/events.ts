@@ -16,11 +16,18 @@ export interface GetEventsOptions {
 
 // ─── DTOs (Requests) ──────────────────────────────────────────────────────────
 
+export interface EventPhotoDto {
+  base64: string;
+  name: string;
+  folder: string;
+  photoType: EventPhotoType;
+}
+
 export interface CreateEventDto {
   name: string;
   description: string;
   eventType: EventType;
-  startDate: string;        // ISO string
+  startDate: string;
   endDate?: string;
   locationUrl?: string;
   isVirtual: boolean;
@@ -28,7 +35,7 @@ export interface CreateEventDto {
   createdById: string;
   groupIds: string[];
   productIds?: string[];
-  coverPhoto?: EventPhotoUploadDto;
+  coverPhoto?: EventPhotoDto;
 }
 
 export interface UpdateEventDto {
@@ -50,13 +57,6 @@ export interface UpdateEventStatusDto {
 export interface UpdateEventProductsDto {
   productIds: string[];
   groupId: string;
-}
-
-export interface EventPhotoUploadDto {
-  base64: string;
-  name: string;
-  folder: string;           // siempre "events"
-  photoType: EventPhotoType;
 }
 
 export interface SendInvitationDto {

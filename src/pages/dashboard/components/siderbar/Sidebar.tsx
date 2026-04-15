@@ -15,7 +15,6 @@ export default function Sidebar({ open, onClose }: Props) {
   const groups = user?.groups || [];
   const [isHovered, setIsHovered] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  console.log(user);
 
   const sortedGroups = [...groups].sort((a, b) => {
     if (a.uid === currentGroup) return -1;

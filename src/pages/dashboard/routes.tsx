@@ -7,6 +7,7 @@ import YourGalleryReviewPage from "./pages/YourGalleryReview/YourGalleryReview";
 import CreateEventPage from "./pages/CreateEvent/CreateEvent";
 import ReviewEvents from "./pages/ReviewEvents/ReviewEvents";
 import EditEventPage from "./pages/EditEvent/EditEvent";
+import ArtStylesConsult from "./pages/ArtStyleConsult/ArtStyleConsult";
 
 export default function DashboardRoutes() {
   return (
@@ -14,6 +15,7 @@ export default function DashboardRoutes() {
       <Route index element={<Navigate to="/dashboard/home" replace />} />
 
       <Route path="/home" element={<HomePage />} />
+      <Route path="/art-styles" element={<ArtStylesConsult />} />
       <Route path="/upload" element={<UploadGalleryPage />} />
       <Route path="/update/:uid" element={<UpdatePicture />} />
       <Route path="/review-art" element={<ReviewArtWorksPage />} />
