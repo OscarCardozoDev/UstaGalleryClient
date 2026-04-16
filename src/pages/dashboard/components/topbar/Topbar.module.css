@@ -1,0 +1,99 @@
+/* ── Avatar / Dropdown ───────────────────────────────────── */
+.avatarWrapper {
+  position: relative;
+}
+
+.avatarBtn {
+  width: 50px;
+  height: 50px;
+  margin-right: 15px;
+  border-radius: 9999px;
+  border: 1.5px solid rgba(163, 163, 164, 0.4);
+  overflow: hidden;
+  cursor: pointer;
+  background: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.25s ease, transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.avatarBtn:hover {
+  border-color: #c9a84c;
+  transform: scale(1.05);
+}
+
+.avatarBtn img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Fallback sin foto */
+.avatarFallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Dropdown */
+.dropdown {
+  position: absolute;
+  top: calc(100% + 0.75rem);
+  right: 0;
+  width: 220px;
+  border: 1px solid rgba(163, 163, 164, 0.2);
+  box-shadow: 0 8px 32px rgba(26, 26, 26, 0.12);
+  overflow: hidden;
+  transform-origin: top right;
+}
+
+/* Triángulo decorativo */
+.dropdown::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  right: 12px;
+  width: 10px;
+  height: 10px;
+  background: inherit;
+  border-left: 1px solid rgba(163, 163, 164, 0.2);
+  border-top: 1px solid rgba(163, 163, 164, 0.2);
+  transform: rotate(45deg);
+}
+
+.dropdownHeader {
+  padding: 1rem 1.25rem 0.75rem;
+  border-bottom: 1px solid rgba(163, 163, 164, 0.15);
+}
+
+.dropdownDivider {
+  height: 1px;
+  margin: 0.25rem 0;
+  background: rgba(163, 163, 164, 0.15);
+}
+
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 1.25rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.18s ease;
+}
+
+.dropdownItem:hover {
+  background: rgba(163, 163, 164, 0.1);
+}
+
+.dropdownItemDanger:hover {
+  background: rgba(186, 26, 26, 0.06);
+}
