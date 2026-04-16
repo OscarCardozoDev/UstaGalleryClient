@@ -61,8 +61,8 @@ export default function Sidebar({ open, onClose }: Props) {
             >
               <svg
                 className={styles.icon}
-                width="20"
-                height="20"
+                width="25"
+                height="25"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -84,8 +84,8 @@ export default function Sidebar({ open, onClose }: Props) {
             >
               <svg
                 className={styles.icon}
-                width="20"
-                height="20"
+                width="25"
+                height="25"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -96,6 +96,38 @@ export default function Sidebar({ open, onClose }: Props) {
                 <line x1="12" y1="3" x2="12" y2="15" />
               </svg>
               <span>Subir galería</span>
+            </button>
+          </li>
+
+          <li>
+            <button
+              className={styles.listItem}
+              onClick={() => handleNavigation("/dashboard/your-gallery")}
+            >
+              <img
+                className={styles.icon}
+                src="../../../../../public/logos/art_gallery.dashboard.svg"
+                alt=""
+                width="25"
+                height="25"
+              />
+              <span>Tu galería</span>
+            </button>
+          </li>
+
+          <li>
+            <button
+              className={styles.listItem}
+              onClick={() => handleNavigation("/dashboard/calendar")}
+            >
+              <img
+                className={styles.icon}
+                src="../../../../../public/logos/calendar.dashboard.svg"
+                alt=""
+                width="25"
+                height="25"
+              />
+              <span>Calendario</span>
             </button>
           </li>
 
@@ -170,21 +202,6 @@ export default function Sidebar({ open, onClose }: Props) {
             </>
           )}
 
-          <li>
-            <button
-              className={styles.listItem}
-              onClick={() => handleNavigation("/dashboard/your-gallery")}
-            >
-              <img
-                className={styles.icon}
-                src="../../../../../public/logos/art_gallery.dashboard.svg"
-                alt=""
-                width="20"
-                height="20"
-              />
-              <span>Tu galería</span>
-            </button>
-          </li>
         </ul>
       </nav>
 
