@@ -67,6 +67,10 @@ export interface RespondInvitationDto {
   status: "ACCEPTED" | "REJECTED";
 }
 
+export interface EventPhotoUploadDto {
+  images: EventPhotoDto[];
+}
+
 // ─── Responses (Subtipos reutilizables) ───────────────────────────────────────
 
 export interface EventPhoto {
@@ -116,7 +120,7 @@ export interface EventSummary {
   name: string;
   description?: string;
   eventType: EventType;
-  status: EventStatus;
+  status?: EventStatus;
   startDate: string;
   endDate: string | null;
   isVirtual?: boolean;
