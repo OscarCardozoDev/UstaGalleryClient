@@ -4,7 +4,7 @@ import DashboardRoutes from "./routes";
 export default function DashboardModule() {
   return (
     <DashboardLayout>
-      <div className="font-sans text-dashboard-textPrimary">
+      <div className="font-sans text-dashboard-textPrimary h-full">
         <DashboardRoutes />
       </div>
     </DashboardLayout>

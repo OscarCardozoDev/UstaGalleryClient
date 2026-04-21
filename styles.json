@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Impresionismo",
+    "description": "Se centra en capturar la luz y el instante, utilizando pinceladas sueltas y colores vibrantes para evocar sensaciones.",
+    "groupId": "b4fa2024-0da5-49a9-bc29-2417515e118c"
+  },
+  {
+    "name": "Surrealismo",
+    "description": "Explora el subconsciente y el mundo de los sueños, creando imágenes ilógicas y fantásticas que desafían la realidad.",
+    "groupId": "b4fa2024-0da5-49a9-bc29-2417515e118c"
+  },
+  {
+    "name": "Minimalismo",
+    "description": "Busca la máxima expresión con los mínimos elementos, reduciendo las obras a formas geométricas fundamentales.",
+    "groupId": "b4fa2024-0da5-49a9-bc29-2417515e118c"
+  },
+  {
+    "name": "Expresionismo",
+    "description": "Prioriza la expresión de sentimientos y emociones intensas sobre la representación objetiva de la realidad.",
+    "groupId": "b4fa2024-0da5-49a9-bc29-2417515e118c"
+  },
+]

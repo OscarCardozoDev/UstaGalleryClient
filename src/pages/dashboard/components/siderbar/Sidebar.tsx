@@ -99,21 +99,74 @@ export default function Sidebar({ open, onClose }: Props) {
           </li>
 
           {user?.userType?.name === "Profesor" && (
-            <li>
-              <button
-                className={styles.listItem}
-                onClick={() => handleNavigation("/dashboard/review-art")}
-              >
-                <img
-                  className={styles.icon}
-                  src="../../../../../public/logos/art_gallery.dashboard.svg"
-                  alt=""
-                  width="20"
-                  height="20"
-                />
-                <span>Revisar obras</span>
-              </button>
-            </li>
+            <>
+              <li>
+                <button
+                  className={styles.listItem}
+                  onClick={() => handleNavigation("/dashboard/review-art")}
+                >
+                  <img
+                    className={styles.icon}
+                    src="../../../../../public/logos/art_gallery.dashboard.svg"
+                    alt=""
+                    width="20"
+                    height="20"
+                  />
+                  <span>Revisar obras</span>
+                </button>
+              </li>
+
+              <li>
+                <button
+                  className={styles.listItem}
+                  onClick={() => handleNavigation("/dashboard/create-event")}
+                >
+                  <img
+                    className={styles.icon}
+                    src="../../../../../public/logos/event.dashboard.svg"
+                    alt=""
+                    width="20"
+                    height="20"
+                  />
+                  <span>Crear Evento</span>
+                </button>
+              </li>
+            </>
+          )}
+
+          {user?.userType?.name === "Administrador" && (
+            <>
+              <li>
+                <button
+                  className={styles.listItem}
+                  onClick={() => handleNavigation("/dashboard/events")}
+                >
+                  <img
+                    className={styles.icon}
+                    src="../../../../../public/logos/event.dashboard.svg"
+                    alt=""
+                    width="20"
+                    height="20"
+                  />
+                  <span>Revisar Eventos</span>
+                </button>
+              </li>
+              <li>
+                <button
+                  className={styles.listItem}
+                  onClick={() => handleNavigation("/dashboard/create-event")}
+                >
+                  <img
+                    className={styles.icon}
+                    src="../../../../../public/logos/event.dashboard.svg"
+                    alt=""
+                    width="20"
+                    height="20"
+                  />
+                  <span>Crear Evento</span>
+                </button>
+              </li>
+            </>
           )}
 
           <li>
