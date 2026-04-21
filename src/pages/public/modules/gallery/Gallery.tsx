@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import GalleryCard from "../../components/GalleryCard/GalleryCard";
 import { getGalleryProducts } from "../../../../services/products";
+import { getAllStyles } from "../../../../services/styles";
 import type { ProductGallery } from "../../../../interfaces/products";
+import type { Style } from "../../../../interfaces/styles";
 import styles from "./Gallery.module.css";
 
 // ─────────────────────────────────────────────────────────────
-// Grid patterns
+// Grid patterns - Mantiene tus patrones originales
 // ─────────────────────────────────────────────────────────────
 
 const PATTERNS = [
@@ -13,27 +15,27 @@ const PATTERNS = [
     name: "pattern1",
     itemsCount: 8,
     gridConfig: {
-      columns: "repeat(4, 1fr)",
-      rows: "repeat(5, 1fr)",
-      gap: "15px",
+      columns: "repeat(12, 1fr)",
+      rows: "auto",
+      gap: "24px",
     },
   },
   {
     name: "pattern2",
     itemsCount: 7,
     gridConfig: {
-      columns: "repeat(4, 1fr)",
-      rows: "repeat(4, 1fr)",
-      gap: "15px",
+      columns: "repeat(12, 1fr)",
+      rows: "auto",
+      gap: "24px",
     },
   },
   {
     name: "pattern3",
     itemsCount: 5,
     gridConfig: {
-      columns: "repeat(4, 1fr)",
-      rows: "repeat(4, 1fr)",
-      gap: "15px",
+      columns: "repeat(12, 1fr)",
+      rows: "auto",
+      gap: "24px",
     },
   },
 ] as const;
@@ -87,15 +89,32 @@ function groupProducts(products: ProductGallery[]): ProductGroup[] {
 
 const Gallery = () => {
   const [products, setProducts] = useState<ProductGallery[]>([]);
+  const [allStyles, setAllStyles] = useState<Style[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [styles_filter] = useState<string[]>(["todos"]);
   const [selectedStyle, setSelectedStyle] = useState("todos");
 
   const loadingRef = useRef<HTMLDivElement>(null);
+
+  // ─────────────────────────────────────────────────────────────
+  // Fetch styles
+  // ─────────────────────────────────────────────────────────────
+
+  useEffect(() => {
+    const fetchStyles = async () => {
+      try {
+        const data = await getAllStyles();
+        setAllStyles(data);
+      } catch (err) {
+        console.error("Error al cargar estilos:", err);
+      }
+    };
+
+    fetchStyles();
+  }, []);
 
   // ─────────────────────────────────────────────────────────────
   // Fetch products
@@ -161,18 +180,29 @@ const Gallery = () => {
 
   if (loading) {
     return (
-      <div className={styles.homePage}>
-        <div className={styles.loadingMessage}>Cargando galería…</div>
+      <div className={styles.container}>
+        <div className={styles.loadingState}>
+          <div className={styles.spinner}></div>
+          <p className="text-tertiary-600 font-sans text-sm tracking-wider">
+            Cargando colección...
+          </p>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className={styles.homePage}>
-        <div className={styles.errorMessage}>
-          {error}
-          <button onClick={() => fetchProducts(1, true)}>Reintentar</button>
+      <div className={styles.container}>
+        
+        <div className={styles.errorState}>
+          <p className="text-red-600 font-sans mb-4">{"Error al cargar la galería"}</p>
+          <button
+            onClick={() => fetchProducts(1, true)}
+            className={styles.retryButton}
+          >
+            Reintentar
+          </button>
         </div>
       </div>
     );
@@ -185,55 +215,87 @@ const Gallery = () => {
   // ─────────────────────────────────────────────────────────────
 
   return (
-    <div className={styles.homePage}>
-      <div className={styles.filtersSection}>
-        <h2>Galería de Artes</h2>
+    <div className={styles.container}>
+      {/* Suminagashi Background */}
+      <div className={styles.suminagashiBg}></div>
 
-        <div className={styles.filters}>
-          <label>Filtrar por estilo: </label>
-          <select
-            value={selectedStyle}
-            onChange={(e) => setSelectedStyle(e.target.value)}
-          >
-            {styles_filter.map((style) => (
-              <option key={style} value={style}>
-                {style === "todos" ? "Todos los estilos" : style}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-
+      {/* Main Content */}
       <main className={styles.mainContent}>
-        <div className={styles.galleryContainer}>
-          {groups.map((group, groupIndex) => (
-            <div
-              key={groupIndex}
-              className={`${styles.gridContainer} ${styles[group.pattern]}`}
-              style={{
-                gridTemplateColumns: group.gridConfig.columns,
-                gridTemplateRows: group.gridConfig.rows,
-                gap: group.gridConfig.gap,
-              }}
-            >
-              {group.items.map((product, itemIndex) => {
-                return (
-                  <GalleryCard
-                    key={product.uid}
-                    product={product}
-                    gridAreaClassName={styles[`${group.pattern}Item${itemIndex + 1}`]}
-                  />
-                );
-              })}
-            </div>
-          ))}
-        </div>
-
-        {hasMore && (
-          <div ref={loadingRef} className={styles.loadingIndicator}>
-            {loadingMore ? "Cargando más obras…" : ""}
+        {/* Header & Filter Section */}
+        <section className={styles.headerSection}>
+          <div className={styles.headerContent}>
+            <h1 className={styles.pageTitle}>Colección</h1>
+            <p className={styles.pageSubtitle}>
+              Un diálogo curado entre forma y vacío. Explora los archivos
+              permanentes del Grupo de Arte Universitario.
+            </p>
           </div>
-        )}
+
+          {/* Filter System */}
+          <div className={styles.filterSystem}>
+            <button
+              className={`${styles.filterButton} ${
+                selectedStyle === "todos" ? styles.filterButtonActive : ""
+              }`}
+              onClick={() => setSelectedStyle("todos")}
+            >
+              Todas las Obras
+            </button>
+
+            {allStyles.map((style) => (
+              <button
+                key={style.uid}
+                className={`${styles.filterButton} ${
+                  selectedStyle === style.uid ? styles.filterButtonActive : ""
+                }`}
+                onClick={() => setSelectedStyle(style.uid)}
+              >
+                {style.name}
+              </button>
+            ))}
+          </div>
+        </section>
+
+        {/* Scrollable Artwork Grid */}
+        <section className={styles.artworkGrid}>
+          <div className={styles.galleryContainer}>
+            {groups.map((group, groupIndex) => (
+              <div
+                key={groupIndex}
+                className={`${styles.gridContainer} ${styles[group.pattern]}`}
+                style={{
+                  gridTemplateColumns: group.gridConfig.columns,
+                  gap: group.gridConfig.gap,
+                }}
+              >
+                {group.items.map((product, itemIndex) => {
+                  return (
+                    <GalleryCard
+                      key={product.uid}
+                      product={product}
+                      gridAreaClassName={
+                        styles[`${group.pattern}Item${itemIndex + 1}`]
+                      }
+                    />
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+
+          {hasMore && (
+            <div ref={loadingRef} className={styles.loadingIndicator}>
+              {loadingMore && (
+                <>
+                  <div className={styles.spinner}></div>
+                  <p className="text-tertiary-600 font-sans text-sm">
+                    Cargando más obras...
+                  </p>
+                </>
+              )}
+            </div>
+          )}
+        </section>
       </main>
     </div>
   );

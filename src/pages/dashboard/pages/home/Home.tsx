@@ -1,6 +1,10 @@
+import { sileo } from "sileo";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./Home.module.css";
+import type { ProductGallery } from "../../../../interfaces/products";
+import { getProductByAuthor } from "../../../../services/products";
+import { useAuth } from '../../../../context/AuthContext';
 
 interface Event {
   id: string;
@@ -15,14 +19,6 @@ interface Event {
   date: string;
 }
 
-interface Artwork {
-  id: string;
-  title: string;
-  category: string;
-  image: string;
-  uploadDate: string;
-}
-
 interface Notification {
   id: string;
   type: "comment" | "event" | "announcement" | "mention" | "deadline";
@@ -34,61 +30,38 @@ interface Notification {
 
 export default function Home() {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const BASE_URL = import.meta.env.VITE_API_URL;
+  const [artworks, setArtworks] = useState<ProductGallery[]>([]);
   const [attendanceTaken, setAttendanceTaken] = useState(false);
   const [currentTime] = useState(new Date());
   const [isLoading, setIsLoading] = useState(true);
 
   // Simular carga de datos
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
+    setIsLoading(true);
 
-    return () => clearTimeout(timer);
-  }, []);
+    const loadArtworks = async () => {
+      try {
+        const artworksData = await getProductByAuthor(user?.uid || "");
+        setArtworks(artworksData);
+      } catch (err) {
+        sileo.error({
+          title: "Error al cargar obras artísticas",
+          description: "Por favor, inténtalo de nuevo más tarde",
+        });
+        setIsLoading(false);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadArtworks();
+  }, [user?.uid]);
 
   // Datos mock
-  const userName = "Antonella";
   const attendanceCount = 0;
   
-  const artworks: Artwork[] = [
-    {
-      id: "1",
-      title: "Astronauta Neon",
-      category: "Arte Digital",
-      image: "🚀",
-      uploadDate: "2024-04-15"
-    },
-    {
-      id: "2",
-      title: "Lazos Humanos",
-      category: "Arte Conceptual",
-      image: "🤝",
-      uploadDate: "2024-04-15"
-    },
-    {
-      id: "3",
-      title: "Paisaje Urbano",
-      category: "Fotografía",
-      image: "🌆",
-      uploadDate: "2024-04-10"
-    },
-    {
-      id: "4",
-      title: "Retrato Abstracto",
-      category: "Pintura",
-      image: "🎨",
-      uploadDate: "2024-04-08"
-    },
-    {
-      id: "5",
-      title: "Escultura Moderna",
-      category: "Escultura",
-      image: "🗿",
-      uploadDate: "2024-04-05"
-    }
-  ];
-
   const notifications: Notification[] = [
     {
       id: "1",
@@ -185,7 +158,7 @@ export default function Home() {
   };
 
   const handleArtworkClick = (artworkId: string) => {
-    console.log("Obra seleccionada:", artworkId);
+    
     // navigate(`/obras/${artworkId}`);
   };
 
@@ -261,7 +234,7 @@ export default function Home() {
         ) : (
           <>
             <div className={styles.welcomeText}>
-              <h1 className={styles.welcomeTitle}>Bienvenida, {userName}</h1>
+              <h1 className={styles.welcomeTitle}>Bienvenida, {user?.name || "Usuario"}</h1>
               <p className={styles.welcomeSubtitle}>
                 Marca tu asistencia, explora tus obras y mantente al día con los eventos del semillero.
               </p>
@@ -356,18 +329,17 @@ export default function Home() {
               <div className={styles.artworksScrollContainer}>
                 {artworks.map((artwork) => (
                   <div 
-                    key={artwork.id} 
+                    key={artwork.uid} 
                     className={styles.artworkCardHorizontal}
-                    onClick={() => handleArtworkClick(artwork.id)}
+                    onClick={() => handleArtworkClick(artwork.uid)}
                   >
                     <div className={styles.artworkImageHorizontal}>
                       <div className={styles.artworkPlaceholder}>
-                        {artwork.image}
+                        <img key={artwork.name} src={`${BASE_URL}${artwork.photos[0].photo.url}`} alt="Arte" />
                       </div>
                     </div>
                     <div className={styles.artworkInfoHorizontal}>
-                      <h3 className={styles.artworkTitle}>{artwork.title}</h3>
-                      <p className={styles.artworkCategory}>{artwork.category}</p>
+                      <h3 className={styles.artworkTitle}>{artwork.name}</h3>
                     </div>
                   </div>
                 ))}

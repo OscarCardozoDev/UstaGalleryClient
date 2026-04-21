@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { sileo } from "sileo";
 import { useAuth } from "../../../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import styles from "./Topbar.module.css";
@@ -91,19 +90,6 @@ export default function Topbar({ onMenuClick }: Props) {
         </div>
 
         <div className="flex items-center gap-2">
-          <button
-            onClick={() =>
-              sileo.error({
-                title: "Something went wrong",
-                description: "Please try again later.",
-              })
-            }
-            className="p-2 rounded-full hover:bg-gray-200 transition-colors text-gray-700"
-            aria-label="Test notification"
-          >
-            Silio
-          </button>
-
           <div className={styles.avatarWrapper} ref={dropdownRef}>
             <button
               className={styles.avatarBtn}

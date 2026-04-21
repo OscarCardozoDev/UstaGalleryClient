@@ -84,8 +84,7 @@ function DashboardContent({ children }: Props) {
               backgroundColor: "#f8f5f8", 
               borderEndEndRadius: 20, 
               borderEndStartRadius: 20, 
-              paddingLeft: 30,
-              paddingRight: 20,
+              padding: 30,
               overflow: 'auto',
               flexGrow: 1,
             }}

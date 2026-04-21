@@ -1,3 +1,4 @@
+import { sileo } from "sileo";
 import { useState, useEffect } from "react";
 import ImageUploader from "../../../components/ImageUploader";
 import { useAuth } from "../../../../context/AuthContext";
@@ -21,9 +22,6 @@ export default function UploadPictures() {
   const [isStylesOpen, setIsStylesOpen] = useState(false);
   const [isAuthorsOpen, setIsAuthorsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
-
   // Estado del formulario
   // Agrega un estado para la key
   const [uploaderKey, setUploaderKey] = useState(0);
@@ -51,8 +49,10 @@ export default function UploadPictures() {
           authors: user?.uid ? [user.uid] : [],
         }));
       } catch (err) {
-        console.error("Error al cargar usuario actual:", err);
-        setError("No se pudo cargar tu información de usuario");
+        sileo.error({
+          title: "Error al cargar usuario actual",
+          description: err instanceof Error ? err.message : "Error al cargar tu información de usuario",
+        });
       }
     };
 
@@ -178,14 +178,14 @@ export default function UploadPictures() {
   };
 
   const handleSubmit = async () => {
-    // Resetear estados
-    setError(null);
-    setSuccess(false);
 
     // Validar formulario
     const validationError = validateForm();
     if (validationError) {
-      setError(validationError);
+      sileo.warning({
+        title: "Error en el formulario",
+        description: validationError,
+      });
       return;
     }
 
@@ -196,7 +196,10 @@ export default function UploadPictures() {
       const imagesBase64 = await convertFilesToBase64(imageFiles);
 
       if (!currentGroup) {
-        setError("No se ha seleccionado un grupo");
+        sileo.warning({
+          title: "Error en el formulario",
+          description: "No se ha seleccionado un grupo",
+        });
         return;
       }
 
@@ -225,7 +228,10 @@ export default function UploadPictures() {
       await createProduct(payload);
 
       // Éxito
-      setSuccess(true);
+      sileo.success({
+        title: "Obra guardada exitosamente",
+        description: "Gracias por contribuir a UstaGallery!",
+      });
 
       // Resetear formulario después de 2 segundos
       setTimeout(() => {
@@ -238,12 +244,13 @@ export default function UploadPictures() {
           authors: user ? [user.uid] : [],
         });
         setImageFiles([]);
-        setSuccess(false);
         setUploaderKey(prev => prev + 1);
-      }, 2000);
+      }, 1000);
     } catch (err) {
-      console.error("Error al crear producto:", err);
-      setError(err instanceof Error ? err.message : "Error al guardar la obra");
+      sileo.error({
+        title: "Error al guardar la obra",
+        description: err instanceof Error ? err.message : "Error al guardar la obra",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -256,15 +263,6 @@ export default function UploadPictures() {
   return (
     <div className={styles.uploadCard}>
       <div className={styles.uploadCardContent}>
-        {/* Mensajes de feedback */}
-        {error && <div className={styles.errorMessage}>❌ {error}</div>}
-
-        {success && (
-          <div className={styles.successMessage}>
-            ✅ ¡Obra guardada exitosamente!
-          </div>
-        )}
-
         <div className={styles.uploadGrid}>
           {/* PREVIEW / IMAGEN */}
           <div className={styles.uploadSection}>

@@ -2063,6 +2063,7 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
+                styleId?: string;
             };
             header?: never;
             path?: never;
@@ -2083,6 +2084,7 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
+                styleId?: string;
             };
             header?: never;
             path?: never;
@@ -2103,6 +2105,7 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
+                styleId?: string;
             };
             header?: never;
             path: {
@@ -2125,6 +2128,7 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
+                styleId?: string;
             };
             header?: never;
             path: {

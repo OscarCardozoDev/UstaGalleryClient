@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   getProductById,
   getProductByAuthor,
@@ -41,7 +41,8 @@ export default function ShowImage() {
   const [loadingAuthor, setLoadingAuthor] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [showArtistInfo, setShowArtistInfo] = useState(false);
+  const [activeView, setActiveView] = useState<'artwork' | 'artist'>('artwork');
+  const navigate = useNavigate();
 
   // ─────────────────────────────────────────────────────────────
   // Cargar producto y estilos
@@ -59,8 +60,7 @@ export default function ShowImage() {
       setAuthor(null);
       setAuthorProducts([]);
       setError(null);
-      setShowArtistInfo(false);
-
+      setActiveView('artwork');
 
       try {
         setLoading(true);
@@ -82,11 +82,11 @@ export default function ShowImage() {
   }, [uid]);
 
   // ─────────────────────────────────────────────────────────────
-  // Cargar autor principal al abrir el panel
+  // Cargar autor cuando se cambia a vista de artista
   // ─────────────────────────────────────────────────────────────
 
   useEffect(() => {
-    if (!showArtistInfo || !product || author) return;
+    if (activeView !== 'artist' || !product || author) return;
 
     const mainAuthor = product.authors.find((a) => a.isAuthor);
     if (!mainAuthor) return;
@@ -110,7 +110,7 @@ export default function ShowImage() {
     };
 
     fetchAuthor();
-  }, [showArtistInfo, product, author]);
+  }, [activeView, product, author]);
 
   // ─────────────────────────────────────────────────────────────
   // Estados de carga
@@ -118,9 +118,10 @@ export default function ShowImage() {
 
   if (loading) {
     return (
-      <div className={styles.pinterestImage}>
-        <div style={{ margin: "auto", color: "black" }}>
-          Cargando producto...
+      <div className={styles.container}>
+        <div className={styles.loadingState}>
+          <div className={styles.spinner}></div>
+          <p className="text-primary-700 font-sans text-sm tracking-wider">Cargando obra...</p>
         </div>
       </div>
     );
@@ -128,9 +129,9 @@ export default function ShowImage() {
 
   if (error || !product) {
     return (
-      <div className={styles.pinterestImage}>
-        <div style={{ margin: "auto", color: "red" }}>
-          {error || "Producto no encontrado"}
+      <div className={styles.container}>
+        <div className={styles.errorState}>
+          <p className="text-red-600 font-sans">{error || "Producto no encontrado"}</p>
         </div>
       </div>
     );
@@ -145,122 +146,234 @@ export default function ShowImage() {
     : null;
 
   // ─────────────────────────────────────────────────────────────
+  // Obtener autor principal
+  // ─────────────────────────────────────────────────────────────
+
+  const mainAuthor = product.authors.find((a) => a.isAuthor);
+
+  // ─────────────────────────────────────────────────────────────
   // Render
   // ─────────────────────────────────────────────────────────────
 
   return (
-    <div className={styles.pinterestImage}>
-      <div className={styles.imageContainer}>
-        <div className={styles.imagePlaceholder}>
-          {product.photos ? (
-            <ImageViewer images={product.photos} baseUrl={BASE_URL} />
-          ) : (
-            <p>No hay imagen disponible</p>
-          )}
-        </div>
-      </div>
-
-      <div
-        className={`${styles.descriptionContainer} ${
-          showArtistInfo ? styles.showArtistInfo : ""
-        }`}
-      >
-        <div className={styles.mainInfo}>
-          <h2 className={styles.title}>{product.name}</h2>
-
-          <p className={styles.description}>{product.description}</p>
-
-          {formattedPrice && <p className={styles.price}>{formattedPrice}</p>}
-
-          <div className={styles.categories}>
-            {allStyles.map((style) => (
-              <div key={style.uid} className={styles.categoryChip}>
-                {style.name}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className={styles.artistInfo}>
-          {loadingAuthor && (
-            <p className={styles.description}>Cargando artista...</p>
-          )}
-
-          {!loadingAuthor && author && (
-            <>
-              {/* ── Cabecera: foto + nombre/descripción ── */}
-              <div className={styles.authorHeader}>
-                <div className={styles.authorAvatar}>
-                  {author.photo?.url ? (
-                    <img
-                      className={styles.authorAvatarImage}
-                      src={`${BASE_URL}${author.photo.url}`}
-                      alt={author.name}
-                    />
-                  ) : (
-                    <div className={styles.authorAvatarFallback}>
-                      {author.name[0]}
-                    </div>
-                  )}
-                </div>
-                <div className={styles.authorMeta}>
-                  <h3 className={styles.authorName}>
-                    {author.name} {author.lastName}
-                  </h3>
-                  <p className={styles.authorUsername}>@{author.username}</p>
-                  {author.description && (
-                    <p className={styles.authorDescription}>
-                      {author.description}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              {/* Separador */}
-              <div className={styles.authorDivider} />
-
-              {/* Obras del autor */}
-              {authorProducts.length > 0 && (
-                <>
-                  <p className={styles.authorWorksLabel}>Otras obras</p>
-                  <RelatedWorks
-                    products={authorProducts}
-                    currentProductUid={uid || ""}
-                  />
-                </>
-              )}
-            </>
-          )}
-
-          {!loadingAuthor && !author && (
-            <p className={styles.description}>
-              No se encontró información del artista.
-            </p>
-          )}
-        </div>
+    <div className={styles.container}>
+      {/* Side Navigation Rail */}
+      <aside className={styles.sideRail}>
+        <div className={styles.railButtons}>
+          <button
+            className={`${styles.railButton} ${activeView === 'artwork' ? styles.railButtonActive : ''}`}
+            onClick={() => setActiveView('artwork')}
+            title="Ver información de la obra"
+          >
+            <span className={styles.railIcon}><img src="/public/logos/art.public.png" alt="obra-de-adrte" width={40} height={40} /></span>
+            <span className={styles.railLabel}>Obra</span>
+          </button>
 
           <button
-            className={styles.artistButton}
-            onClick={() => setShowArtistInfo(!showArtistInfo)}
+            className={`${styles.railButton} ${activeView === 'artist' ? styles.railButtonActive : ''}`}
+            onClick={() => setActiveView('artist')}
+            title="Ver información del artista"
           >
-            {showArtistInfo
-              ? "Ver información de la obra"
-              : "Ver información del artista"}
-            <svg
-              className={styles.arrowIcon}
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <line x1="5" y1="12" x2="19" y2="12" />
-              <polyline points="12 5 19 12 12 19" />
-            </svg>
+            <span className={styles.railIcon}><img src="/public/logos/artist.public.png" alt="artista-de-adrte" width={40} height={40} /></span>
+            <span className={styles.railLabel}>Artista</span>
           </button>
+        </div>
+      </aside>
+
+      {/* Main Canvas - Artwork Viewport */}
+      <main className={styles.mainCanvas}>
+        <section className={styles.artworkViewport}>
+          {/* Main Image - Hero */}
+          <div className={styles.heroImage}>
+            {product.photos ? (
+              <ImageViewer images={product.photos} baseUrl={BASE_URL} />
+            ) : (
+              <div className={styles.noImage}>
+                <p className="text-tertiary-500">No hay imagen disponible</p>
+              </div>
+            )}
+            <div className={styles.imageLabel}>
+              <span className="text-primary-950 font-sans">Vista Principal</span>
+            </div>
+          </div>
+
+          {/* Supporting Info Bar */}
+          <div className={styles.supportingInfo}>
+            <div className={styles.infoGroup}>
+              <p className={styles.infoLabel}>Técnica</p>
+              <p className={styles.infoValue}>
+                {product.technique || "No especificada"}
+              </p>
+            </div>
+            <div className={styles.infoGroup}>
+              <p className={styles.infoLabel}>Disponibilidad</p>
+              <p className={styles.infoValue}>
+                {product.isAvailable ? "Disponible" : "No Disponible"}
+              </p>
+            </div>
+            <div className={styles.infoGroup}>
+              <p className={styles.infoLabel}>Referencia</p>
+              <p className={styles.infoValue}>#{product.uid.slice(0, 8)}</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Information Panel */}
+        <section className={styles.infoPanel}>
+          <div className={styles.infoPanelContent}>
+            {activeView === 'artwork' ? (
+              <>
+                {/* Artwork Info */}
+                <header className={styles.header}>
+                  <div className={styles.headerDivider}>
+                    <div className={styles.dividerLine}></div>
+                    <span className="text-tertiary-600 font-sans">Obra Destacada</span>
+                  </div>
+                  <h1 className={styles.title}>{product.name}</h1>
+                </header>
+
+                <div className={styles.artworkDetails}>
+                  <div className={styles.metadataGrid}>
+                    <div className={styles.metadataItem}>
+                      <span className={styles.metadataLabel}>Año</span>
+                      <p className={styles.metadataValue}>
+                        {new Date(product.madeAt).getFullYear()}
+                      </p>
+                    </div>
+                    {formattedPrice && (
+                      <div className={styles.metadataItem}>
+                        <span className={styles.metadataLabel}>Precio</span>
+                        <p className={`${styles.metadataValue} text-gold`}>
+                          {formattedPrice}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className={styles.descriptionSection}>
+                    <p className="text-primary-800 leading-relaxed text-lg font-light font-sans">
+                      {product.description}
+                    </p>
+                  </div>
+
+                  {allStyles.length > 0 && (
+                    <div className={styles.stylesSection}>
+                      <span className={styles.stylesLabel}>Estilos</span>
+                      <div className={styles.styleChips}>
+                        {allStyles.map((style) => (
+                          <div key={style.uid} className={styles.styleChip}>
+                            {style.name}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className={styles.actionButtons}>
+                    <button className={styles.primaryButton}>
+                      Consultar Detalles
+                      <span className={styles.buttonIcon}>→</span>
+                    </button>
+                    <button 
+                      className={styles.secondaryButton}
+                      onClick={() => setActiveView('artist')}
+                    >
+                      Ver Biografía del Artista
+                    </button>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                {/* Artist Info */}
+                <header className={styles.header}>
+                  <div className={styles.headerDivider}>
+                    <div className={styles.dividerLine}></div>
+                    <span className="text-tertiary-600 font-sans">Información del Artista</span>
+                  </div>
+                  {loadingAuthor ? (
+                    <div className={styles.artistLoading}>
+                      <div className={styles.spinner}></div>
+                      <p className="text-tertiary-600">Cargando artista...</p>
+                    </div>
+                  ) : author ? (
+                    <>
+                      <div className={styles.artistHeader}>
+                        <div className={styles.artistAvatar}>
+                          {author.photo?.url ? (
+                            <img
+                              className={styles.avatarImage}
+                              src={`${BASE_URL}${author.photo.url}`}
+                              alt={author.name}
+                            />
+                          ) : (
+                            <div className={styles.avatarFallback}>
+                              {author.name[0]}
+                            </div>
+                          )}
+                        </div>
+                        <div className={styles.artistMeta}>
+                          <h1 className={styles.artistName}>
+                            {author.name} {author.lastName}
+                          </h1>
+                          <p className={styles.artistUsername}>@{author.username}</p>
+                        </div>
+                      </div>
+
+                      {author.description && (
+                        <div className={styles.artistBio}>
+                          <p className="text-primary-700 leading-relaxed font-light font-serif text-xl italic">
+                            "{author.description}"
+                          </p>
+                        </div>
+                      )}
+
+                      {authorProducts.length > 0 && (
+                        <>
+                          <div className={styles.divider}></div>
+                          <div className={styles.artistWorks}>
+                            <p className={styles.worksLabel}>Otras Obras del Artista</p>
+                            <RelatedWorks
+                              products={authorProducts}
+                              currentProductUid={uid || ""}
+                            />
+                          </div>
+                        </>
+                      )}
+                    </>
+                  ) : (
+                    <p className="text-tertiary-600">
+                      No se encontró información del artista.
+                    </p>
+                  )}
+                </header>
+              </>
+            )}
+
+            {/* Footer */}
+            <footer className={styles.footer}>
+              <div className={styles.footerContent}>
+                <span className="text-tertiary-500">© 2024 USTA GALLERY</span>
+                <div className={styles.footerIcons}>
+                  <button className={styles.iconButton} title="Compartir">
+                    ↗
+                  </button>
+                  <button className={styles.iconButton} title="Favorito">
+                    ♥
+                  </button>
+                </div>
+              </div>
+            </footer>
+          </div>
+        </section>
+      </main>
+
+      {/* Floating Back Button */}
+      <div className={styles.floatingButton}>
+        <button className={styles.backButton} onClick={() => navigate("/gallery")}>
+          <span className={styles.backButtonLabel}>Volver a Galería</span>
+          <span className={styles.backButtonIcon}>⊞</span>
+        </button>
       </div>
     </div>
   );
@@ -275,49 +388,14 @@ interface RelatedWorksProps {
   currentProductUid: string;
 }
 
-interface ImageWithOrientation {
-  product: Product;
-  orientation: "horizontal" | "vertical" | null;
-}
-
 const RelatedWorks = ({ products, currentProductUid }: RelatedWorksProps) => {
-  const [images, setImages] = useState<ImageWithOrientation[]>([]);
+  const filtered = products.filter((p) => p.uid !== currentProductUid);
 
-  useEffect(() => {
-    const filtered = products.filter((p) => p.uid !== currentProductUid);
-
-    const loadImages = filtered.map(
-      (product) =>
-        new Promise<ImageWithOrientation>((resolve) => {
-          const photo =
-            product.photos?.find((p) => p.isMain)?.photo ??
-            product.photos?.[0]?.photo;
-
-          if (!photo) {
-            resolve({ product, orientation: null });
-            return;
-          }
-
-          const img = new Image();
-          img.src = `${BASE_URL}${photo.url}`;
-          img.onload = () => {
-            resolve({
-              product,
-              orientation: img.width > img.height ? "horizontal" : "vertical",
-            });
-          };
-          img.onerror = () => resolve({ product, orientation: null });
-        }),
-    );
-
-    Promise.all(loadImages).then(setImages);
-  }, [products, currentProductUid]);
-
-  if (images.length === 0) return null;
+  if (filtered.length === 0) return null;
 
   return (
-    <div className={styles.imgContainer}>
-      {images.map(({ product }) => (
+    <div className={styles.relatedGrid}>
+      {filtered.slice(0, 6).map((product) => (
         <GalleryCard key={product.uid} product={product} variant="carousel" />
       ))}
     </div>

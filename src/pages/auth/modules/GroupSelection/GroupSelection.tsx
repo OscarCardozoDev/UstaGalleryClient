@@ -1,3 +1,4 @@
+import { sileo } from "sileo";
 import React, { useState, useEffect } from 'react';
 import styles from './GroupSelection.module.css';
 import { getAllGroups, addStudentToGroups } from '../../../../services/groups';
@@ -18,7 +19,6 @@ const GroupSelection: React.FC<GroupSelectionProps> = ({
   const [groups, setGroups] = useState<Group[]>([]);
   const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -27,7 +27,6 @@ const GroupSelection: React.FC<GroupSelectionProps> = ({
 
   const fetchGroups = async () => {
     setIsLoading(true);
-    setError('');
 
     try {
       const groupResults: GroupResult[] = await getAllGroups();
@@ -38,8 +37,10 @@ const GroupSelection: React.FC<GroupSelectionProps> = ({
       })));
 
     } catch (err) {
-      setError('Error al cargar los grupos. Intenta nuevamente.');
-      console.error('Error fetching groups:', err);
+      sileo.error({
+        title: "Error al cargar los grupos",
+        description: "Intenta nuevamente.",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -55,21 +56,28 @@ const GroupSelection: React.FC<GroupSelectionProps> = ({
 
   const handleSubmit = async () => {
     if (selectedGroups.length === 0) {
-      setError('Por favor selecciona al menos un grupo');
+      sileo.warning({
+        title: "Por favor selecciona al menos un grupo",
+      });
       return;
     }
 
     setIsSubmitting(true);
-    setError('');
 
     try {
       const response = await addStudentToGroups({ groupIds: selectedGroups });
       if (response) {
+        sileo.success({
+          title: "Grupos unidos con éxito",
+          description: "Has unido a los grupos seleccionados.",
+        });
         onGroupsSelected();
       }
     } catch (err) {
-      setError('Error al unirse a los grupos. Intenta nuevamente.');
-      console.error('Error joining groups:', err);
+      sileo.error({
+        title: "Error al unirse a los grupos",
+        description: "Intenta nuevamente.",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -129,8 +137,6 @@ const GroupSelection: React.FC<GroupSelectionProps> = ({
           );
         })}
       </div>
-
-      {error && <div className={styles.errorMessage}>{error}</div>}
 
       <button
         onClick={handleSubmit}

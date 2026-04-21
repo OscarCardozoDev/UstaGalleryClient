@@ -1,21 +1,145 @@
-.pinterestImage {
-  display: flex;
-  width: 100vw;
-  height: 95vh;
-  margin-top: 59px;
-  background-color: #f0f0f0;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  transition: transform 0.4s ease-in-out;
-}
+/* ═══════════════════════════════════════════════════════════════════
+   CONTAINER PRINCIPAL
+   ═══════════════════════════════════════════════════════════════════ */
 
-.imageContainer {
-  width: 50%;
+.container {
   position: relative;
+  width: 100vw;
+  height: 100vh;
+  margin-top: 59px;
+  background-color: #f8f9fb;
+  overflow: hidden;
+  display: flex;
 }
 
-.imagePlaceholder {
-  background-color: #e0e0e0;
+/* Pattern overlay sutil */
+.container::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-image: radial-gradient(circle at 2px 2px, rgba(0, 0, 0, 0.02) 1px, transparent 0);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   SIDE RAIL NAVIGATION
+   ═══════════════════════════════════════════════════════════════════ */
+
+.sideRail {
+  position: fixed;
+  left: 32px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 40;
+  background-color: rgba(248, 249, 251, 0.8);
+  backdrop-filter: blur(16px);
+  padding: 40px 16px;
+  box-shadow: 20px 0 60px -15px rgba(25, 28, 30, 0.04);
+}
+
+.railButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  align-items: center;
+}
+
+.railButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  opacity: 0.5;
+}
+
+.railButton:hover {
+  transform: translateX(4px);
+  opacity: 0.8;
+}
+
+.railButtonActive {
+  opacity: 1;
+}
+
+.railButtonActive .railIcon {
+  filter: grayscale(0);
+}
+
+.railIcon {
+  font-size: 24px;
+  filter: grayscale(1);
+  transition: filter 0.3s ease;
+}
+
+.railLabel {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #777777;
+  font-family: 'Manrope', sans-serif;
+}
+
+.railButtonActive .railLabel {
+  color: #000000;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   MAIN CANVAS
+   ═══════════════════════════════════════════════════════════════════ */
+
+.mainCanvas {
+  height: 100vh;
+  overflow-y: auto;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  padding: 0px 64px 48px;
+  padding-left: 128px;
+  gap: 80px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   ARTWORK VIEWPORT (Bento Layout)
+   ═══════════════════════════════════════════════════════════════════ */
+
+.artworkViewport {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.heroImage {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+}
+
+.imageLabel {
+  position: absolute;
+  bottom: 24px;
+  left: 24px;
+  background-color: rgba(248, 249, 251, 0.7);
+  backdrop-filter: blur(12px);
+  padding: 8px 16px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.noImage {
   width: 100%;
   height: 100%;
   display: flex;
@@ -23,343 +147,624 @@
   justify-content: center;
 }
 
-.descriptionContainer {
-  width: 50%;
-  padding: 24px;
-  background-color: black;
-  color: white;
+/* Supporting Info Bar */
+.supportingInfo {
   display: flex;
-  position: relative;
-  align-items: flex-end;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(119, 119, 119, 0.2);
+  padding-top: 32px;
+}
+
+.infoGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.infoLabel {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #777777;
+  font-family: 'Manrope', sans-serif;
+}
+
+.infoValue {
+  font-size: 18px;
+  font-style: italic;
+  font-family: 'Newsreader', serif;
+  color: #191c1e;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   INFORMATION PANEL
+   ═══════════════════════════════════════════════════════════════════ */
+
+.infoPanel {
+  width: 400px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   justify-content: center;
-  overflow: hidden;
+  border-left: 1px solid rgba(119, 119, 119, 0.1);
+  padding-left: 60px;
 }
 
-/* ========================================
-   RESPONSIVE - 768px
-   ======================================== */
-@media (max-width: 768px) {
-  /* El wrapper principal deja de ser un contenedor cerrado */
-  .pinterestImage {
-    flex-direction: column;
-    height: 100dvh;
-    margin-top: 59px;
-    overflow-y: scroll;
-    box-shadow: none;
-  }
-
-  /* La imagen ocupa su altura natural */
-  .imageContainer {
-    width: 100%;
-    height: auto;
-    flex-shrink: 0;
-  }
-
-  .imagePlaceholder {
-    width: 100%;
-    height: auto;
-    min-height: 200px;
-  }
-
-  /* El contenedor de info necesita altura explícita porque
-     sus hijos son position:absolute y no empujan el layout */
-  .descriptionContainer {
-    width: 100%;
-    height: auto;
-    min-height: 100vh;
-    padding: 0;
-    align-items: flex-start;
-    overflow: hidden; /* mantiene el slide lateral */
-    position: relative;
-  }
-
-  .mainInfo {
-    width: 100%;
-    min-height: 100vh;
-    padding: 20px 16px 80px 16px;
-    overflow: visible;
-  }
-
-  .artistInfo {
-    width: 100%;
-    min-height: 100vh;
-    padding: 20px 16px;
-    overflow-y: auto;
-  }
-
-  .artistInfo .authorAvatarImage {
-    left: 15%;
-    width: 70%;
-    margin: 16px 0;
-  }
-
-  .title {
-    font-size: 1.3em;
-  }
-
-  .description {
-    font-size: 0.95em;
-  }
-
-  .imgContainer {
-    width: 100%;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    grid-auto-rows: 100px;
-    gap: 10px;
-  }
-
-  .artistButton {
-    position: absolute;
-    bottom: 10%;
-    left: 0;
-    right: 0;
-    width: 100%;
-    border-radius: 0;
-    border-left: none;
-    border-right: none;
-    border-bottom: none;
-    padding: 14px 16px;
-    z-index: 20;
-    background-color: #111;
-  }
+.infoPanelContent {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+  padding-right: 16px;
 }
 
-.mainInfo,
-.artistInfo {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  padding: 25px 5vw;
-  transition: transform 0.4s ease-in-out;
+/* Custom scrollbar */
+.infoPanelContent::-webkit-scrollbar {
+  width: 2px;
+}
+
+.infoPanelContent::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.infoPanelContent::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   HEADER SECTION
+   ═══════════════════════════════════════════════════════════════════ */
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.headerDivider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.dividerLine {
+  width: 32px;
+  height: 1px;
+  background-color: #000000;
+}
+
+.headerDivider span {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
 }
 
 .title {
-  display: flex;
-  justify-content: center;
-  font-size: 1.5em;
-  font-weight: bold;
-  margin-bottom: 8px;
-}
-
-.description {
-  text-align: center;
-  font-size: 1em;
-  margin-bottom: 16px;
-  line-height: 1.5;
-  text-wrap: balance;
-}
-
-.price {
-  text-align: center;
-  font-size: 1.2em;
-  font-weight: bold;
-  color: #4caf50;
+  font-family: 'Newsreader', serif;
+  font-style: italic;
+  font-size: 4rem;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: #000000;
   margin-bottom: 16px;
 }
 
-.mainInfo {
-  display: flex;
-  height: 85%;
-  align-items: center;
-  flex-direction: column;
-  transform: translateX(0);
-}
-
-.categories {
-  max-width: 750px;
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 8px;
-  margin-bottom: 25px;
-}
-
-.categoryChip {
-  display: inline-block;
-  color: white;
-  background-color: #616161;
-  padding: 6px 12px;
-  border-radius: 16px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: default;
-  user-select: none;
-}
-
-.imgContainer {
-  width: 80%;
-  height: 100%;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  grid-auto-rows: 150px;
-  gap: 16px;
-  overflow-y: scroll;
-  grid-auto-flow: dense;
-  scrollbar-width: none;
-}
-
-.artistInfo {
-  transform: translateX(100%);
-  color: white;
-}
-
-.artistInfo .authorAvatarImage {
-  margin: 25px 0;
-  position: relative;
-  left: 25%;
-  width: 50%;
-  border-radius: 5px;
-}
-
-.showArtistInfo .mainInfo {
-  transform: translateX(-100%);
-}
-
-.showArtistInfo .artistInfo {
-  transform: translateX(0);
-}
-
-.artistButton {
-  width: 500px;
-  margin-bottom: 15px;
-  padding: 8px 16px;
-  color: #ffffff;
-  background-color: transparent;
-  border: 1px solid #ffffff;
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  transition: all 0.3s ease;
-}
-
-.artistButton:hover {
-  border-color: #e0e0e0;
-  background-color: #333333;
-}
-
-.arrowIcon {
-  transition: transform 0.4s ease-in-out;
-}
-
-.showArtistInfo .arrowIcon {
-  transform: scaleX(-1);
-}
 /* ═══════════════════════════════════════════════════════════════════
-   AUTHOR PANEL
+   ARTWORK DETAILS
    ═══════════════════════════════════════════════════════════════════ */
 
-/* Cabecera: foto circular a la izquierda, meta a la derecha */
-.authorHeader {
-  min-height: 150px;
+.artworkDetails {
   display: flex;
-  align-items: center;
-  gap: 20px;
+  flex-direction: column;
+  gap: 40px;
 }
 
-/* Foto circular */
-.authorAvatar {
-  flex-shrink: 0;
-  width: 125px;
-  height: 125px;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 2px solid rgba(255, 255, 255, 0.15);
-  background: #2a2a2a;
-}
-
-.authorAvatar img {
-  /* override del estilo global de artistInfo img */
-  position: static !important;
-  left: auto !important;
-  width: 100% !important;
-  height: 100% !important;
-  margin: 0 !important;
-  border-radius: 0 !important;
-  object-fit: cover;
-}
-
-/* Fallback inicial cuando no hay foto */
-.authorAvatarFallback {
-  width: 100%;
-  height: 100%;
+.metadataGrid {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2rem;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.4);
+  gap: 48px;
 }
 
-/* Columna derecha: nombre, username, descripción */
-.authorMeta {
+.metadataItem {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  min-width: 0;
-  padding-top: 4px;
 }
 
-.authorName {
-  font-size: 1.1rem;
+.metadataLabel {
+  font-size: 10px;
   font-weight: 700;
-  color: #fff;
-  margin: 0;
-  line-height: 1.3;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #777777;
+  font-family: 'Manrope', sans-serif;
 }
 
-.authorUsername {
-  font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.45);
-  margin: 0;
+.metadataValue {
+  font-family: 'Newsreader', serif;
+  font-size: 2rem;
+  color: #191c1e;
 }
 
-.authorDescription {
-  font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.7);
-  line-height: 1.5;
-  margin: 6px 0 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 4;
-  -webkit-box-orient: vertical;
+.descriptionSection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.stylesSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.stylesLabel {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #777777;
+  font-family: 'Manrope', sans-serif;
+}
+
+.styleChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.styleChip {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: #edeef0;
+  color: #191c1e;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  font-family: 'Manrope', sans-serif;
+  border: 1px solid rgba(119, 119, 119, 0.1);
+  cursor: default;
+  transition: all 0.3s ease;
+}
+
+.styleChip:hover {
+  background-color: #d9dadc;
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   ACTION BUTTONS
+   ═══════════════════════════════════════════════════════════════════ */
+
+.actionButtons {
+  padding-top: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.primaryButton {
+  width: 100%;
+  background-color: #000000;
+  color: #ffffff;
+  padding: 24px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  font-family: 'Manrope', sans-serif;
+}
+
+.primaryButton:hover {
+  background-color: #5f5e5e;
+}
+
+.primaryButton:active {
+  transform: scale(0.99);
+}
+
+.buttonIcon {
+  font-size: 14px;
+}
+
+.secondaryButton {
+  width: 100%;
+  background-color: transparent;
+  color: #191c1e;
+  padding: 24px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  border: 1px solid rgba(119, 119, 119, 0.3);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  font-family: 'Manrope', sans-serif;
+}
+
+.secondaryButton:hover {
+  background-color: #e7e8ea;
+}
+
+.secondaryButton:active {
+  transform: scale(0.99);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   ARTIST SECTION
+   ═══════════════════════════════════════════════════════════════════ */
+
+.artistHeader {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.artistAvatar {
+  flex-shrink: 0;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
   overflow: hidden;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  background-color: #edeef0;
 }
 
-/* Separador horizontal */
-.authorDivider {
+.avatarImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(0.3);
+}
+
+.avatarFallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.3);
+  font-family: 'Newsreader', serif;
+}
+
+.artistMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.artistName {
+  font-family: 'Newsreader', serif;
+  font-style: italic;
+  font-size: 2rem;
+  color: #000000;
+  line-height: 1.2;
+}
+
+.artistUsername {
+  font-size: 14px;
+  color: #777777;
+  font-family: 'Manrope', sans-serif;
+}
+
+.artistBio {
+  padding: 24px 0;
+}
+
+.divider {
   width: 100%;
   height: 1px;
-  background: rgba(255, 255, 255, 0.1);
-  margin: 20px 0 16px;
+  background-color: rgba(119, 119, 119, 0.2);
+  margin: 32px 0;
 }
 
-/* Label "Otras obras" */
-.authorWorksLabel {
-  font-size: 0.72rem;
-  font-weight: 600;
+.artistWorks {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.worksLabel {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: rgba(255, 255, 255, 0.35);
-  margin: 0 0 12px;
+  color: #777777;
+  font-family: 'Manrope', sans-serif;
 }
 
-/* ── Responsive ── */
+.relatedGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.artistLoading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 40px 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════════════════════════════ */
+
+.footer {
+  margin-top: auto;
+  padding-top: 32px;
+  border-top: 1px solid rgba(119, 119, 119, 0.2);
+}
+
+.footerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-family: 'Manrope', sans-serif;
+}
+
+.footerIcons {
+  display: flex;
+  gap: 16px;
+}
+
+.iconButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #777777;
+  transition: color 0.3s ease;
+  padding: 0;
+}
+
+.iconButton:hover {
+  color: #000000;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   FLOATING BACK BUTTON
+   ═══════════════════════════════════════════════════════════════════ */
+
+.floatingButton {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  z-index: 40;
+}
+
+.backButton {
+  background-color: #000;
+  width: 45px;
+  color: white;
+  padding: 15px 20px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: width 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.backButton:hover {
+  width: 200px;
+}
+
+.backButtonLabel {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  white-space: nowrap; 
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+}
+
+.backButton:hover .backButtonLabel {
+  opacity: 1;
+  visibility: visible;
+}
+
+.backButtonIcon {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translate(-60%, -55%);
+  font-size: 20px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   LOADING & ERROR STATES
+   ═══════════════════════════════════════════════════════════════════ */
+
+.loadingState,
+.errorState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  gap: 16px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #edeef0;
+  border-top-color: #000000;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   RESPONSIVE - TABLET (768px)
+   ═══════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 1024px) {
+  .sideRail {
+    left: 16px;
+    padding: 32px 12px;
+  }
+
+  .mainCanvas {
+    padding: 0px 32px 48px 96px;
+    gap: 40px;
+  }
+
+  .infoPanel {
+    width: 320px;
+    padding-left: 40px;
+  }
+
+  .title {
+    font-size: 3rem;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   RESPONSIVE - MOBILE (768px)
+   ═══════════════════════════════════════════════════════════════════ */
+
 @media (max-width: 768px) {
-  .authorHeader {
-    gap: 14px;
+  .container {
+    margin-top: 59px;
+    height: auto;
+    min-height: 100vh;
   }
 
-  .authorAvatar {
-    width: 64px;
-    height: 64px;
+  .sideRail {
+    position: fixed;
+    left: auto;
+    top: auto;
+    bottom: 0;
+    right: 0;
+    transform: none;
+    width: 100%;
+    background-color: rgba(248, 249, 251, 0.95);
+    padding: 16px;
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.08);
   }
 
-  .authorName {
-    font-size: 1rem;
+  .railButtons {
+    flex-direction: row;
+    gap: 24px;
+    justify-content: center;
+  }
+
+  .railButton {
+    flex-direction: row;
+    gap: 12px;
+  }
+
+  .railLabel {
+    font-size: 12px;
+  }
+
+  .mainCanvas {
+    flex-direction: column;
+    padding: 0px 16px 100px;
+    gap: 9rem;
+    height: 100dvh;
+    overflow: auto;
+  }
+
+  .artworkViewport {
+    width: 100%;
+  }
+
+  .heroImage {
+    min-height: 50vh;
+  }
+
+  .supportingInfo {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .infoPanel {
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid rgba(119, 119, 119, 0.1);
+    padding-left: 0;
+    padding-top: 32px;
+  }
+
+  .infoPanelContent {
+    max-height: none;
+    overflow-y: visible;
+  }
+
+  .title {
+    font-size: 2.5rem;
+  }
+
+  .subtitle {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .metadataGrid {
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .actionButtons {
+    position: relative;
+    z-index: 1;
+  }
+
+  .artistHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .artistAvatar {
+    width: 80px;
+    height: 80px;
+  }
+
+  .artistName {
+    font-size: 1.5rem;
+  }
+
+  .relatedGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .floatingButton {
+    display: none;
+  }
+
+  .footer {
+    padding-bottom: 80px;
   }
 }

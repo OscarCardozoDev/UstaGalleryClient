@@ -1,7 +1,7 @@
-import type { authInterface } from "../interfaces/auth";
+import type { CreateCredentialDto } from "../interfaces/auth";
 const API_URL = import.meta.env.VITE_API_URL;
 
-export async function Register ({mail, password}: authInterface) {
+export async function Register ({mail, password}: CreateCredentialDto) {
     try {
         console.log(API_URL);
         const response = await fetch(API_URL + '/auth/register', {
@@ -26,7 +26,7 @@ export async function Register ({mail, password}: authInterface) {
     }
 }
 
-export async function Login ({mail, password}: authInterface) {
+export async function Login ({mail, password}: CreateCredentialDto) {
     try {
         const response = await fetch(API_URL + '/auth/login', {
             method: 'POST',
