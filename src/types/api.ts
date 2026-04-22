@@ -481,6 +481,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/groups/change-profesor/{uid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Cambiar el profesor asignado al grupo */
+        patch: operations["GroupController_changeProfesor"];
+        trace?: never;
+    };
     "/groups/student/add": {
         parameters: {
             query?: never;
@@ -1025,6 +1042,160 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/schedule/create": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Crear horario y generar sesiones del semestre */
+        post: operations["ScheduleController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/schedule/group/{groupId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener horarios activos del grupo */
+        get: operations["ScheduleController_getByGroup"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/schedule/{uid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Actualizar horario y regenerar sesiones futuras */
+        put: operations["ScheduleController_update"];
+        post?: never;
+        /** Desactivar horario y eliminar sesiones futuras sin asistencia */
+        delete: operations["ScheduleController_remove"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/classes/create": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Crear clase manual */
+        post: operations["ClassesController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/classes/attend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Registrar asistencia del estudiante autenticado */
+        post: operations["ClassesController_attend"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/classes/group/{groupId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener sesiones del grupo para el calendario */
+        get: operations["ClassesController_getByGroup"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/classes/current/{groupId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** ¿Hay clase activa ahora para el grupo? */
+        get: operations["ClassesController_getCurrent"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/classes/{uid}/attendance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Listar estudiantes que asistieron a la clase */
+        get: operations["ClassesController_getAttendance"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/classes/{uid}/topic": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Actualizar temática y/o reseña de la clase */
+        patch: operations["ClassesController_updateTopic"];
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1137,6 +1308,10 @@ export interface components {
             name?: string;
             /** @example uuid-del-profesor */
             profesorId?: string;
+        };
+        ChangeProfesorDto: {
+            /** @example uuid-del-nuevo-profesor */
+            newProfesorId: string;
         };
         AddStudentDto: {
             /** @example uuid-del-usuario */
@@ -1334,6 +1509,9 @@ export interface components {
             /** @example uuid-grupo */
             groupId: string;
         };
+        AddEventPhotoDto: {
+            images: components["schemas"]["EventPhotoDto"][];
+        };
         SendInvitationDto: {
             /** @example uuid-grupo-invitado */
             groupId: string;
@@ -1344,6 +1522,49 @@ export interface components {
              * @enum {string}
              */
             status: "ACCEPTED" | "REJECTED";
+        };
+        CreateScheduleDto: {
+            /** @example uuid-del-grupo */
+            groupId: string;
+            /**
+             * @description 0=Dom, 1=Lun, 2=Mar, 3=Mié, 4=Jue, 5=Vie, 6=Sáb
+             * @example 2
+             */
+            dayOfWeek: number;
+            /** @example 14:00 */
+            startTime: string;
+            /** @example 16:00 */
+            endTime: string;
+        };
+        UpdateScheduleDto: {
+            /** @example 3 */
+            dayOfWeek?: number;
+            /** @example 15:00 */
+            startTime?: string;
+            /** @example 17:00 */
+            endTime?: string;
+        };
+        CreateClassDto: {
+            /** @example uuid-del-grupo */
+            groupId: string;
+            /** @example 2025-05-10T00:00:00.000Z */
+            date: string;
+            /** @example 14:00 */
+            startTime: string;
+            /** @example 16:00 */
+            endTime: string;
+            /** @example Técnica de acuarela */
+            topic?: string;
+        };
+        AttendDto: {
+            /** @example uuid-de-la-clase */
+            classId: string;
+        };
+        UpdateTopicDto: {
+            /** @example Técnica de acuarela */
+            topic?: string;
+            /** @example Se practicó mezcla de colores y fondos húmedos */
+            review?: string;
         };
     };
     responses: never;
@@ -1932,6 +2153,29 @@ export interface operations {
             };
         };
     };
+    GroupController_changeProfesor: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                uid: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChangeProfesorDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     GroupController_addStudent: {
         parameters: {
             query?: never;
@@ -2063,6 +2307,7 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
+                styleId?: string;
             };
             header?: never;
             path?: never;
@@ -2083,6 +2328,7 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
+                styleId?: string;
             };
             header?: never;
             path?: never;
@@ -2103,6 +2349,7 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
+                styleId?: string;
             };
             header?: never;
             path: {
@@ -2125,6 +2372,7 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
+                styleId?: string;
             };
             header?: never;
             path: {
@@ -2517,7 +2765,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["EventPhotoDto"];
+                "application/json": components["schemas"]["AddEventPhotoDto"];
             };
         };
         responses: {
@@ -2606,6 +2854,213 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ScheduleController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateScheduleDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ScheduleController_getByGroup: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                groupId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ScheduleController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                uid: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateScheduleDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ScheduleController_remove: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                uid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ClassesController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateClassDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ClassesController_attend: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AttendDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ClassesController_getByGroup: {
+        parameters: {
+            query?: {
+                from?: string;
+                to?: string;
+            };
+            header?: never;
+            path: {
+                groupId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ClassesController_getCurrent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                groupId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ClassesController_getAttendance: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                uid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ClassesController_updateTopic: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                uid: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateTopicDto"];
+            };
+        };
         responses: {
             200: {
                 headers: {
