@@ -50,6 +50,7 @@ export default function CalendarPage() {
     }
 
     setLoading(true);
+    console.log(currentGroup);
     getClassesByGroup(currentGroup)
       .then((classes) => {
         const mapped = classes.map(classToEvent);
@@ -78,7 +79,7 @@ export default function CalendarPage() {
   return (
     <CalendarProvider events={events} users={users}>
       <div className="mx-auto flex max-w-screen-2xl flex-col gap-4 p-4">
-        <ClientContainer view="month" />
+        <ClientContainer />
         <ChangeBadgeVariantInput />
       </div>
     </CalendarProvider>

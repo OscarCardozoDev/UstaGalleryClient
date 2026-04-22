@@ -5,3 +5,44 @@ body {
     padding: 0px;
     overflow: hidden;
 }
+
+/* ─── shadcn/ui CSS variables (light mode) ──────────────────────────────────
+   Used by the Calendar component and any shadcn-style UI components.
+   Values map to the UstaGallery design palette.
+   ─────────────────────────────────────────────────────────────────────────── */
+:root {
+  --background: 0 0% 100%;
+  --foreground: 0 0% 10%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 10%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 10%;
+  --muted: 216 11% 96%;
+  --muted-foreground: 240 1% 64%;
+  --accent: 216 8% 91%;
+  --accent-foreground: 0 0% 10%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 99%;
+  --border: 216 5% 86%;
+  --input: 216 5% 86%;
+  --ring: 0 0% 10%;
+  --radius: 0.5rem;
+}
+
+.dark {
+  --background: 0 0% 10%;
+  --foreground: 0 0% 98%;
+  --card: 0 0% 14%;
+  --card-foreground: 0 0% 98%;
+  --popover: 0 0% 14%;
+  --popover-foreground: 0 0% 98%;
+  --muted: 0 0% 21%;
+  --muted-foreground: 240 1% 64%;
+  --accent: 0 0% 21%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 62% 30%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 0 0% 21%;
+  --input: 0 0% 21%;
+  --ring: 216 5% 86%;
+}

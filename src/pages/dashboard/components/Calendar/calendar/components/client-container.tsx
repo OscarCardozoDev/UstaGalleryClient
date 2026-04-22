@@ -12,14 +12,8 @@ import { CalendarAgendaView } from "../components/agenda-view/calendar-agenda-vi
 import { CalendarDayView } from "../components/week-and-day-view/calendar-day-view";
 import { CalendarWeekView } from "../components/week-and-day-view/calendar-week-view";
 
-import type { TCalendarView } from "../types";
-
-interface IProps {
-  view: TCalendarView;
-}
-
-export function ClientContainer({ view }: IProps) {
-  const { selectedDate, selectedUserId, events } = useCalendar();
+export function ClientContainer() {
+  const { view, selectedDate, selectedUserId, events } = useCalendar();
 
   const filteredEvents = useMemo(() => {
     return events.filter(event => {
@@ -89,7 +83,7 @@ export function ClientContainer({ view }: IProps) {
 
   return (
     <div className="overflow-hidden rounded-xl border">
-      <CalendarHeader view={view} events={filteredEvents} />
+      <CalendarHeader events={filteredEvents} />
 
       <DndProviderWrapper>
         {view === "day" && <CalendarDayView singleDayEvents={singleDayEvents} multiDayEvents={multiDayEvents} />}

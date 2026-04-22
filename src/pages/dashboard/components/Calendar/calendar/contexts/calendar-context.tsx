@@ -2,9 +2,11 @@ import { createContext, useContext, useState } from "react";
 
 import type { Dispatch, SetStateAction } from "react";
 import type { IEvent, IUser } from "../interfaces";
-import type { TBadgeVariant, TVisibleHours, TWorkingHours } from "../types";
+import type { TBadgeVariant, TCalendarView, TVisibleHours, TWorkingHours } from "../types";
 
 interface ICalendarContext {
+  view: TCalendarView;
+  setView: (view: TCalendarView) => void;
   selectedDate: Date;
   setSelectedDate: (date: Date | undefined) => void;
   selectedUserId: IUser["id"] | "all";
@@ -34,7 +36,15 @@ const WORKING_HOURS = {
 
 const VISIBLE_HOURS = { from: 7, to: 18 };
 
-export function CalendarProvider({ children, users, events }: { children: React.ReactNode; users: IUser[]; events: IEvent[] }) {
+interface CalendarProviderProps {
+  children: React.ReactNode;
+  users: IUser[];
+  events: IEvent[];
+  defaultView?: TCalendarView;
+}
+
+export function CalendarProvider({ children, users, events, defaultView = "month" }: CalendarProviderProps) {
+  const [view, setView] = useState<TCalendarView>(defaultView);
   const [badgeVariant, setBadgeVariant] = useState<TBadgeVariant>("colored");
   const [visibleHours, setVisibleHours] = useState<TVisibleHours>(VISIBLE_HOURS);
   const [workingHours, setWorkingHours] = useState<TWorkingHours>(WORKING_HOURS);
@@ -56,6 +66,8 @@ export function CalendarProvider({ children, users, events }: { children: React.
   return (
     <CalendarContext.Provider
       value={{
+        view,
+        setView,
         selectedDate,
         setSelectedDate: handleSelectDate,
         selectedUserId,
