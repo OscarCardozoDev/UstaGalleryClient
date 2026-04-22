@@ -1,15 +1,18 @@
-import { CALENDAR_ITEMS_MOCK, USERS_MOCK } from "./mocks";
+import { createManualClass, updateClassTopic } from "../../../../../services/classes";
 
-export const getEvents = async () => {
-  // TO DO: implement this
-  // Increase the delay to better see the loading state
-  // await new Promise(resolve => setTimeout(resolve, 800));
-  return CALENDAR_ITEMS_MOCK;
+export const createClass = async (data: {
+  groupId: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  topic?: string;
+}) => {
+  return createManualClass(data);
 };
 
-export const getUsers = async () => {
-  // TO DO: implement this
-  // Increase the delay to better see the loading state
-  // await new Promise(resolve => setTimeout(resolve, 800));
-  return USERS_MOCK;
+export const updateTopic = async (
+  classId: string,
+  data: { topic?: string; review?: string },
+) => {
+  return updateClassTopic(classId, data);
 };
