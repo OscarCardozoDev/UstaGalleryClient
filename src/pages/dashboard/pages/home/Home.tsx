@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./Home.module.css";
+import { useAuth } from "../../../../context/AuthContext";
+import { getCurrentClass, attendClass } from "../../../../services/classes";
 
 interface Event {
   id: string;
@@ -34,9 +36,12 @@ interface Notification {
 
 export default function Home() {
   const navigate = useNavigate();
+  const { currentGroup } = useAuth();
   const [attendanceTaken, setAttendanceTaken] = useState(false);
   const [currentTime] = useState(new Date());
   const [isLoading, setIsLoading] = useState(true);
+  const [currentClassId, setCurrentClassId] = useState<string | null>(null);
+  const [checkingClass, setCheckingClass] = useState(true);
 
   // Simular carga de datos
   useEffect(() => {
@@ -49,7 +54,7 @@ export default function Home() {
 
   // Datos mock
   const userName = "Antonella";
-  const attendanceCount = 0;
+  const [attendanceCount] = useState(0);
   
   const artworks: Artwork[] = [
     {
@@ -179,9 +184,29 @@ export default function Home() {
     }
   ];
 
-  const handleTakeAttendance = () => {
-    setAttendanceTaken(true);
-    console.log("Asistencia registrada");
+  useEffect(() => {
+    if (!currentGroup) {
+      setCheckingClass(false);
+      return;
+    }
+    getCurrentClass(currentGroup)
+      .then((result) => {
+        if (result.active && result.classId) {
+          setCurrentClassId(result.classId);
+        }
+      })
+      .catch(() => { /* silently ignore */ })
+      .finally(() => setCheckingClass(false));
+  }, [currentGroup]);
+
+  const handleTakeAttendance = async () => {
+    if (!currentClassId) return;
+    try {
+      await attendClass(currentClassId);
+      setAttendanceTaken(true);
+    } catch {
+      setAttendanceTaken(true);
+    }
   };
 
   const handleArtworkClick = (artworkId: string) => {
@@ -295,19 +320,21 @@ export default function Home() {
               </div>
               <p className={styles.dateText}>{formatDate(currentTime)}</p>
               
-              <button 
+              <button
                 className={`${styles.attendanceButton} ${attendanceTaken ? styles.attendanceButtonTaken : ''}`}
                 onClick={handleTakeAttendance}
-                disabled={attendanceTaken}
+                disabled={attendanceTaken || !currentClassId || checkingClass}
               >
-                {attendanceTaken ? (
+                {checkingClass ? (
+                  <>Verificando clase...</>
+                ) : attendanceTaken ? (
                   <>
                     <svg className={styles.checkIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                     Asistencia Tomada
                   </>
-                ) : (
+                ) : currentClassId ? (
                   <>
                     <svg className={styles.checkIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor">
                       <circle cx="12" cy="12" r="10" strokeWidth={2} />
@@ -315,6 +342,8 @@ export default function Home() {
                     </svg>
                     Tomar Asistencia
                   </>
+                ) : (
+                  <>No hay clase en el momento</>
                 )}
               </button>
 
