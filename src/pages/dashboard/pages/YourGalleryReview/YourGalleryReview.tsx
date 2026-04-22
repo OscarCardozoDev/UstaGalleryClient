@@ -6,7 +6,6 @@ import ArtworkCard from "../../components/artworkCard/ArtworkCard";
 import styles from "./YourGalleryReview.module.css";
 
 // ─── Componente ───────────────────────────────────────────────────────────────
-
 export default function YourGalleryReview() {
   const { user } = useAuth();
 

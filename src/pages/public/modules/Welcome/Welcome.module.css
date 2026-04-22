@@ -302,7 +302,11 @@
 /* ── Responsive visibility ───────────────────────────────── */
 @media (max-width: 767px) {
   .desktopHero  { display: none; }
-  .mobileLayout { display: block; }
+  .mobileLayout { 
+      height: 100vh;
+      display: block;
+      overflow-y: scroll;
+  }
 }
 
 @media (min-width: 768px) {

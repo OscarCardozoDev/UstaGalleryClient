@@ -22,20 +22,19 @@ interface AuthContextType {
 // ═══════════════════════════════════════════════════════════════════════════
 // CONSTANTES
 // ═══════════════════════════════════════════════════════════════════════════
-
-const SESSION_KEY = 'user_session';
+const sessionKey = crypto.randomUUID();
 
 // ═══════════════════════════════════════════════════════════════════════════
 // HELPERS - USUARIO (sessionStorage)
 // ═══════════════════════════════════════════════════════════════════════════
 
 const saveUser = (user: UserSession) => {
-  sessionStorage.setItem(SESSION_KEY, JSON.stringify(user));
+  sessionStorage.setItem(sessionKey, JSON.stringify(user));
 };
 
 const getUser = (): UserSession | null => {
   try {
-    const stored = sessionStorage.getItem(SESSION_KEY);
+    const stored = sessionStorage.getItem(sessionKey);
     return stored ? (JSON.parse(stored) as UserSession) : null;
   } catch {
     return null;
@@ -81,7 +80,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // ═══════════════════════════════════════════════════════════════════════════
 // PROVIDER
-// Sin useNavigate aquí — cada consumidor maneja su propia navegación
 // ═══════════════════════════════════════════════════════════════════════════
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -104,7 +102,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Carga inicial: sessionStorage → backend
   useEffect(() => {
     const init = async () => {
-      const cached = getUser();
+      const cached = await getUser();
       if (cached) {
         setUser(cached);
         setCurrentGroupState(resolveGroup(cached));
@@ -162,7 +160,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // No navega — quien llame a logout() se encarga del navigate
   const logout = async () => {
     await Logout();
-    sessionStorage.removeItem(SESSION_KEY);
+    sessionStorage.removeItem(sessionKey);
     setUser(null);
     setCurrentGroupState(null);
   };

@@ -1,4 +1,11 @@
-import type { ClassSession, CurrentClassResult, AttendanceRecord } from '../interfaces/classes';
+import type {
+  ClassSession,
+  CurrentClassResult,
+  AttendanceRecord,
+  CreateClassDto,
+  UpdateTopicDto,
+  AttendDto,
+} from '../interfaces/classes';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -41,12 +48,12 @@ export async function getCurrentClass(groupId: string): Promise<CurrentClassResu
   return handleResponse<CurrentClassResult>(res, 'Failed to check current class');
 }
 
-export async function attendClass(classId: string): Promise<{ success: boolean }> {
+export async function attendClass(body: AttendDto): Promise<{ success: boolean }> {
   const res = await fetch(`${API_URL}/classes/attend`, {
     method: 'POST',
     credentials: 'include',
     headers: getHeaders(true),
-    body: JSON.stringify({ classId }),
+    body: JSON.stringify(body),
   });
   if (res.status === 409) return { success: true };
   return handleResponse<{ success: boolean }>(res, 'Failed to register attendance');
@@ -62,7 +69,7 @@ export async function getClassAttendance(classId: string): Promise<AttendanceRec
 
 export async function updateClassTopic(
   classId: string,
-  data: { topic?: string; review?: string },
+  data: UpdateTopicDto,
 ): Promise<{ uid: string; topic: string | null; review: string | null }> {
   const res = await fetch(`${API_URL}/classes/${classId}/topic`, {
     method: 'PATCH',
@@ -73,13 +80,7 @@ export async function updateClassTopic(
   return handleResponse(res, 'Failed to update topic');
 }
 
-export async function createManualClass(data: {
-  groupId: string;
-  date: string;
-  startTime: string;
-  endTime: string;
-  topic?: string;
-}): Promise<{ uid: string }> {
+export async function createManualClass(data: CreateClassDto): Promise<{ uid: string }> {
   const res = await fetch(`${API_URL}/classes/create`, {
     method: 'POST',
     credentials: 'include',

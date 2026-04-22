@@ -25,7 +25,10 @@
         "react-dom": "^19.2.0",
         "react-hook-form": "^7.72.1",
         "react-router-dom": "^7.10.1",
+<<<<<<< HEAD
         "remove": "^0.1.5",
+=======
+>>>>>>> develop
         "sileo": "^0.1.5",
         "tailwind-merge": "^3.4.0",
         "tailwindcss-animate": "^1.0.7",

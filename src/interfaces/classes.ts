@@ -1,3 +1,11 @@
+import type { components } from "../types/api";
+
+// ─── Requests (codegen) ──────────────────────────────────────────────────────
+export type CreateClassDto  = components["schemas"]["CreateClassDto"];
+export type UpdateTopicDto  = components["schemas"]["UpdateTopicDto"];
+export type AttendDto       = components["schemas"]["AttendDto"];
+
+// ─── Responses (manual) ──────────────────────────────────────────────────────
 export interface ClassProfesor {
   uid: string;
   name: string;

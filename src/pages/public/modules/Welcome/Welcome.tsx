@@ -3,8 +3,12 @@
 // Layout y efectos via Welcome.module.css
 // Animaciones de entrada con Framer Motion
 
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import styles from "./Welcome.module.css";
+import { getHomeEvents } from "../../../../services/events";
+import type { EventHome } from "../../../../interfaces/events";
 
 /* ── Variantes de animación ─────────────────────────────── */
 const fadeUp = {
@@ -49,6 +53,20 @@ const scaleIn = {
 
 /* ── Componente principal ───────────────────────────────── */
 export default function Welcome() {
+  const navigate = useNavigate();
+  const [events, setEvents] = useState<EventHome[]>([]);
+
+  useEffect(() => {
+    getHomeEvents({ limit: 2 }).then(setEvents).catch(() => {});
+  }, []);
+
+  const formatEventDate = (dateStr: string) => {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString("es-CO", { month: "short", day: "numeric" }).toUpperCase()
+      + " — "
+      + d.toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit" });
+  };
+
   return (
     <div className={`${styles.root} bg-neutral`}>
 
@@ -131,32 +149,39 @@ export default function Welcome() {
           variants={slideRight} initial="hidden" animate="visible" custom={0.7}
         >
           <div className={styles.eventsContainer}>
-            <div className={styles.eventItem}>
-              <span className="font-sans text-[0.6rem] tracking-[0.12em] uppercase text-tertiary block mb-1">
-                Upcoming Events
-              </span>
-              <h3 className="font-serif italic text-[1.75rem] text-primary leading-tight mb-1">
-                Vernissage: Light
-              </h3>
-              <p className="font-sans text-[0.6rem] uppercase tracking-[0.15em] text-tertiary">
-                Oct 24 — 18:00
-              </p>
-            </div>
-
-            <div className={styles.eventItem}>
-              <h3 className="font-serif italic text-[1.75rem] text-primary leading-tight mb-1">
-                Curator's Talk
-              </h3>
-              <p className="font-sans text-[0.6rem] uppercase tracking-[0.15em] text-tertiary">
-                Nov 02 — 14:00
-              </p>
-            </div>
+            {events.length === 0 ? (
+              <div className={styles.eventItem}>
+                <span className="font-sans text-[0.6rem] tracking-[0.12em] uppercase text-tertiary block mb-1">
+                  Próximos Eventos
+                </span>
+                <p className="font-sans text-[0.6rem] uppercase tracking-[0.15em] text-tertiary">
+                  Sin eventos próximos
+                </p>
+              </div>
+            ) : (
+              events.map((event, i) => (
+                <div key={event.uid} className={styles.eventItem}>
+                  {i === 0 && (
+                    <span className="font-sans text-[0.6rem] tracking-[0.12em] uppercase text-tertiary block mb-1">
+                      Próximos Eventos
+                    </span>
+                  )}
+                  <h3 className="font-serif italic text-[1.75rem] text-primary leading-tight mb-1">
+                    {event.name}
+                  </h3>
+                  <p className="font-sans text-[0.6rem] uppercase tracking-[0.15em] text-tertiary">
+                    {formatEventDate(event.startDate)}
+                  </p>
+                </div>
+              ))
+            )}
           </div>
 
           <button
             className={`${styles.reserveBtn} w-full py-4 mt-6 bg-primary text-neutral font-sans text-[0.6rem] tracking-[0.18em] uppercase border-none cursor-pointer hover:bg-primary-800 transition-colors duration-400`}
+            onClick={() => navigate("/events")}
           >
-            Reserve Access
+            Ver Eventos
           </button>
         </motion.div>
 

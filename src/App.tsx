@@ -4,12 +4,14 @@ import { ProtectedRoute, GuestRoute } from "./context/ProtectedRoutes";
 import MainPageModule from "./pages/public/index";
 import AuthPage from "./pages/auth/layout/AuthLayout";
 import DashboardModule from "./pages/dashboard/index";
-
+import { Toaster } from "sileo";
 import "./App.css";
 
 function App() {
   return (
     <BrowserRouter>
+      <Toaster position="top-center" theme="dark" />
+
       <AuthProvider>
         <Routes>
         {/* Rutas públicas */}

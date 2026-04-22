@@ -92,7 +92,8 @@ export default function EditEvent() {
   // ── Obras seleccionadas ────────────────────────────────────────────────────
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [requestingGroupId, setRequestingGroupId] = useState("");
-  const [isProductsOpen, setIsProductsOpen] = useState(false);
+  const [productSearch, setProductSearch] = useState("");
+  const [carouselIndex, setCarouselIndex] = useState(0);
 
   // ── UI ─────────────────────────────────────────────────────────────────────
   const [activeTab, setActiveTab]           = useState<"info" | "photos" | "products">("info");
@@ -429,169 +430,312 @@ export default function EditEvent() {
         )}
 
         {/* ══ TAB: Fotos ══ */}
-        {activeTab === "photos" && (
-          <div className={styles.photosTab}>
+        {activeTab === "photos" && (() => {
+          const allPhotos = event.photos;
+          const currentPhoto = allPhotos[carouselIndex] ?? null;
+          const PHOTO_TYPE_LABELS: Record<string, string> = {
+            HERO: "Portada", PROMO: "Promocional", MEMORY: "Recuerdo",
+          };
+          return (
+            <div className={styles.photosTab}>
 
-            {/* Fotos existentes por tipo */}
-            {[
-              { type: "HERO" as const,   label: "Portada", list: heroPhotos },
-              { type: "PROMO" as const,  label: "Promocionales", list: promoPhotos },
-              { type: "MEMORY" as const, label: "Recuerdo", list: memPhotos },
-            ].map(({ type, label, list }) =>
-              list.length > 0 ? (
-                <div key={type} className={styles.photoGroup}>
-                  <div className={styles.photoGroupHeader}>
-                    <h3 className={styles.photoGroupTitle}>{label}</h3>
-                    <span className={styles.sectionCount}>{list.length}</span>
-                  </div>
-                  <div className={styles.photoGrid}>
-                    {list.map((p) => (
-                      <div key={p.photo.uid} className={styles.photoItem}>
-                        <img src={p.photo.url} alt="foto" className={styles.photoThumb} />
+              {/* ── Carrusel grande ── */}
+              {allPhotos.length > 0 ? (
+                <div className={styles.carouselSection}>
+                  {/* Imagen principal */}
+                  <div className={styles.carouselMain}>
+                    <img
+                      key={currentPhoto?.photo.uid}
+                      src={currentPhoto?.photo.url}
+                      alt="foto evento"
+                      className={styles.carouselMainImage}
+                    />
+
+                    {/* Overlay: tipo + botón eliminar */}
+                    <div className={styles.carouselOverlay}>
+                      <span className={styles.carouselTypeBadge}>
+                        {PHOTO_TYPE_LABELS[currentPhoto?.photoType ?? ""] ?? currentPhoto?.photoType}
+                      </span>
+                      <button
+                        className={styles.carouselDeleteBtn}
+                        onClick={() => {
+                          handleDeletePhoto(currentPhoto!.photo.uid);
+                          setCarouselIndex((i) => Math.max(0, i - 1));
+                        }}
+                        title="Eliminar esta foto"
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
+                          <polyline points="3 6 5 6 21 6" />
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 6l-1 14H6L5 6" />
+                          <path strokeLinecap="round" d="M10 11v6M14 11v6M9 6V4h6v2" />
+                        </svg>
+                        Eliminar
+                      </button>
+                    </div>
+
+                    {/* Flechas de navegación */}
+                    {allPhotos.length > 1 && (
+                      <>
                         <button
-                          className={styles.deletePhotoBtn}
-                          onClick={() => handleDeletePhoto(p.photo.uid)}
-                          title="Eliminar foto"
+                          className={`${styles.carouselArrow} ${styles.carouselArrowLeft}`}
+                          onClick={() => setCarouselIndex((i) => (i - 1 + allPhotos.length) % allPhotos.length)}
+                          aria-label="Anterior"
                         >
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
-                            <line x1="18" y1="6" x2="6" y2="18" strokeLinecap="round" />
-                            <line x1="6" y1="6" x2="18" y2="18" strokeLinecap="round" />
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 18l-6-6 6-6" />
                           </svg>
                         </button>
-                        {type === "HERO" && (
-                          <span className={styles.heroBadge}>HERO</span>
-                        )}
+                        <button
+                          className={`${styles.carouselArrow} ${styles.carouselArrowRight}`}
+                          onClick={() => setCarouselIndex((i) => (i + 1) % allPhotos.length)}
+                          aria-label="Siguiente"
+                        >
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 18l6-6-6-6" />
+                          </svg>
+                        </button>
+                      </>
+                    )}
+
+                    {/* Contador */}
+                    <div className={styles.carouselCounter}>
+                      {carouselIndex + 1} / {allPhotos.length}
+                    </div>
+                  </div>
+
+                  {/* Miniaturas */}
+                  <div className={styles.carouselThumbs}>
+                    {allPhotos.map((p, i) => (
+                      <div
+                        key={p.photo.uid}
+                        className={`${styles.carouselThumb} ${i === carouselIndex ? styles.carouselThumbActive : ""}`}
+                        onClick={() => setCarouselIndex(i)}
+                        title={PHOTO_TYPE_LABELS[p.photoType] ?? p.photoType}
+                      >
+                        <img src={p.photo.url} alt={`foto-${i}`} className={styles.carouselThumbImg} />
+                        <span className={styles.carouselThumbBadge}>
+                          {p.photoType === "HERO" ? "⭐" : p.photoType === "PROMO" ? "📸" : "🎞️"}
+                        </span>
                       </div>
                     ))}
                   </div>
                 </div>
-              ) : null
-            )}
+              ) : (
+                <div className={styles.noPhotosState}>
+                  <span>📷</span>
+                  <p>Aún no hay fotos en este evento</p>
+                </div>
+              )}
 
-            {/* Subir nuevas fotos */}
-            <div className={styles.uploadPhotosSection}>
-              <h3 className={styles.photoGroupTitle}>Agregar fotos</h3>
+              {/* ── Subir nuevas fotos ── */}
+              <div className={styles.uploadPhotosSection}>
+                <div className={styles.uploadPhotosSectionHeader}>
+                  <h3 className={styles.photoGroupTitle}>Agregar fotos</h3>
+                  <div className={styles.formGroup} style={{ flex: "0 0 200px" }}>
+                    <select className={styles.formInput} value={selectedPhotoType}
+                      onChange={(e) => setSelectedPhotoType(e.target.value as EventPhotoType)}>
+                      {PHOTO_TYPE_OPTIONS.map((o) => (
+                        <option key={o.value} value={o.value}>{o.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
 
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Tipo de foto</label>
-                <select className={styles.formInput} value={selectedPhotoType}
-                  onChange={(e) => setSelectedPhotoType(e.target.value as EventPhotoType)}>
-                  {PHOTO_TYPE_OPTIONS.map((o) => (
-                    <option key={o.value} value={o.value}>{o.label}</option>
-                  ))}
-                </select>
+                <div className={styles.imageUploaderContainer}>
+                  <ImageUploader
+                    key={uploaderKey}
+                    onChange={setNewPhotoItems}
+                    limit={10}
+                    hideMainSelector
+                  />
+                </div>
+
+                <button
+                  className={styles.submitButton}
+                  onClick={handleUploadPhotos}
+                  disabled={isLoadingPhotos || newPhotoItems.filter((i) => !i.isExisting).length === 0}
+                >
+                  {isLoadingPhotos ? "Subiendo..." : "Subir fotos seleccionadas"}
+                </button>
               </div>
-
-              <div className={styles.imageUploaderContainer}>
-                <ImageUploader
-                  key={uploaderKey}
-                  onChange={setNewPhotoItems}
-                  limit={10}
-                  hideMainSelector
-                />
-              </div>
-
-              <button
-                className={styles.submitButton}
-                onClick={handleUploadPhotos}
-                disabled={isLoadingPhotos || newPhotoItems.filter((i) => !i.isExisting).length === 0}
-              >
-                {isLoadingPhotos ? "Subiendo..." : "Subir fotos seleccionadas"}
-              </button>
             </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* ══ TAB: Obras ══ */}
-        {activeTab === "products" && (
-          <div className={styles.productsTab}>
+        {activeTab === "products" && (() => {
+          const inEvent   = availableProducts.filter((p) => selectedProducts.includes(p.uid));
+          const notInEvent = availableProducts
+            .filter((p) => !selectedProducts.includes(p.uid))
+            .filter((p) => p.name.toLowerCase().includes(productSearch.toLowerCase()));
+          const allFiltered = availableProducts.filter((p) =>
+            p.name.toLowerCase().includes(productSearch.toLowerCase())
+          );
 
-            {/* Selector de grupo */}
-            {event.groups.length > 1 && (
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Grupo (gestionar obras de)</label>
-                <select className={styles.formInput} value={requestingGroupId}
-                  onChange={async (e) => {
-                    const gid = e.target.value;
-                    setRequestingGroupId(gid);
-                    const prods = await getAvailableProducts(gid);
-                    setAvailableProducts(prods);
-                  }}>
-                  {event.groups.map(({ group }) => (
-                    <option key={group.uid} value={group.uid}>{group.name}</option>
-                  ))}
-                </select>
-              </div>
-            )}
+          return (
+            <div className={styles.productsTab}>
 
-            <div className={styles.productsInfo}>
-              <span>{selectedProducts.length} obra(s) seleccionada(s)</span>
-            </div>
+              {/* Selector de grupo (multi-grupo) */}
+              {event.groups.length > 1 && (
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Grupo</label>
+                  <select className={styles.formInput} value={requestingGroupId}
+                    onChange={async (e) => {
+                      const gid = e.target.value;
+                      setRequestingGroupId(gid);
+                      const prods = await getAvailableProducts(gid);
+                      setAvailableProducts(prods);
+                      setSelectedProducts([]);
+                    }}>
+                    {event.groups.map(({ group }) => (
+                      <option key={group.uid} value={group.uid}>{group.name}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
 
-            {/* Selector personalizado de obras */}
-            <div className={styles.selectContainer}>
-              <div
-                className={styles.selectTrigger}
-                onClick={() => setIsProductsOpen(!isProductsOpen)}
-              >
-                <span className={styles.selectValue}>
-                  {selectedProducts.length > 0
-                    ? `${selectedProducts.length} obra(s) seleccionada(s)`
-                    : "Selecciona las obras para este evento"}
-                </span>
-                <svg className={`${styles.selectIcon} ${isProductsOpen ? styles.rotate : ""}`}
-                  width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
-              </div>
-
-              {isProductsOpen && (
-                <div className={styles.selectDropdown}>
-                  {availableProducts.length > 0 ? (
-                    availableProducts.map((product) => {
+              {/* ── Obras en el evento ── */}
+              {inEvent.length > 0 && (
+                <div className={styles.productsSection}>
+                  <div className={styles.productsSectionHeader}>
+                    <h3 className={styles.productsSectionTitle}>En el evento</h3>
+                    <span className={styles.sectionCount}>{inEvent.length}</span>
+                  </div>
+                  <div className={styles.productsGrid}>
+                    {inEvent.map((product) => {
                       const heroUrl = product.photos[0]?.photo.url ?? "";
-                      const isSelected = selectedProducts.includes(product.uid);
+                      const authors = product.authors
+                        .filter((a) => a.isAuthor)
+                        .map((a) => `${a.user.name} ${a.user.lastName}`)
+                        .join(", ");
                       return (
                         <div
                           key={product.uid}
-                          className={styles.productOption}
+                          className={`${styles.productCard} ${styles.productCardSelected}`}
                           onClick={() => toggleProduct(product.uid)}
+                          title="Click para quitar del evento"
                         >
-                          {heroUrl && (
-                            <img src={heroUrl} alt={product.name} className={styles.productOptionImg} />
-                          )}
-                          <div className={styles.productOptionInfo}>
-                            <span className={styles.productOptionName}>{product.name}</span>
-                            <span className={styles.productOptionAuthor}>
-                              {product.authors.filter((a) => a.isAuthor).map((a) => `${a.user.name} ${a.user.lastName}`).join(", ")}
-                            </span>
+                          <div className={styles.productCardImage}>
+                            {heroUrl
+                              ? <img src={heroUrl} alt={product.name} className={styles.productCardImg} />
+                              : <div className={styles.productCardPlaceholder}>🎨</div>
+                            }
+                            <div className={styles.productCardCheck}>
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                              </svg>
+                            </div>
                           </div>
-                          <input type="checkbox" checked={isSelected} readOnly
-                            className={styles.checkbox} />
+                          <div className={styles.productCardInfo}>
+                            <p className={styles.productCardName}>{product.name}</p>
+                            <p className={styles.productCardAuthor}>{authors}</p>
+                          </div>
                         </div>
                       );
-                    })
-                  ) : (
-                    <div className={styles.selectOptionEmpty}>
-                      No hay obras APPROVED disponibles en este grupo
-                    </div>
-                  )}
+                    })}
+                  </div>
                 </div>
               )}
-            </div>
 
-            <div className={styles.warningBox}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-              </svg>
-              Actualizar las obras también devolverá el evento a <strong>PENDIENTE</strong>.
-            </div>
+              {/* ── Buscador ── */}
+              <div className={styles.productsSectionHeader}>
+                <h3 className={styles.productsSectionTitle}>
+                  Obras disponibles
+                  <span className={styles.sectionCount} style={{ marginLeft: 8 }}>
+                    {availableProducts.length}
+                  </span>
+                </h3>
+                <div className={styles.searchWrapper}>
+                  <svg className={styles.searchIcon} width="15" height="15" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="11" cy="11" r="8" />
+                    <path strokeLinecap="round" d="M21 21l-4.35-4.35" />
+                  </svg>
+                  <input
+                    type="text"
+                    className={styles.searchInput}
+                    placeholder="Buscar por nombre..."
+                    value={productSearch}
+                    onChange={(e) => setProductSearch(e.target.value)}
+                  />
+                  {productSearch && (
+                    <button className={styles.clearSearch} onClick={() => setProductSearch("")}>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M18 6L6 18M6 6l12 12" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
+              </div>
 
-            <button className={styles.submitButton} onClick={handleSaveProducts} disabled={isLoadingProducts}>
-              {isLoadingProducts ? "Guardando..." : "Guardar obras"}
-            </button>
-          </div>
-        )}
+              {/* Grid de obras NO en el evento (filtradas por búsqueda) */}
+              {availableProducts.length === 0 ? (
+                <div className={styles.productsEmpty}>
+                  <span>🎨</span>
+                  <p>No hay obras APPROVED disponibles en este grupo</p>
+                </div>
+              ) : notInEvent.length > 0 ? (
+                <div className={styles.productsGrid}>
+                  {notInEvent.map((product) => {
+                    const heroUrl = product.photos[0]?.photo.url ?? "";
+                    const authors = product.authors
+                      .filter((a) => a.isAuthor)
+                      .map((a) => `${a.user.name} ${a.user.lastName}`)
+                      .join(", ");
+                    return (
+                      <div
+                        key={product.uid}
+                        className={styles.productCard}
+                        onClick={() => toggleProduct(product.uid)}
+                        title="Click para agregar al evento"
+                      >
+                        <div className={styles.productCardImage}>
+                          {heroUrl
+                            ? <img src={heroUrl} alt={product.name} className={styles.productCardImg} />
+                            : <div className={styles.productCardPlaceholder}>🎨</div>
+                          }
+                          <div className={styles.productCardAddIcon}>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
+                              <line x1="12" y1="5" x2="12" y2="19" strokeLinecap="round" />
+                              <line x1="5" y1="12" x2="19" y2="12" strokeLinecap="round" />
+                            </svg>
+                          </div>
+                        </div>
+                        <div className={styles.productCardInfo}>
+                          <p className={styles.productCardName}>{product.name}</p>
+                          <p className={styles.productCardAuthor}>{authors}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : productSearch && allFiltered.length === 0 ? (
+                <div className={styles.productsEmpty}>
+                  <span>🔍</span>
+                  <p>No se encontraron obras con ese nombre</p>
+                </div>
+              ) : (
+                <div className={styles.productsEmpty}>
+                  <span>✅</span>
+                  <p>Todas las obras disponibles ya están en el evento</p>
+                </div>
+              )}
+
+              <div className={styles.warningBox}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                </svg>
+                Guardar devolverá el evento a <strong>PENDIENTE</strong> para revisión.
+              </div>
+
+              <button className={styles.submitButton} onClick={handleSaveProducts} disabled={isLoadingProducts}>
+                {isLoadingProducts
+                  ? "Guardando..."
+                  : `Guardar obras (${selectedProducts.length} seleccionadas)`}
+              </button>
+            </div>
+          );
+        })()}
 
       </div>
     </div>

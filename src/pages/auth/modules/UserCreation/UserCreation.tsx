@@ -1,3 +1,4 @@
+import { sileo } from "sileo";
 import React, { useState, useRef } from 'react';
 import styles from './UserCreation.module.css';
 import formsParams from '../../../../utils/forms.params.json';
@@ -60,13 +61,19 @@ const UserCreation: React.FC<UserCreationProps> = ({
     if (file) {
       // Validate file type
       if (!file.type.startsWith('image/')) {
-        setErrors((prev) => ({ ...prev, profileImage: 'Por favor selecciona una imagen válida' }));
+        sileo.error({
+          title: "Error de imagen",
+          description: "Por favor selecciona una imagen válida (JPG, JPEG, PNG)",
+        });
         return;
       }
 
       // Validate file size (max 5MB)
       if (file.size > 2 * 1024 * 1024) {
-        setErrors((prev) => ({ ...prev, profileImage: 'La imagen no debe superar 5MB' }));
+        sileo.error({
+          title: "Error de imagen",
+          description: "La imagen no debe superar 5MB",
+        });
         return;
       }
 
@@ -172,12 +179,18 @@ const UserCreation: React.FC<UserCreationProps> = ({
       const result = await createUser(requestData);
 
       if (result) {
+        sileo.success({
+          title: "Usuario creado exitosamente",
+          description: "Tu perfil ha sido creado exitosamente",
+        });
         onUserCreated();
       }
     } catch (err) {
-      console.error('Error creating user:', err);
       const errorMessage = err instanceof Error ? err.message : 'Error al crear usuario. Intenta nuevamente.';
-      setErrors({ name: errorMessage });
+      sileo.error({
+        title: "Error al crear usuario",
+        description: errorMessage,
+      });
     } finally {
       setIsLoading(false);
     }

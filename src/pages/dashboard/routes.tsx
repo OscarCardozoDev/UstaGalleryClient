@@ -8,6 +8,8 @@ import CreateEventPage from "./pages/CreateEvent/CreateEvent";
 import ReviewEvents from "./pages/ReviewEvents/ReviewEvents";
 import EditEventPage from "./pages/EditEvent/EditEvent";
 import Calendar from "./pages/Calendar/Calendar";
+import InvitationsPage from "./pages/Invitations/Invitations";
+import MyEventsPage from "./pages/MyEvents/MyEvents";
 
 export default function DashboardRoutes() {
   return (
@@ -23,6 +25,8 @@ export default function DashboardRoutes() {
       <Route path="/events/" element={<ReviewEvents />} />
       <Route path="/events/edit/:uid" element={<EditEventPage />} />
       <Route path="/calendar" element={<Calendar />} />
+      <Route path="/invitations" element={<InvitationsPage />} />
+      <Route path="/my-events" element={<MyEventsPage />} />
 
       {/* futuras rutas */}
       {/* <Route path="users" element={<UsersPage />} /> */}

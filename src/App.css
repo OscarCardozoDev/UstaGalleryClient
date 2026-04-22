@@ -23,7 +23,28 @@
 
   html {
     -webkit-text-size-adjust: 100%;
-    scroll-behavior: smooth;
+    scroll-behavior: stable;
+  }
+
+  /* Scrollbar global */
+  html::-webkit-scrollbar {
+    width: 12px;
+  }
+
+  html::-webkit-scrollbar-track {
+    background: transparent;
+    margin-top: 5px;
+    margin-bottom: 20px;
+  }
+
+  html::-webkit-scrollbar-thumb {
+    background: #3a3a3a;
+    border-radius: 6px;
+    border: 3px solid #f8f5f8;
+  }
+
+  html::-webkit-scrollbar-thumb:hover {
+    background: #171717;
   }
 
   body {
