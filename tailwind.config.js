@@ -1,4 +1,6 @@
 /** @type {import('tailwindcss').Config} */
+import animatePlugin from "tailwindcss-animate";
+
 export default {
   content: [
     "./index.html",
@@ -15,6 +17,14 @@ export default {
     },
 
     extend: {
+      screens: {
+        xs: "460px",
+      },
+
+      maxWidth: {
+        "8xl": "90rem",
+      },
+
       colors: {
         // ── Paleta Principal (Design System USTA Gallery) ────
         primary: {
@@ -32,6 +42,8 @@ export default {
           DEFAULT: '#1A1A1A',
           light:   '#4A4A4A',
           dark:    '#0D0D0D',
+          // Needed by shadcn button variant="default"
+          foreground: 'hsl(var(--primary-foreground))',
         },
 
         // ── Secondary — Gris medio ────────────────────────────
@@ -50,6 +62,8 @@ export default {
           DEFAULT: '#B8B8BC',
           light:   '#DADADC',
           dark:    '#96969A',
+          // Needed by shadcn button variant="secondary"
+          foreground: 'hsl(var(--secondary-foreground))',
         },
 
         // ── Tertiary — Gris cálido medio ──────────────────────
@@ -110,8 +124,15 @@ export default {
           foreground: 'hsl(var(--destructive-foreground))',
         },
         border: 'hsl(var(--border))',
-        input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
+        input:  'hsl(var(--input))',
+        ring:   'hsl(var(--ring))',
+        chart: {
+          "1": "hsl(var(--chart-1))",
+          "2": "hsl(var(--chart-2))",
+          "3": "hsl(var(--chart-3))",
+          "4": "hsl(var(--chart-4))",
+          "5": "hsl(var(--chart-5))",
+        },
 
         // ── Paleta Dashboard ─────────────────────────────────
         dashboard: {
@@ -132,13 +153,24 @@ export default {
       },
 
       borderRadius: {
+        // shadcn/ui (calendar component)
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 2px)',
+        sm: 'calc(var(--radius) - 4px)',
+        // UstaGallery design system
         dashboard: '12px',
         hero:      '18px',
         pill:      '9999px',
       },
 
+      backgroundImage: {
+        // Diagonal stripe pattern for non-working hours in calendar day/week view
+        "calendar-disabled-hour": "repeating-linear-gradient(-60deg, hsl(var(--border)) 0 0.5px, transparent 0.5px 8px)",
+      },
+
       // ── Tipografía fluid ──────────────────────────────────
       fontSize: {
+        xxs:          ['0.625rem', '1rem'],
         'fluid-xs':   ['clamp(0.65rem,  1.2vw, 0.75rem)',  { lineHeight: '1.4' }],
         'fluid-sm':   ['clamp(0.75rem,  1.5vw, 0.875rem)', { lineHeight: '1.5' }],
         'fluid-base': ['clamp(0.875rem, 1.8vw, 1rem)',     { lineHeight: '1.6' }],
@@ -151,9 +183,13 @@ export default {
 
       // ── Espaciado extra ───────────────────────────────────
       spacing: {
-        '18': '4.5rem',
-        '22': '5.5rem',
-        '26': '6.5rem',
+        '4.5': '1.125rem',
+        '5.5': '1.375rem',
+        '6.5': '1.625rem',
+        '8.5': '2.125rem',
+        '18':  '4.5rem',
+        '22':  '5.5rem',
+        '26':  '6.5rem',
       },
 
       // ── Sombras ───────────────────────────────────────────
@@ -180,8 +216,24 @@ export default {
         '600': '600ms',
         '900': '900ms',
       },
+
+      // ── Animaciones (shadcn/ui accordion) ─────────────────
+      keyframes: {
+        "accordion-down": {
+          from: { height: "0" },
+          to:   { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to:   { height: "0" },
+        },
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up":   "accordion-up 0.2s ease-out",
+      },
     },
   },
 
-  plugins: [],
+  plugins: [animatePlugin],
 }
