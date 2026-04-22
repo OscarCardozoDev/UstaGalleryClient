@@ -5,7 +5,7 @@ import type { IEvent, IUser } from "../interfaces/calendar";
 export const getCalendarEvents = async (): Promise<IEvent[]> => {
   return [
     {
-      id: 1,
+      id: "1",
       title: "Clase de Pintura",
       description: "Clase de pintura con el profesor de Pintura",
       startDate: "2026-04-15",
@@ -18,7 +18,7 @@ export const getCalendarEvents = async (): Promise<IEvent[]> => {
       },
     },
     {
-      id: 2,
+      id: "2",
       title: "Reunión docente",
       description: "Reunión con el docente de Pintura",
       startDate: "2026-04-16",
@@ -31,7 +31,7 @@ export const getCalendarEvents = async (): Promise<IEvent[]> => {
       },
     },
     {
-      id: 3,
+      id: "3",
       title: "Exposición final",
       description: "Exposición final de la UstaGallery",
       startDate: "2026-04-20",
