@@ -468,6 +468,13 @@
   height: 100%;
 }
 
+.eventsEmpty {
+  font-size: 0.85rem;
+  color: #999;
+  margin: 24px 0 0;
+  text-align: center;
+}
+
 .eventsTimeline {
   display: flex;
   flex-direction: column;

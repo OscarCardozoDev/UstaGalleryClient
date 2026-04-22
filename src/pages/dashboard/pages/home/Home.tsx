@@ -4,20 +4,17 @@ import { useNavigate } from "react-router-dom";
 import styles from "./Home.module.css";
 import type { ProductGallery } from "../../../../interfaces/products";
 import { getProductByAuthor } from "../../../../services/products";
+import { getHomeEvents } from "../../../../services/events";
+import type { EventHome } from "../../../../interfaces/events";
 import { useAuth } from '../../../../context/AuthContext';
 
-interface Event {
-  id: string;
-  title: string;
-  time: string;
-  location: string;
-  type: "PRÁCTICA DIRIGIDA" | "CHARLA ABIERTA";
-  attendees: number;
-  maxAttendees?: number;
-  description: string;
-  image: string;
-  date: string;
-}
+const EVENT_TYPE_LABELS: Record<string, string> = {
+  EXHIBITION: "Exposición",
+  WORKSHOP: "Taller",
+  PERFORMANCE: "Presentación",
+  CONFERENCE: "Conferencia",
+  OTHER: "Otro",
+};
 
 interface Notification {
   id: string;
@@ -33,30 +30,33 @@ export default function Home() {
   const { user } = useAuth();
   const BASE_URL = import.meta.env.VITE_API_URL;
   const [artworks, setArtworks] = useState<ProductGallery[]>([]);
+  const [upcomingEvents, setUpcomingEvents] = useState<EventHome[]>([]);
   const [attendanceTaken, setAttendanceTaken] = useState(false);
   const [currentTime] = useState(new Date());
   const [isLoading, setIsLoading] = useState(true);
 
-  // Simular carga de datos
   useEffect(() => {
     setIsLoading(true);
 
-    const loadArtworks = async () => {
+    const loadData = async () => {
       try {
-        const artworksData = await getProductByAuthor(user?.uid || "");
+        const [artworksData, eventsData] = await Promise.all([
+          getProductByAuthor(user?.uid || ""),
+          getHomeEvents({ limit: 4 }),
+        ]);
         setArtworks(artworksData);
+        setUpcomingEvents(eventsData);
       } catch (err) {
         sileo.error({
-          title: "Error al cargar obras artísticas",
+          title: "Error al cargar datos",
           description: "Por favor, inténtalo de nuevo más tarde",
         });
-        setIsLoading(false);
       } finally {
         setIsLoading(false);
       }
     };
 
-    loadArtworks();
+    loadData();
   }, [user?.uid]);
 
   // Datos mock
@@ -102,53 +102,6 @@ export default function Home() {
       message: "Entrega de proyecto final en 3 días",
       time: "Hace 2 días",
       read: true
-    }
-  ];
-
-  const upcomingEvents: Event[] = [
-    {
-      id: "1",
-      title: "Taller de Acuarela",
-      time: "10:00 AM",
-      location: "Aula de Artes",
-      type: "PRÁCTICA DIRIGIDA",
-      attendees: 15,
-      description: "Técnicas avanzadas de acuarela con la profesora Sandra.",
-      image: "🎨",
-      date: "Mañana"
-    },
-    {
-      id: "2",
-      title: "Exposición Semestral",
-      time: "6:00 PM",
-      location: "Galería Principal",
-      type: "CHARLA ABIERTA",
-      attendees: 45,
-      description: "Inauguración de la exposición de trabajos del semestre.",
-      image: "🖼️",
-      date: "Viernes 16"
-    },
-    {
-      id: "3",
-      title: "Crítica de Obra Grupal",
-      time: "2:00 PM",
-      location: "Sala 102",
-      type: "PRÁCTICA DIRIGIDA",
-      attendees: 12,
-      description: "Sesión de retroalimentación entre compañeros.",
-      image: "💬",
-      date: "Lunes 19"
-    },
-    {
-      id: "4",
-      title: "Conferencia: Arte Urbano",
-      time: "4:00 PM",
-      location: "Auditorio Central",
-      type: "CHARLA ABIERTA",
-      attendees: 80,
-      description: "Charla con el artista urbano reconocido Juan Pérez.",
-      image: "🎭",
-      date: "Mar 21"
     }
   ];
 
@@ -410,45 +363,41 @@ export default function Home() {
           ) : (
             <div className={styles.eventsSection}>
               <h2 className={styles.cardTitle}>Próximos Eventos</h2>
-              
-              <div className={styles.eventsTimeline}>
-                {upcomingEvents.map((event, index) => (
-                  <div 
-                    key={event.id} 
-                    className={styles.eventTimelineItem}
-                    onClick={() => handleEventClick(event.id)}
-                  >
-                    <div className={styles.eventTimelineDot}></div>
-                    {index < upcomingEvents.length - 1 && <div className={styles.eventTimelineLine}></div>}
-                    
-                    <div className={styles.eventTimelineContent}>
-                      <div className={styles.eventDate}>{event.date}</div>
-                      <div className={styles.eventTimelineCard}>
-                        <div className={styles.eventHeader}>
-                          <span className={`${styles.eventBadge} ${styles[event.type.replace(' ', '')]}`}>
-                            {event.type}
-                          </span>
-                          <span className={styles.eventTime}>{event.time}</span>
+
+              {upcomingEvents.length === 0 ? (
+                <p className={styles.eventsEmpty}>No hay eventos próximos</p>
+              ) : (
+                <div className={styles.eventsTimeline}>
+                  {upcomingEvents.map((event, index) => {
+                    const date = new Date(event.startDate);
+                    const dateLabel = date.toLocaleDateString("es-CO", { weekday: "short", day: "numeric", month: "short" });
+                    const timeLabel = date.toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit" });
+                    return (
+                      <div
+                        key={event.uid}
+                        className={styles.eventTimelineItem}
+                        onClick={() => handleEventClick(event.uid)}
+                      >
+                        <div className={styles.eventTimelineDot}></div>
+                        {index < upcomingEvents.length - 1 && <div className={styles.eventTimelineLine}></div>}
+
+                        <div className={styles.eventTimelineContent}>
+                          <div className={styles.eventDate}>{dateLabel}</div>
+                          <div className={styles.eventTimelineCard}>
+                            <div className={styles.eventHeader}>
+                              <span className={styles.eventBadge}>
+                                {EVENT_TYPE_LABELS[event.eventType] ?? event.eventType}
+                              </span>
+                              <span className={styles.eventTime}>{timeLabel}</span>
+                            </div>
+                            <h3 className={styles.eventTitle}>{event.name}</h3>
+                          </div>
                         </div>
-                        <h3 className={styles.eventTitle}>{event.title}</h3>
-                        <p className={styles.eventLocation}>
-                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 7.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11 6c0 3-4 6.5-4 6.5S3 9 3 6a4 4 0 018 0z" />
-                          </svg>
-                          {event.location}
-                        </p>
-                        <p className={styles.eventAttendees}>
-                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 12v-1a2 2 0 00-2-2H5a2 2 0 00-2 2v1M6.5 7a2 2 0 100-4 2 2 0 000 4z" />
-                          </svg>
-                          {event.attendees} asistentes
-                        </p>
                       </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
         </div>
