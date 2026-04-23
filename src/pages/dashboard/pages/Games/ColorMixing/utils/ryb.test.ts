@@ -62,7 +62,7 @@ describe('rybDistance', () => {
 
 describe('TARGET_COLORS', () => {
   it('has at least 10 colors', () => {
-    expect(TARGET_COLORS.length).toBeGreaterThanOrEqual(10)
+    expect(TARGET_COLORS.length).toBeGreaterThanOrEqual(30)
   })
 
   it('each color has name, r, y, b in [0, 100]', () => {
