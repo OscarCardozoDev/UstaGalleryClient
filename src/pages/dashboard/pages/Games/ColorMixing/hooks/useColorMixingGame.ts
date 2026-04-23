@@ -5,6 +5,9 @@ import type { RYBColor, NamedColor } from '../utils/ryb'
 export type Level = 'easy' | 'medium' | 'hard'
 export type Phase = 'selecting-level' | 'playing' | 'round-end' | 'game-over'
 
+export const HARD_MIN_SCORE = 7
+export const MEDIUM_DURATION = 60  // seconds
+
 export interface GameState {
   phase: Phase
   level: Level | null

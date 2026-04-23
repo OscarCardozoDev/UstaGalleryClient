@@ -1,4 +1,4 @@
-import { useColorMixingGame } from './hooks/useColorMixingGame'
+import { useColorMixingGame, MEDIUM_DURATION } from './hooks/useColorMixingGame'
 import LevelSelector from './components/LevelSelector'
 import TargetColor from './components/TargetColor'
 import ColorMixer from './components/ColorMixer'
@@ -16,7 +16,7 @@ export default function ColorMixingGame() {
       <header className={styles.header}>
         <h1 className={styles.title}>Mezcla de colores</h1>
         {phase !== 'selecting-level' && level && (
-          <ScoreDisplay round={round} score={score} level={level} timeLeft={timeLeft} />
+          <ScoreDisplay round={round} score={score} level={level} timeLeft={level === 'medium' ? timeLeft : undefined} />
         )}
       </header>
 
@@ -28,7 +28,7 @@ export default function ColorMixingGame() {
         {phase === 'playing' && level && (
           <>
             {level === 'medium' && (
-              <RoundTimer timeLeft={timeLeft} total={60} />
+              <RoundTimer timeLeft={timeLeft} total={MEDIUM_DURATION} />
             )}
             <div className={styles.gameArea}>
               <TargetColor color={targetColor} />
@@ -41,7 +41,7 @@ export default function ColorMixingGame() {
           </>
         )}
 
-        {phase === 'round-end' && (
+        {phase === 'round-end' && level && (
           <div className={styles.roundEnd}>
             <p className={styles.roundScore}>
               Puntaje esta ronda: <strong>{lastRoundScore.toFixed(1)}</strong>
