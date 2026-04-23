@@ -229,6 +229,27 @@ export default function Sidebar({ open, onClose }: Props) {
               <span>Tu galería</span>
             </button>
           </li>
+
+          <li>
+            <button
+              className={styles.listItem}
+              onClick={() => handleNavigation("/dashboard/games")}
+            >
+              <svg
+                className={styles.icon}
+                width="25"
+                height="25"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <path d="M8 12h8M12 8v8" />
+              </svg>
+              <span>Práctica</span>
+            </button>
+          </li>
         </ul>
       </nav>
 
