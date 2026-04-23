@@ -108,13 +108,15 @@ export default function ClasesPage() {
     setSchedError(null);
     setSchedLoading(true);
     try {
-      const created = await createSchedule({
+      await createSchedule({
         groupId: currentGroup,
         dayOfWeek: Number(schedDay),
         startTime: schedStart,
         endTime: schedEnd,
       });
-      setSchedules((prev) => [...prev, created]);
+      // Reload full list — backend returns only { uid }, not the full object
+      const updated = await getSchedulesByGroup(currentGroup);
+      setSchedules(updated);
       setSchedSuccess("Horario creado. Se generaron las clases del semestre.");
       setTimeout(() => setSchedSuccess(null), 4000);
     } catch (e) {

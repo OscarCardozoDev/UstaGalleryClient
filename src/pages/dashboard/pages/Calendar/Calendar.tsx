@@ -21,6 +21,7 @@ function getGroupColor(groupId: string): TEventColor {
 
 function classToEvent(cls: ClassSession): IEvent {
   const dateStr = cls.date.split("T")[0];
+  const profesor = cls.group?.profesor;
   return {
     id: cls.uid,
     startDate: `${dateStr}T${cls.startTime}:00`,
@@ -29,8 +30,8 @@ function classToEvent(cls: ClassSession): IEvent {
     color: getGroupColor(cls.groupId),
     description: cls.review ?? "",
     user: {
-      id: cls.group.profesor.uid,
-      name: `${cls.group.profesor.name} ${cls.group.profesor.lastName}`,
+      id: profesor?.uid ?? cls.groupId,
+      name: profesor ? `${profesor.name} ${profesor.lastName}` : "Profesor",
       picturePath: null,
     },
   };
@@ -50,7 +51,6 @@ export default function CalendarPage() {
     }
 
     setLoading(true);
-    console.log(currentGroup);
     getClassesByGroup(currentGroup)
       .then((classes) => {
         const mapped = classes.map(classToEvent);
