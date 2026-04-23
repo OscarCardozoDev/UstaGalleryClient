@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { sileo } from "sileo";
 import ImageUploader from "../../../components/ImageUploader";
 import type { ImageUploaderItem } from "../../../components/ImageUploader";
 import {
@@ -100,8 +101,6 @@ export default function EditEvent() {
   const [isLoadingInfo, setIsLoadingInfo]   = useState(false);
   const [isLoadingPhotos, setIsLoadingPhotos] = useState(false);
   const [isLoadingProducts, setIsLoadingProducts] = useState(false);
-  const [error, setError]                   = useState<string | null>(null);
-  const [success, setSuccess]               = useState<string | null>(null);
 
   // ── Carga inicial ──────────────────────────────────────────────────────────
 
@@ -139,7 +138,7 @@ export default function EditEvent() {
           setAvailableProducts(prods);
         }
       } catch (err) {
-        setError("No se pudo cargar el evento");
+        sileo.error({ title: "No se pudo cargar el evento" });
       } finally {
         setIsFetching(false);
       }
@@ -151,14 +150,11 @@ export default function EditEvent() {
   // ── Guardar info general ───────────────────────────────────────────────────
 
   const handleSaveInfo = async () => {
-    setError(null);
-    setSuccess(null);
-
-    if (!form.name.trim())        return setError("El nombre es requerido");
-    if (!form.description.trim()) return setError("La descripción es requerida");
-    if (!form.startDate)          return setError("La fecha de inicio es requerida");
+    if (!form.name.trim())        { sileo.warning({ title: "El nombre es requerido" }); return; }
+    if (!form.description.trim()) { sileo.warning({ title: "La descripción es requerida" }); return; }
+    if (!form.startDate)          { sileo.warning({ title: "La fecha de inicio es requerida" }); return; }
     if (form.isVirtual && !form.streamingUrl.trim())
-      return setError("El link de streaming es requerido para eventos virtuales");
+      { sileo.warning({ title: "El link de streaming es requerido para eventos virtuales" }); return; }
 
     setIsLoadingInfo(true);
     try {
@@ -172,9 +168,12 @@ export default function EditEvent() {
         isVirtual:   form.isVirtual,
         streamingUrl: form.isVirtual ? form.streamingUrl.trim() : undefined,
       });
-      setSuccess("ℹ️ Información actualizada. El evento volvió a estado PENDIENTE para revisión del admin.");
+      sileo.success({
+        title: "Información actualizada",
+        description: "El evento volvió a estado PENDIENTE para revisión del admin.",
+      });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error al guardar");
+      sileo.error({ title: err instanceof Error ? err.message : "Error al guardar" });
     } finally {
       setIsLoadingInfo(false);
     }
@@ -183,11 +182,8 @@ export default function EditEvent() {
   // ── Subir fotos ────────────────────────────────────────────────────────────
 
   const handleUploadPhotos = async () => {
-    setError(null);
-    setSuccess(null);
-
     const newItems = newPhotoItems.filter((i) => !i.isExisting && i.file);
-    if (newItems.length === 0) return setError("Selecciona al menos una foto para subir");
+    if (newItems.length === 0) { sileo.warning({ title: "Selecciona al menos una foto para subir" }); return; }
 
     setIsLoadingPhotos(true);
     try {
@@ -200,17 +196,13 @@ export default function EditEvent() {
           photoType: selectedPhotoType,
         });
       }
-
-      // Recargar evento para mostrar fotos actualizadas
       const updated = await getEventById(uid!);
       setEvent(updated);
-
-      // Limpiar uploader
       setNewPhotoItems([]);
       setUploaderKey((k) => k + 1);
-      setSuccess(`✅ ${newItems.length} foto(s) subida(s) correctamente.`);
+      sileo.success({ title: `${newItems.length} foto(s) subidas correctamente` });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error al subir fotos");
+      sileo.error({ title: err instanceof Error ? err.message : "Error al subir fotos" });
     } finally {
       setIsLoadingPhotos(false);
     }
@@ -219,7 +211,6 @@ export default function EditEvent() {
   // ── Eliminar foto existente ────────────────────────────────────────────────
 
   const handleDeletePhoto = async (photoId: string) => {
-    setError(null);
     try {
       await removeEventPhoto(uid!, photoId);
       setEvent((prev) =>
@@ -228,16 +219,14 @@ export default function EditEvent() {
           : prev
       );
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error al eliminar foto");
+      sileo.error({ title: err instanceof Error ? err.message : "Error al eliminar foto" });
     }
   };
 
   // ── Guardar obras ──────────────────────────────────────────────────────────
 
   const handleSaveProducts = async () => {
-    setError(null);
-    setSuccess(null);
-    if (!requestingGroupId) return setError("No hay grupo seleccionado");
+    if (!requestingGroupId) { sileo.warning({ title: "No hay grupo seleccionado" }); return; }
 
     setIsLoadingProducts(true);
     try {
@@ -245,9 +234,9 @@ export default function EditEvent() {
         productIds: selectedProducts,
         groupId: requestingGroupId,
       });
-      setSuccess("✅ Obras actualizadas. El evento volvió a PENDIENTE.");
+      sileo.success({ title: "Obras actualizadas", description: "El evento volvió a PENDIENTE para revisión." });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error al actualizar obras");
+      sileo.error({ title: err instanceof Error ? err.message : "Error al actualizar obras" });
     } finally {
       setIsLoadingProducts(false);
     }
@@ -305,17 +294,13 @@ export default function EditEvent() {
           </button>
         </div>
 
-        {/* Feedback */}
-        {error   && <div className={styles.errorMessage}>❌ {error}</div>}
-        {success && <div className={styles.successMessage}>{success}</div>}
-
         {/* Tabs */}
         <div className={styles.tabs}>
           {(["info", "photos", "products"] as const).map((tab) => (
             <button
               key={tab}
               className={`${styles.tab} ${activeTab === tab ? styles.tabActive : ""}`}
-              onClick={() => { setActiveTab(tab); setError(null); setSuccess(null); }}
+              onClick={() => setActiveTab(tab)}
             >
               {tab === "info"     && "📝 Información"}
               {tab === "photos"   && "🖼️ Fotos"}
@@ -583,9 +568,13 @@ export default function EditEvent() {
                     onChange={async (e) => {
                       const gid = e.target.value;
                       setRequestingGroupId(gid);
-                      const prods = await getAvailableProducts(gid);
-                      setAvailableProducts(prods);
-                      setSelectedProducts([]);
+                      try {
+                        const prods = await getAvailableProducts(gid);
+                        setAvailableProducts(prods);
+                        setSelectedProducts([]);
+                      } catch (err) {
+                        sileo.error({ title: err instanceof Error ? err.message : "Error al cargar obras del grupo" });
+                      }
                     }}>
                     {event.groups.map(({ group }) => (
                       <option key={group.uid} value={group.uid}>{group.name}</option>
