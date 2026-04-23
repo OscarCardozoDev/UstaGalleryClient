@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Trash2, Plus, CalendarDays, Clock, BookOpen, List } from "lucide-react";
+import { sileo } from "sileo";
 import { useAuth } from "../../../../context/AuthContext";
 import { getSchedulesByGroup, createSchedule, deleteSchedule } from "../../../../services/schedule";
 import { createManualClass, getClassesByGroup } from "../../../../services/classes";
@@ -46,16 +47,6 @@ function TimeInput({ label, id, value, onChange }: { label: string; id: string; 
   );
 }
 
-function ErrorMsg({ msg }: { msg: string | null }) {
-  if (!msg) return null;
-  return <p className="mt-2 rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">{msg}</p>;
-}
-
-function SuccessMsg({ msg }: { msg: string | null }) {
-  if (!msg) return null;
-  return <p className="mt-2 rounded-md bg-green-50 px-3 py-2 text-sm text-green-700">{msg}</p>;
-}
-
 // ─── Main Page ───────────────────────────────────────────────────────────────
 
 export default function ClasesPage() {
@@ -76,8 +67,6 @@ export default function ClasesPage() {
   const [schedStart, setSchedStart] = useState("14:00");
   const [schedEnd, setSchedEnd] = useState("16:00");
   const [schedLoading, setSchedLoading] = useState(false);
-  const [schedError, setSchedError] = useState<string | null>(null);
-  const [schedSuccess, setSchedSuccess] = useState<string | null>(null);
 
   // ── Manual class state ──────────────────────────────────────
   const [classDate, setClassDate] = useState("");
@@ -85,8 +74,6 @@ export default function ClasesPage() {
   const [classEnd, setClassEnd] = useState("16:00");
   const [classTopic, setClassTopic] = useState("");
   const [classLoading, setClassLoading] = useState(false);
-  const [classError, setClassError] = useState<string | null>(null);
-  const [classSuccess, setClassSuccess] = useState<string | null>(null);
 
   // ── Load schedules + classes ────────────────────────────────
   useEffect(() => {
@@ -107,14 +94,13 @@ export default function ClasesPage() {
   const handleCreateSchedule = async () => {
     if (!currentGroup) return;
     if (!schedStart || !schedEnd) {
-      setSchedError("Completa la hora de inicio y fin.");
+      sileo.warning({ title: "Completa la hora de inicio y fin." });
       return;
     }
     if (schedStart >= schedEnd) {
-      setSchedError("La hora de fin debe ser mayor a la de inicio.");
+      sileo.warning({ title: "La hora de fin debe ser mayor a la de inicio." });
       return;
     }
-    setSchedError(null);
     setSchedLoading(true);
     try {
       await createSchedule({
@@ -123,17 +109,15 @@ export default function ClasesPage() {
         startTime: schedStart,
         endTime: schedEnd,
       });
-      // Reload full list — backend returns only { uid }, not the full object
       const [updated, updatedClasses] = await Promise.all([
         getSchedulesByGroup(currentGroup),
         getClassesByGroup(currentGroup),
       ]);
       setSchedules(updated);
       setClasses(updatedClasses);
-      setSchedSuccess("Horario creado. Se generaron las clases del semestre.");
-      setTimeout(() => setSchedSuccess(null), 4000);
+      sileo.success({ title: "Horario creado", description: "Se generaron las clases del semestre." });
     } catch (e) {
-      setSchedError((e as Error).message);
+      sileo.error({ title: (e as Error).message });
     } finally {
       setSchedLoading(false);
     }
@@ -146,16 +130,16 @@ export default function ClasesPage() {
       await deleteSchedule(uid);
       setSchedules((prev) => prev.filter((s) => s.uid !== uid));
     } catch (e) {
-      alert((e as Error).message);
+      sileo.error({ title: (e as Error).message });
     }
   };
 
   // ── Create manual class ─────────────────────────────────────
   const handleCreateClass = async () => {
     if (!currentGroup) return;
-    if (!classDate) { setClassError("Selecciona una fecha."); return; }
-    if (!classStart || !classEnd) { setClassError("Completa la hora de inicio y fin."); return; }
-    if (classStart >= classEnd) { setClassError("La hora de fin debe ser mayor a la de inicio."); return; }
+    if (!classDate) { sileo.warning({ title: "Selecciona una fecha." }); return; }
+    if (!classStart || !classEnd) { sileo.warning({ title: "Completa la hora de inicio y fin." }); return; }
+    if (classStart >= classEnd) { sileo.warning({ title: "La hora de fin debe ser mayor a la de inicio." }); return; }
 
     const dto: CreateClassDto = {
       groupId: currentGroup,
@@ -165,20 +149,18 @@ export default function ClasesPage() {
       ...(classTopic.trim() && { topic: classTopic.trim() }),
     };
 
-    setClassError(null);
     setClassLoading(true);
     try {
       await createManualClass(dto);
       const updatedClasses = await getClassesByGroup(currentGroup);
       setClasses(updatedClasses);
-      setClassSuccess("Clase creada correctamente.");
       setClassDate("");
       setClassStart("14:00");
       setClassEnd("16:00");
       setClassTopic("");
-      setTimeout(() => setClassSuccess(null), 4000);
+      sileo.success({ title: "Clase creada correctamente." });
     } catch (e) {
-      setClassError((e as Error).message);
+      sileo.error({ title: (e as Error).message });
     } finally {
       setClassLoading(false);
     }
@@ -332,8 +314,6 @@ export default function ClasesPage() {
           </button>
         </div>
 
-        <ErrorMsg   msg={schedError}   />
-        <SuccessMsg msg={schedSuccess} />
       </SectionCard>
 
       {/* ── Manual class section ── */}
@@ -384,8 +364,6 @@ export default function ClasesPage() {
           {classLoading ? "Creando…" : "Crear clase"}
         </button>
 
-        <ErrorMsg   msg={classError}   />
-        <SuccessMsg msg={classSuccess} />
       </SectionCard>
 
     </div>
