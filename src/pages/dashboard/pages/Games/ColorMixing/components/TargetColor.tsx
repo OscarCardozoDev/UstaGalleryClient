@@ -11,7 +11,12 @@ export default function TargetColor({ color }: Props) {
   return (
     <div className={styles.container}>
       <p className={styles.label}>Color objetivo</p>
-      <div className={styles.swatch} style={{ backgroundColor: hex }} />
+      <div
+        className={styles.swatch}
+        style={{ backgroundColor: hex }}
+        role="img"
+        aria-label={`Color objetivo: ${color.name}`}
+      />
       <p className={styles.name}>{color.name}</p>
     </div>
   )

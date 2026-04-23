@@ -11,13 +11,20 @@ export default function RoundTimer({ timeLeft, total = 60 }: Props) {
 
   return (
     <div className={styles.container}>
-      <div className={styles.track}>
+      <div
+        className={styles.track}
+        role="progressbar"
+        aria-valuenow={timeLeft}
+        aria-valuemin={0}
+        aria-valuemax={total}
+        aria-label="Tiempo restante"
+      >
         <div
           className={styles.fill}
           style={{ width: `${pct}%`, background: color }}
         />
       </div>
-      <span className={styles.label} style={{ color }}>{timeLeft}s</span>
+      <span className={styles.label} style={{ color }} aria-live="polite">{timeLeft}s</span>
     </div>
   )
 }

@@ -44,6 +44,7 @@ export default function ColorMixer({ mix, onChange, onConfirm }: Props) {
               onChange={(e) => handleChange(key, Number(e.target.value))}
               className={styles.slider}
               style={{ accentColor: color }}
+              aria-label={label}
             />
           </div>
         ))}
