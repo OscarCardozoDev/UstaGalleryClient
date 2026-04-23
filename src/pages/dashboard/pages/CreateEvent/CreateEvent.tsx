@@ -9,6 +9,7 @@ import type {
   AvailableProduct,
 } from "../../../../interfaces/events";
 import styles from "./CreateEvent.module.css";
+import { sileo } from "sileo";
 
 // ─── Constantes ───────────────────────────────────────────────────────────────
 
@@ -87,8 +88,6 @@ export default function CreateEvent() {
 
   // UI
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
 
   // ── Cerrar dropdowns al click fuera ───────────────────────────────────────
 
@@ -156,20 +155,15 @@ export default function CreateEvent() {
   // ── Submit ────────────────────────────────────────────────────────────────
 
   const handleSubmit = async () => {
-    setError(null);
-    setSuccess(false);
-
     const validationError = validate();
-    if (validationError) { setError(validationError); return; }
+    if (validationError) { sileo.warning({ title: validationError }); return; }
 
     setIsLoading(true);
 
     try {
-      // Construir ISO dates combinando fecha + hora
       const toISO = (date: string, time: string) =>
         time ? `${date}T${time}:00.000Z` : `${date}T00:00:00.000Z`;
 
-      // Portada — primera imagen marcada como isMain, o la primera disponible
       const coverItem = imageItems.find((i) => i.isMain) ?? imageItems[0];
       let coverPhoto: CreateEventDto["coverPhoto"] | undefined;
 
@@ -199,16 +193,12 @@ export default function CreateEvent() {
       };
 
       await createEvent(payload);
-      setSuccess(true);
-
-      setTimeout(() => {
-        setForm(EMPTY_FORM);
-        setImageItems([]);
-        setUploaderKey((k) => k + 1);
-        setSuccess(false);
-      }, 2000);
+      sileo.success({ title: "¡Evento creado!", description: "Está pendiente de aprobación." });
+      setForm(EMPTY_FORM);
+      setImageItems([]);
+      setUploaderKey((k) => k + 1);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error al crear el evento.");
+      sileo.error({ title: err instanceof Error ? err.message : "Error al crear el evento." });
     } finally {
       setIsLoading(false);
     }
@@ -227,10 +217,6 @@ export default function CreateEvent() {
   return (
     <div className={styles.uploadCard}>
       <div className={styles.uploadCardContent}>
-
-        {/* ── Feedback ── */}
-        {error   && <div className={styles.errorMessage}>❌ {error}</div>}
-        {success && <div className={styles.successMessage}>✅ ¡Evento creado exitosamente! Está pendiente de aprobación.</div>}
 
         <div className={styles.uploadGrid}>
 
