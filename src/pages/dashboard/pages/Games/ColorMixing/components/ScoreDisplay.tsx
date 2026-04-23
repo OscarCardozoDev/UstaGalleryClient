@@ -1,3 +1,4 @@
+import { HARD_MIN_SCORE } from '../hooks/useColorMixingGame'
 import type { Level } from '../hooks/useColorMixingGame'
 import styles from './ScoreDisplay.module.css'
 
@@ -5,7 +6,7 @@ interface Props {
   round: number
   score: number
   level: Level
-  timeLeft: number
+  timeLeft?: number
 }
 
 export default function ScoreDisplay({ round, score, level, timeLeft }: Props) {
@@ -24,10 +25,10 @@ export default function ScoreDisplay({ round, score, level, timeLeft }: Props) {
       {level === 'hard' && (
         <div className={styles.stat}>
           <span className={styles.statLabel}>Mínimo</span>
-          <span className={`${styles.statValue} ${styles.danger}`}>7.0</span>
+          <span className={`${styles.statValue} ${styles.danger}`}>{HARD_MIN_SCORE.toFixed(1)}</span>
         </div>
       )}
-      {level === 'medium' && (
+      {level === 'medium' && timeLeft !== undefined && (
         <div className={styles.stat}>
           <span className={styles.statLabel}>Tiempo</span>
           <span className={`${styles.statValue} ${timeLeft <= 10 ? styles.danger : ''}`}>
