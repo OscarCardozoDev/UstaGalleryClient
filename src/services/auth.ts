@@ -3,7 +3,6 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 export async function Register ({mail, password}: CreateCredentialDto) {
     try {
-        console.log(API_URL);
         const response = await fetch(API_URL + '/auth/register', {
             method: 'POST',
             headers: {

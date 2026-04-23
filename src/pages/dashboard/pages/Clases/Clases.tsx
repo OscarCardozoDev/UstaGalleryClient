@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { Trash2, Plus, CalendarDays, Clock, BookOpen } from "lucide-react";
+import { Trash2, Plus, CalendarDays, Clock, BookOpen, List } from "lucide-react";
 import { useAuth } from "../../../../context/AuthContext";
 import { getSchedulesByGroup, createSchedule, deleteSchedule } from "../../../../services/schedule";
-import { createManualClass } from "../../../../services/classes";
+import { createManualClass, getClassesByGroup } from "../../../../services/classes";
 import type { ScheduleItem } from "../../../../interfaces/schedule";
-import type { CreateClassDto } from "../../../../interfaces/classes";
+import type { CreateClassDto, ClassSession } from "../../../../interfaces/classes";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -64,6 +64,10 @@ export default function ClasesPage() {
   const isProfessorOrAdmin =
     user?.isProfesor || user?.userType?.name === "Administrador";
 
+  // ── Classes state ───────────────────────────────────────────
+  const [classes, setClasses] = useState<ClassSession[]>([]);
+  const [loadingClasses, setLoadingClasses] = useState(false);
+
   // ── Schedule state ──────────────────────────────────────────
   const [schedules, setSchedules] = useState<ScheduleItem[]>([]);
   const [loadingSchedules, setLoadingSchedules] = useState(false);
@@ -84,14 +88,19 @@ export default function ClasesPage() {
   const [classError, setClassError] = useState<string | null>(null);
   const [classSuccess, setClassSuccess] = useState<string | null>(null);
 
-  // ── Load schedules ──────────────────────────────────────────
+  // ── Load schedules + classes ────────────────────────────────
   useEffect(() => {
     if (!currentGroup) return;
     setLoadingSchedules(true);
+    setLoadingClasses(true);
     getSchedulesByGroup(currentGroup)
       .then(setSchedules)
       .catch(() => {})
       .finally(() => setLoadingSchedules(false));
+    getClassesByGroup(currentGroup)
+      .then(setClasses)
+      .catch(() => {})
+      .finally(() => setLoadingClasses(false));
   }, [currentGroup]);
 
   // ── Create schedule ─────────────────────────────────────────
@@ -115,8 +124,12 @@ export default function ClasesPage() {
         endTime: schedEnd,
       });
       // Reload full list — backend returns only { uid }, not the full object
-      const updated = await getSchedulesByGroup(currentGroup);
+      const [updated, updatedClasses] = await Promise.all([
+        getSchedulesByGroup(currentGroup),
+        getClassesByGroup(currentGroup),
+      ]);
       setSchedules(updated);
+      setClasses(updatedClasses);
       setSchedSuccess("Horario creado. Se generaron las clases del semestre.");
       setTimeout(() => setSchedSuccess(null), 4000);
     } catch (e) {
@@ -156,6 +169,8 @@ export default function ClasesPage() {
     setClassLoading(true);
     try {
       await createManualClass(dto);
+      const updatedClasses = await getClassesByGroup(currentGroup);
+      setClasses(updatedClasses);
       setClassSuccess("Clase creada correctamente.");
       setClassDate("");
       setClassStart("14:00");
@@ -197,6 +212,55 @@ export default function ClasesPage() {
           Administra horarios recurrentes y clases puntuales del grupo.
         </p>
       </div>
+
+      {/* ── Classes list (debug / overview) ── */}
+      <SectionCard title="Clases del Grupo" icon={<List className="size-4" />}>
+        {loadingClasses ? (
+          <p className="text-sm text-muted-foreground">Cargando clases…</p>
+        ) : classes.length === 0 ? (
+          <p className="text-sm text-muted-foreground italic">No hay clases registradas para este grupo.</p>
+        ) : (
+          <div className="overflow-hidden rounded-lg border">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b bg-muted/50">
+                  <th className="px-4 py-2 text-left font-medium text-muted-foreground">Fecha</th>
+                  <th className="px-4 py-2 text-left font-medium text-muted-foreground">Inicio</th>
+                  <th className="px-4 py-2 text-left font-medium text-muted-foreground">Fin</th>
+                  <th className="px-4 py-2 text-left font-medium text-muted-foreground">Temática</th>
+                  <th className="px-4 py-2 text-left font-medium text-muted-foreground">Tipo</th>
+                </tr>
+              </thead>
+              <tbody>
+                {classes.map((c) => (
+                  <tr key={c.uid} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
+                    <td className="px-4 py-2 text-foreground">{c.date.split("T")[0]}</td>
+                    <td className="px-4 py-2 text-muted-foreground">{formatTime(c.startTime)}</td>
+                    <td className="px-4 py-2 text-muted-foreground">{formatTime(c.endTime)}</td>
+                    <td className="px-4 py-2 text-muted-foreground">{c.topic ?? "—"}</td>
+                    <td className="px-4 py-2">
+                      {c.scheduleId ? (
+                        <span className="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
+                          Recurrente
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center rounded-full bg-orange-50 px-2 py-0.5 text-xs font-medium text-orange-700 ring-1 ring-inset ring-orange-700/10">
+                          Manual
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p className="px-4 py-2 text-xs text-muted-foreground border-t">
+              Total: {classes.length} clase(s) —{" "}
+              {classes.filter((c) => c.scheduleId).length} recurrentes,{" "}
+              {classes.filter((c) => !c.scheduleId).length} manuales
+            </p>
+          </div>
+        )}
+      </SectionCard>
 
       {/* ── Schedules section ── */}
       <SectionCard title="Horarios Recurrentes" icon={<Clock className="size-4" />}>

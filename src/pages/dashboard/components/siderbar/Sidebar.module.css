@@ -4,7 +4,8 @@
   height: calc(100% - 60px);
   margin: 30px 0;
   margin-left: 0;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   transition: width 0.3s ease, margin-left 0.3s ease;

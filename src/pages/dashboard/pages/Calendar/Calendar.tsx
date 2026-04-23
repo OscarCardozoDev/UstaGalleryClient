@@ -2,11 +2,14 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../../../context/AuthContext";
 import { CalendarProvider } from "../../components/Calendar/calendar/contexts/calendar-context";
 import { ClientContainer } from "../../components/Calendar/calendar/components/client-container";
-import { ChangeBadgeVariantInput } from "../../components/Calendar/calendar/components/change-badge-variant-input";
 import { getClassesByGroup } from "../../../../services/classes";
+import { getSchedulesByGroup } from "../../../../services/schedule";
 import type { IEvent, IUser } from "../../components/Calendar/calendar/interfaces";
 import type { ClassSession } from "../../../../interfaces/classes";
+import type { ScheduleItem } from "../../../../interfaces/schedule";
 import type { TEventColor } from "../../components/Calendar/calendar/types";
+
+// ─── Color helpers ────────────────────────────────────────────────────────────
 
 const GROUP_COLORS: Record<string, TEventColor> = {};
 const COLOR_PALETTE: TEventColor[] = ["blue", "green", "purple", "orange", "red", "yellow"];
@@ -19,6 +22,9 @@ function getGroupColor(groupId: string): TEventColor {
   return GROUP_COLORS[groupId];
 }
 
+// ─── Converters ───────────────────────────────────────────────────────────────
+
+/** Real ClassSession (stored in DB) → IEvent */
 function classToEvent(cls: ClassSession): IEvent {
   const dateStr = cls.date.split("T")[0];
   const profesor = cls.group?.profesor;
@@ -37,6 +43,55 @@ function classToEvent(cls: ClassSession): IEvent {
   };
 }
 
+/**
+ * ScheduleItem (recurring pattern) → IEvent[]
+ *
+ * Expands dayOfWeek into individual occurrences from today until semester end.
+ * Skips dates already covered by a real ClassSession (matched by scheduleId + date).
+ */
+function scheduleToEvents(
+  schedule: ScheduleItem,
+  coveredKeys: Set<string>,
+): IEvent[] {
+  const semesterEnd = new Date(new Date().getFullYear(), 11, 15); // Dec 15 current year
+  const events: IEvent[] = [];
+
+  const cursor = new Date();
+  cursor.setHours(0, 0, 0, 0);
+
+  // Advance to first occurrence of dayOfWeek
+  while (cursor.getDay() !== schedule.dayOfWeek) {
+    cursor.setDate(cursor.getDate() + 1);
+  }
+
+  while (cursor <= semesterEnd) {
+    const dateStr = cursor.toISOString().split("T")[0];
+    const key = `${schedule.uid}-${dateStr}`;
+
+    if (!coveredKeys.has(key)) {
+      events.push({
+        id: `virtual-${key}`,
+        startDate: `${dateStr}T${schedule.startTime}:00`,
+        endDate: `${dateStr}T${schedule.endTime}:00`,
+        title: "Clase",
+        color: "red",
+        description: "",
+        user: {
+          id: schedule.groupId,
+          name: "Profesor",
+          picturePath: null,
+        },
+      });
+    }
+
+    cursor.setDate(cursor.getDate() + 7);
+  }
+
+  return events;
+}
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
 export default function CalendarPage() {
   const { currentGroup } = useAuth();
   const [events, setEvents] = useState<IEvent[]>([]);
@@ -51,17 +106,37 @@ export default function CalendarPage() {
     }
 
     setLoading(true);
-    getClassesByGroup(currentGroup)
-      .then((classes) => {
-        const mapped = classes.map(classToEvent);
-        setEvents(mapped);
 
+    Promise.all([
+      getClassesByGroup(currentGroup),
+      getSchedulesByGroup(currentGroup),
+    ])
+      .then(([classes, schedules]) => {
+        // Real session events
+        const realEvents = classes.map(classToEvent);
+
+        // Keys of real sessions that came from a schedule: "scheduleId-YYYY-MM-DD"
+        const coveredKeys = new Set<string>(
+          classes
+            .filter((c) => c.scheduleId)
+            .map((c) => `${c.scheduleId}-${c.date.split("T")[0]}`),
+        );
+
+        // Virtual events from recurring schedules (only dates not already in DB)
+        const virtualEvents = schedules.flatMap((s) =>
+          scheduleToEvents(s, coveredKeys),
+        );
+
+        setEvents([...realEvents, ...virtualEvents]);
+
+        // Build users list from real classes only (schedules have no profesor data)
         const professorMap = new Map<string, IUser>();
         classes.forEach((c) => {
-          if (!professorMap.has(c.group.profesor.uid)) {
-            professorMap.set(c.group.profesor.uid, {
-              id: c.group.profesor.uid,
-              name: `${c.group.profesor.name} ${c.group.profesor.lastName}`,
+          const p = c.group?.profesor;
+          if (p && !professorMap.has(p.uid)) {
+            professorMap.set(p.uid, {
+              id: p.uid,
+              name: `${p.name} ${p.lastName}`,
               picturePath: null,
             });
           }
@@ -78,9 +153,8 @@ export default function CalendarPage() {
 
   return (
     <CalendarProvider events={events} users={users}>
-      <div className="mx-auto flex max-w-screen-2xl flex-col gap-4 p-4">
+      <div className="mx-auto flex h-full max-w-screen-2xl flex-col gap-4 p-4">
         <ClientContainer />
-        <ChangeBadgeVariantInput />
       </div>
     </CalendarProvider>
   );

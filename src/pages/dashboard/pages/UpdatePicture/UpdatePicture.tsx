@@ -190,7 +190,6 @@ export default function EditProduct() {
         styles: form.styles.length > 0 ? form.styles : undefined,
         images: imagesPayload as UpdateProductDto["images"],
       };
-      console.log(payload);
       await updateProduct(uid!, payload);
       setSuccess(true);
       setTimeout(() => {

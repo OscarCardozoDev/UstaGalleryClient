@@ -1,10 +1,9 @@
-import { Columns, Grid3x3, List, Plus, Grid2x2, CalendarRange } from "lucide-react";
+import { Columns, Grid3x3, List, Grid2x2, CalendarRange } from "lucide-react";
 
 import { Button } from "../../../ui/button";
 import { UserSelect } from "../../components/header/user-select";
 import { TodayButton } from "../../components/header/today-button";
 import { DateNavigator } from "../../components/header/date-navigator";
-import { AddEventDialog } from "../../components/dialogs/add-event-dialog";
 import { useCalendar } from "../../contexts/calendar-context";
 
 import type { IEvent } from "../../interfaces";
@@ -79,13 +78,6 @@ export function CalendarHeader({ events }: IProps) {
 
           <UserSelect />
         </div>
-
-        <AddEventDialog>
-          <Button className="w-full sm:w-auto">
-            <Plus />
-            Add Event
-          </Button>
-        </AddEventDialog>
       </div>
     </div>
   );

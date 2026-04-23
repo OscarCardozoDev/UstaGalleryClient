@@ -77,7 +77,6 @@ export default function EventCard({
   const sc = STATUS_CONFIG[event.status];
   const heroPhoto = event.photos.find((p) => p.photoType === "HERO");
   const imageUrl = heroPhoto?.photo.url ?? null;
-  console.log(baseUrl + imageUrl);
   const isPending = event.status === "PENDING";
   const isApproved = event.status === "APPROVED";
 
