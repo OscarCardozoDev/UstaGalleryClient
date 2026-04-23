@@ -12,6 +12,10 @@ function cubicInt(t: number, a: number, b: number): number {
   return a + (b - a) * t * t * (3 - 2 * t)
 }
 
+function clamp100(v: number): number {
+  return Math.min(100, Math.max(0, v))
+}
+
 // Trilinear interpolation through RYB color cube.
 // Based on Gossett & Chen paint-mixing model.
 function rybToRgb(r: number, y: number, b: number): [number, number, number] {
@@ -51,7 +55,7 @@ function rybToRgb(r: number, y: number, b: number): [number, number, number] {
 }
 
 export function rybToHex(r: number, y: number, b: number): string {
-  const [rr, gg, bb] = rybToRgb(r, y, b)
+  const [rr, gg, bb] = rybToRgb(clamp100(r), clamp100(y), clamp100(b))
   return `#${rr.toString(16).padStart(2, '0')}${gg.toString(16).padStart(2, '0')}${bb.toString(16).padStart(2, '0')}`
 }
 
@@ -60,9 +64,11 @@ export function rybToHex(r: number, y: number, b: number): string {
 const MAX_DISTANCE = Math.sqrt(3) * 100
 
 export function rybDistance(a: RYBColor, b: RYBColor): number {
-  const dr = a.r - b.r
-  const dy = a.y - b.y
-  const db = a.b - b.b
+  const ar = clamp100(a.r), ay = clamp100(a.y), ab = clamp100(a.b)
+  const br = clamp100(b.r), by = clamp100(b.y), bb = clamp100(b.b)
+  const dr = ar - br
+  const dy = ay - by
+  const db = ab - bb
   return Math.sqrt(dr * dr + dy * dy + db * db) / MAX_DISTANCE
 }
 

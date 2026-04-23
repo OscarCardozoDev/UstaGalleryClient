@@ -23,8 +23,11 @@ describe('rybToHex', () => {
 
   it('pure blue returns blue-ish hex', () => {
     const hex = rybToHex(0, 0, 100)
+    const r = parseInt(hex.slice(1, 3), 16)
+    const g = parseInt(hex.slice(3, 5), 16)
     const b = parseInt(hex.slice(5, 7), 16)
-    expect(b).toBeGreaterThan(150)
+    expect(b).toBeGreaterThan(r)
+    expect(b).toBeGreaterThan(g)
   })
 
   it('returns #ffffff for (0,0,0)', () => {
@@ -61,7 +64,7 @@ describe('rybDistance', () => {
 })
 
 describe('TARGET_COLORS', () => {
-  it('has at least 10 colors', () => {
+  it('has at least 30 colors', () => {
     expect(TARGET_COLORS.length).toBeGreaterThanOrEqual(30)
   })
 
