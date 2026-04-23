@@ -58,6 +58,7 @@ function reducer(state: GameState, action: Action): GameState {
       return { ...state, mix: action.mix }
 
     case 'CONFIRM_MIX':
+      if (state.phase !== 'playing') return state  // prevent double-submission
       return {
         ...state,
         phase: action.nextPhase,
@@ -82,6 +83,7 @@ function reducer(state: GameState, action: Action): GameState {
       }
 
     case 'TICK':
+      if (state.phase !== 'playing') return state  // guard against stale interval
       if (state.timeLeft <= 1) return { ...state, timeLeft: 0, phase: 'game-over' }
       return { ...state, timeLeft: state.timeLeft - 1 }
 
@@ -94,9 +96,10 @@ function reducer(state: GameState, action: Action): GameState {
 }
 
 function pickTarget(usedIndices: number[]): { target: NamedColor; index: number } {
+  const used = new Set(usedIndices)
   const available = TARGET_COLORS
     .map((c, i) => ({ c, i }))
-    .filter(({ i }) => !usedIndices.includes(i))
+    .filter(({ i }) => !used.has(i))
   if (available.length === 0) {
     const i = Math.floor(Math.random() * TARGET_COLORS.length)
     return { target: TARGET_COLORS[i], index: i }
