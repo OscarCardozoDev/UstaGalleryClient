@@ -28,14 +28,10 @@ export default function ColorMixer({ mix, onChange, onConfirm }: Props) {
   return (
     <div className={styles.container}>
       <div className={styles.preview} style={{ backgroundColor: previewHex }} />
-      <p className={styles.previewLabel}>Tu mezcla</p>
 
       <div className={styles.sliders}>
         {SLIDERS.map(({ key, label, color }) => (
           <div key={key} className={styles.sliderRow}>
-            <label className={styles.sliderLabel} style={{ color }}>
-              {label} <span className={styles.value}>{mix[key]}</span>
-            </label>
             <input
               type="range"
               min={0}

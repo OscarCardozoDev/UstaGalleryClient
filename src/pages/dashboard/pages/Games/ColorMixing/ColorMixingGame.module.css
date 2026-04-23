@@ -29,6 +29,10 @@
 }
 
 .gameArea {
+  background-color: black;
+  height: 500px;
+  width: 800px;
+  position: relative;
   display: flex;
   gap: 3rem;
   align-items: flex-start;

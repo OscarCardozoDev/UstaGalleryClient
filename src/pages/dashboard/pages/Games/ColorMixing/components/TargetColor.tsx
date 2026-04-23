@@ -10,7 +10,6 @@ export default function TargetColor({ color }: Props) {
   const hex = rybToHex(color.r, color.y, color.b)
   return (
     <div className={styles.container}>
-      <p className={styles.label}>Color objetivo</p>
       <div
         className={styles.swatch}
         style={{ backgroundColor: hex }}

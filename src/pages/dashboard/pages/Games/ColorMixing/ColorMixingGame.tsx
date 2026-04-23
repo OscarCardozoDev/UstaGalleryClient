@@ -5,6 +5,7 @@ import ColorMixer from './components/ColorMixer'
 import ScoreDisplay from './components/ScoreDisplay'
 import RoundTimer from './components/RoundTimer'
 import ResultScreen from './components/ResultScreen'
+import Counter from './components/Counter/Counter'
 import styles from './ColorMixingGame.module.css'
 
 export default function ColorMixingGame() {
@@ -31,6 +32,16 @@ export default function ColorMixingGame() {
               <RoundTimer timeLeft={timeLeft} total={MEDIUM_DURATION} />
             )}
             <div className={styles.gameArea}>
+              <Counter
+                value={5}
+                places={[1, ".", 0.1, 0.01]}
+                fontSize={80}
+                gap={10}
+                gradientHeight={0}
+                textColor="white"
+                fontWeight={900}
+              />
+              
               <TargetColor color={targetColor} />
               <ColorMixer
                 mix={mix}
