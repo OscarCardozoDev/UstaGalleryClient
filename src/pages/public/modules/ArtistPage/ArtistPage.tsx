@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { getAuthorDetail } from "../../../../services/users";
 import { getProductByAuthor } from "../../../../services/products";
@@ -22,7 +22,7 @@ export default function ArtistPage() {
   const [error, setError] = useState<string | null>(null);
   const [worksError, setWorksError] = useState<string | null>(null);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     if (!uid) {
       setError("No se proporcionó un artista");
       setLoading(false);
@@ -54,11 +54,11 @@ export default function ArtistPage() {
     }
 
     setLoading(false);
-  };
+  }, [uid]);
 
   useEffect(() => {
     fetchData();
-  }, [uid]);
+  }, [fetchData]);
 
   if (loading) {
     return (
@@ -84,7 +84,7 @@ export default function ArtistPage() {
     <div className={styles.container}>
       <div className={styles.backButtonWrapper}>
         <button className={styles.backButton} onClick={() => navigate("/gallery")}>
-          ← Back to directory
+          ← Volver a galería
         </button>
       </div>
 
@@ -142,7 +142,7 @@ function HeroSection({ author }: { author: AuthorDetail }) {
               alt={`${author.name} ${author.lastName}`}
             />
           ) : (
-            <div className={styles.photoFallback}>{author.name[0]}</div>
+            <div className={styles.photoFallback}>{author.name[0] ?? "?"}</div>
           )}
         </div>
         <div className={styles.photoAccent} />
@@ -165,7 +165,7 @@ function WorksSection({
   return (
     <section className={styles.worksSection}>
       <div className={styles.worksSectionHeader}>
-        <h2 className={styles.worksSectionTitle}>Selected Works</h2>
+        <h2 className={styles.worksSectionTitle}>Obras del Artista</h2>
         <span className={styles.worksSectionMeta}>
           {products.length} {products.length === 1 ? "obra" : "obras"}
         </span>
@@ -198,12 +198,12 @@ function BentoWorks({ products }: { products: Product[] }) {
   return (
     <>
       <div className={styles.bentoGrid}>
-        <WorkCard product={featured} variant="featured" />
+        <WorkCard key={featured.uid} product={featured} variant="featured" />
         {second && <WorkCard key={second.uid} product={second} />}
         {third && <WorkCard key={third.uid} product={third} />}
       </div>
 
-      <WorkCard product={panoramic} variant="panoramic" />
+      <WorkCard key={panoramic.uid} product={panoramic} variant="panoramic" />
 
       {rest.length > 0 && (
         <div className={styles.restGrid}>
