@@ -118,19 +118,21 @@ function HeroSection({ author }: { author: AuthorDetail }) {
   return (
     <section className={styles.hero}>
       <div className={styles.heroLeft}>
-        <h1 className={styles.artistName}>
-          {author.name}
-          <br />
-          {author.lastName}
-        </h1>
+        <div className={styles.heroContent}>
+          <h1 className={styles.artistName}>
+            {author.name}
+            <br />
+            {author.lastName}
+          </h1>
 
-        {author.description && (
-          <div className={styles.bioCard}>
-            <div className={styles.bioCardAccent} />
-            <p className={styles.bioDescription}>"{author.description}"</p>
-            <p className={styles.artistUsername}>@{author.username}</p>
-          </div>
-        )}
+          {author.description && (
+            <div className={styles.bioCard}>
+              <div className={styles.bioCardAccent} />
+              <p className={styles.bioDescription}>"{author.description}"</p>
+              <p className={styles.artistUsername}>@{author.username}</p>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className={styles.heroRight}>
