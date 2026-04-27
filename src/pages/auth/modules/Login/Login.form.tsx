@@ -40,8 +40,10 @@ export default function LoginForm({
         return;
       }
 
-      const { hasProfile, hasGroup } = userAuth;
-      if (!hasProfile) {
+      const { hasProfile, hasGroup, isEmailVerified } = userAuth;
+      if (!isEmailVerified) {
+        onProfileRequired?.(1);
+      } else if (!hasProfile) {
         onProfileRequired?.(2);
       } else if (!hasGroup) {
         onProfileRequired?.(3);

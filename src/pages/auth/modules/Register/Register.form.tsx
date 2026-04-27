@@ -45,7 +45,7 @@ export default function RegisterForm({
           title: "Registro exitoso",
           description: "Tu cuenta ha sido creada con éxito.",
         });
-        onProfileRequired(2);
+        onProfileRequired(1);
       }
     } catch (err) {
       setOpenSnackbar("error", {

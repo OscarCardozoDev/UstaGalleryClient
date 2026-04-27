@@ -1,88 +1,94 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { sendVerificationCode, verifyCode } from '../../../../services/auth';
 import styles from './EmailVerification.module.css';
 
 interface EmailVerificationProps {
   onVerified: (isVerified: boolean) => void;
   isVerified: boolean;
+  setOpenSnackbar: (
+    type: 'error' | 'success' | 'warning',
+    message: { title: string; description: string },
+  ) => void;
 }
 
-const EmailVerification: React.FC<EmailVerificationProps> = ({ 
-  onVerified, 
-  isVerified 
+const EmailVerification: React.FC<EmailVerificationProps> = ({
+  onVerified,
+  isVerified,
+  setOpenSnackbar,
 }) => {
-  const [email, setEmail] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
   const [isCodeSent, setIsCodeSent] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
-  const validateEmail = (email: string): boolean => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
+  useEffect(() => {
+    let cancelled = false;
+    setIsLoading(true);
+    sendVerificationCode()
+      .then(() => {
+        if (!cancelled) setIsCodeSent(true);
+      })
+      .catch(() => {
+        if (!cancelled)
+          setOpenSnackbar('error', {
+            title: 'Error al enviar el código',
+            description: 'No se pudo enviar el correo. Intenta nuevamente.',
+          });
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
+      });
+    return () => { cancelled = true; };
+  }, []);
 
   const handleSendCode = async () => {
-    setError('');
-    
-    if (!email) {
-      setError('Por favor ingresa tu correo electrónico');
-      return;
-    }
-
-    if (!validateEmail(email)) {
-      setError('Por favor ingresa un correo válido');
-      return;
-    }
-
     setIsLoading(true);
-
     try {
-      // TODO: Llamar al servicio para enviar código de verificación
-      // const response = await authService.sendVerificationCode(email);
-      
-      // Simulación de envío
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
+      await sendVerificationCode();
       setIsCodeSent(true);
-      setError('');
+      setOpenSnackbar('success', {
+        title: 'Código enviado',
+        description: 'Revisa tu correo electrónico',
+      });
     } catch (err) {
-      setError('Error al enviar el código. Intenta nuevamente.');
-      console.error('Error sending verification code:', err);
+      setOpenSnackbar('error', {
+        title: 'Error al enviar el código',
+        description: 'No se pudo enviar el correo. Intenta nuevamente.',
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleVerifyCode = async () => {
-    setError('');
-
     if (!verificationCode) {
-      setError('Por favor ingresa el código de verificación');
+      setOpenSnackbar('warning', {
+        title: 'Código requerido',
+        description: 'Por favor ingresa el código de verificación',
+      });
       return;
     }
 
     if (verificationCode.length !== 6) {
-      setError('El código debe tener 6 dígitos');
+      setOpenSnackbar('warning', {
+        title: 'Código inválido',
+        description: 'El código debe tener 6 dígitos',
+      });
       return;
     }
 
     setIsLoading(true);
-
     try {
-      // TODO: Llamar al servicio para verificar código
-      // const response = await authService.verifyCode(email, verificationCode);
-      // onVerified(response.token);
-      
-      // Simulación de verificación exitosa
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      const mockToken = 'ec7ac960-6c7c-4010-8430-e219cac64831';
-      //onVerified(mockToken);
+      await verifyCode(verificationCode);
+      setOpenSnackbar('success', {
+        title: 'Correo verificado',
+        description: 'Tu correo ha sido verificado exitosamente',
+      });
       onVerified(true);
-      
     } catch (err) {
-      setError('Código incorrecto. Verifica e intenta nuevamente.');
-      console.error('Error verifying code:', err);
+      setOpenSnackbar('error', {
+        title: 'Código incorrecto',
+        description: (err as Error).message || 'Código incorrecto. Verifica e intenta nuevamente.',
+      });
     } finally {
       setIsLoading(false);
     }
@@ -104,33 +110,23 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
     <div className={styles.container}>
       <h3 className={styles.title}>Verificación de Correo</h3>
       <p className={styles.description}>
-        {isCodeSent 
-          ? 'Ingresa el código de 6 dígitos enviado a tu correo'
-          : 'Ingresa tu correo institucional para continuar'
-        }
+        {!isCodeSent
+          ? 'Enviando código a tu correo registrado...'
+          : 'Ingresa el código de 6 dígitos enviado a tu correo registrado'}
       </p>
 
       {!isCodeSent ? (
         <div className={styles.formGroup}>
-          <label htmlFor="email" className={styles.label}>
-            Correo Electrónico
-          </label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="ejemplo@usantoto.edu.co"
-            className={styles.input}
-            disabled={isLoading}
-          />
-          <button
-            onClick={handleSendCode}
-            className={styles.primaryButton}
-            disabled={isLoading}
-          >
-            {isLoading ? 'Enviando...' : 'Enviar Código'}
-          </button>
+          {isLoading && (
+            <button className={styles.primaryButton} disabled>
+              Enviando...
+            </button>
+          )}
+          {!isLoading && !isCodeSent && (
+            <button onClick={handleSendCode} className={styles.primaryButton}>
+              Reintentar
+            </button>
+          )}
         </div>
       ) : (
         <div className={styles.formGroup}>
@@ -159,25 +155,16 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
               {isLoading ? 'Verificando...' : 'Verificar'}
             </button>
             <button
-              onClick={() => {
-                setIsCodeSent(false);
-                setVerificationCode('');
-                setError('');
-              }}
+              onClick={handleSendCode}
               className={styles.linkButton}
               disabled={isLoading}
             >
-              Cambiar correo
+              Reenviar código
             </button>
           </div>
         </div>
       )}
 
-      {error && (
-        <div className={styles.errorMessage}>
-          {error}
-        </div>
-      )}
     </div>
   );
 };

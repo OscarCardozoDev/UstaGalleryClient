@@ -18,6 +18,7 @@ export default function AuthLayout() {
   const [showForms, setShowForms] = useState(true);
   const [expandCover, setExpandCover] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
+  const [emailVerified, setEmailVerified] = useState(false);
 
   const handleProfileRequired = (step: number) => {
     setShowForms(false);
@@ -108,9 +109,13 @@ export default function AuthLayout() {
             <Step>
               <EmailVerification
                 onVerified={(ok) => {
-                  if (ok) setTimeout(() => setCurrentStep(2), 100);
+                  if (ok) {
+                    setEmailVerified(true);
+                    setTimeout(() => setCurrentStep(2), 100);
+                  }
                 }}
-                isVerified={false}
+                isVerified={emailVerified}
+                setOpenSnackbar={(type, message) => handleAuthSileo({ type, message })}
               />
             </Step>
             <Step>
