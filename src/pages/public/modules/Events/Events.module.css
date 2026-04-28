@@ -1,12 +1,3 @@
-/* ── Variables heredadas del sistema de diseño ──────────────────────────── */
-/* Mismos tokens que Welcome.module.css:
-   --color-primary:   #000000
-   --color-secondary: #5d5f5f
-   --color-surface:   #f8f9fb
-   --font-headline:   "Instrument Serif", serif
-   --font-body:       "Instrument Sans", sans-serif
-*/
-
 /* ── Wrapper principal ────────────────────────────────────────────────────── */
 .page {
   position: relative;

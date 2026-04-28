@@ -2,12 +2,14 @@ import { useState, useEffect, useRef } from "react";
 import ImageUploader from "../../../components/ImageUploader";
 import type { ImageUploaderItem } from "../../../components/ImageUploader";
 import { useAuth } from "../../../../context/AuthContext";
-import { createEvent, getAvailableProducts } from "../../../../services/events";
+import { createEvent, getAvailableProducts, sendInvitation } from "../../../../services/events";
+import { getAllGroups } from "../../../../services/groups";
 import type {
   CreateEventDto,
   EventType,
   AvailableProduct,
 } from "../../../../interfaces/events";
+import type { GroupWithRelations } from "../../../../interfaces/groups";
 import styles from "./CreateEvent.module.css";
 import { sileo } from "sileo";
 
@@ -71,10 +73,19 @@ const EMPTY_FORM: FormState = {
 export default function CreateEvent() {
   const { user, currentGroup } = useAuth();
 
+  const isAdmin = user?.userType?.name?.toLowerCase() === "administrador";
+
   // Formulario
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [uploaderKey, setUploaderKey] = useState(0);
   const [imageItems, setImageItems] = useState<ImageUploaderItem[]>([]);
+
+  // Grupo seleccionado para el evento
+  const [selectedGroupId, setSelectedGroupId] = useState<string>(
+    isAdmin ? "" : (currentGroup ?? ""),
+  );
+  const [allGroups, setAllGroups] = useState<GroupWithRelations[]>([]);
+  const [isLoadingGroups, setIsLoadingGroups] = useState(false);
 
   // Obras disponibles
   const [availableProducts, setAvailableProducts] = useState<AvailableProduct[]>([]);
@@ -88,6 +99,32 @@ export default function CreateEvent() {
 
   // UI
   const [isLoading, setIsLoading] = useState(false);
+
+  // ── Sincronizar selectedGroupId con currentGroup para profesores ──────────
+
+  useEffect(() => {
+    if (!isAdmin && currentGroup) {
+      setSelectedGroupId(currentGroup);
+    }
+  }, [isAdmin, currentGroup]);
+
+  // ── Cargar todos los grupos si es admin ───────────────────────────────────
+
+  useEffect(() => {
+    if (!isAdmin) return;
+    const load = async () => {
+      setIsLoadingGroups(true);
+      try {
+        const data = await getAllGroups();
+        setAllGroups(data);
+      } catch {
+        sileo.error({ title: "No se pudieron cargar los grupos" });
+      } finally {
+        setIsLoadingGroups(false);
+      }
+    };
+    load();
+  }, [isAdmin]);
 
   // ── Cerrar dropdowns al click fuera ───────────────────────────────────────
 
@@ -104,14 +141,18 @@ export default function CreateEvent() {
     return () => document.removeEventListener("mousedown", handleOutside);
   }, []);
 
-  // ── Cargar obras disponibles cuando hay grupo ──────────────────────────────
+  // ── Cargar obras disponibles cuando cambia el grupo seleccionado ──────────
 
   useEffect(() => {
-    if (!currentGroup) return;
+    if (!selectedGroupId) {
+      setAvailableProducts([]);
+      return;
+    }
     const load = async () => {
       setIsLoadingProducts(true);
+      setForm((prev) => ({ ...prev, productIds: [] }));
       try {
-        const data = await getAvailableProducts(currentGroup);
+        const data = await getAvailableProducts(selectedGroupId);
         setAvailableProducts(data);
       } catch {
         // silencioso — no es crítico para crear el evento
@@ -120,7 +161,7 @@ export default function CreateEvent() {
       }
     };
     load();
-  }, [currentGroup]);
+  }, [selectedGroupId]);
 
   // ── Handlers de formulario ─────────────────────────────────────────────────
 
@@ -143,7 +184,7 @@ export default function CreateEvent() {
     if (!form.name.trim())        return "El nombre del evento es requerido.";
     if (!form.description.trim()) return "La descripción es requerida.";
     if (!form.startDate)          return "La fecha de inicio es requerida.";
-    if (!currentGroup)            return "No tienes un grupo activo.";
+    if (!selectedGroupId)         return "Debes seleccionar un grupo para el evento.";
     if (!user)                    return "No hay sesión activa.";
     if (form.isVirtual && !form.streamingUrl.trim())
       return "El link de streaming es requerido para eventos virtuales.";
@@ -187,13 +228,29 @@ export default function CreateEvent() {
         isVirtual:   form.isVirtual,
         streamingUrl: form.isVirtual ? form.streamingUrl.trim() : undefined,
         createdById: user!.uid,
-        groupIds:    [currentGroup!],
+        // Admin creates without direct group association; invitation handles it.
+        // Professor associates their group directly.
+        groupIds:    isAdmin ? [] : [selectedGroupId],
         productIds:  form.productIds.length > 0 ? form.productIds : undefined,
         coverPhoto,
       };
 
-      await createEvent(payload);
-      sileo.success({ title: "¡Evento creado!", description: "Está pendiente de aprobación." });
+      const { uid: newEventUid } = await createEvent(payload);
+
+      // Admin flow: send invitation to the selected group
+      if (isAdmin) {
+        await sendInvitation(newEventUid, { groupId: selectedGroupId });
+        sileo.success({
+          title: "¡Evento creado!",
+          description: "Se envió la invitación al grupo seleccionado.",
+        });
+      } else {
+        sileo.success({
+          title: "¡Evento creado!",
+          description: "Está pendiente de aprobación.",
+        });
+      }
+
       setForm(EMPTY_FORM);
       setImageItems([]);
       setUploaderKey((k) => k + 1);
@@ -213,6 +270,11 @@ export default function CreateEvent() {
     form.productIds.length > 0
       ? `${form.productIds.length} obra${form.productIds.length !== 1 ? "s" : ""} seleccionada${form.productIds.length !== 1 ? "s" : ""}`
       : "Selecciona obras (opcional)";
+
+  // Opciones de grupo para el selector
+  const groupOptions: { uid: string; name: string }[] = isAdmin
+    ? allGroups.map((g) => ({ uid: g.uid, name: g.name }))
+    : (user?.groups ?? []);
 
   return (
     <div className={styles.uploadCard}>
@@ -301,6 +363,36 @@ export default function CreateEvent() {
                   </div>
                 )}
               </div>
+            </div>
+
+            {/* Selector de grupo */}
+            <div className={styles.formGroup}>
+              <label htmlFor="ev-group" className={styles.formLabel}>
+                Grupo encargado <span className={styles.required}>*</span>
+                {isAdmin && (
+                  <span className={styles.optionalTag}>
+                    se enviará invitación
+                  </span>
+                )}
+              </label>
+              <select
+                id="ev-group"
+                className={styles.formInput}
+                value={selectedGroupId}
+                onChange={(e) => setSelectedGroupId(e.target.value)}
+                disabled={isLoading || isLoadingGroups}
+              >
+                {(isAdmin || groupOptions.length > 1) && (
+                  <option value="">
+                    {isLoadingGroups ? "Cargando grupos…" : "Selecciona un grupo"}
+                  </option>
+                )}
+                {groupOptions.map((g) => (
+                  <option key={g.uid} value={g.uid}>
+                    {g.name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {/* Fechas */}
@@ -427,10 +519,14 @@ export default function CreateEvent() {
               <div className={styles.selectContainer} ref={productsRef}>
                 <div
                   className={styles.selectTrigger}
-                  onClick={() => !isLoading && !isLoadingProducts && setIsProductsOpen((v) => !v)}
+                  onClick={() => !isLoading && !isLoadingProducts && selectedGroupId && setIsProductsOpen((v) => !v)}
                 >
                   <span className={styles.selectValue}>
-                    {isLoadingProducts ? "Cargando obras…" : selectedProductsLabel}
+                    {!selectedGroupId
+                      ? "Selecciona un grupo primero"
+                      : isLoadingProducts
+                        ? "Cargando obras…"
+                        : selectedProductsLabel}
                   </span>
                   <svg
                     className={`${styles.selectIcon} ${isProductsOpen ? styles.rotate : ""}`}
@@ -513,7 +609,11 @@ export default function CreateEvent() {
             </button>
 
             <p className={styles.submitHint}>
-              El evento quedará en estado <strong>Pendiente</strong> hasta que un administrador lo apruebe.
+              {isAdmin
+                ? "El grupo recibirá una invitación para participar en el evento."
+                : "El evento quedará en estado "}
+              {!isAdmin && <strong>Pendiente</strong>}
+              {!isAdmin && " hasta que un administrador lo apruebe."}
             </p>
           </div>
         </div>

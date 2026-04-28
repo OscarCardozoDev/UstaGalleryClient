@@ -316,6 +316,24 @@ export async function respondInvitation(
   );
 }
 
+// ─── Quitar un grupo del evento (sin necesidad de invitación) ────────────────
+
+export async function removeGroupFromEvent(
+  eventId: string,
+  groupId: string,
+): Promise<{ removed: boolean }> {
+  const response = await fetch(`${API_URL}/events/${eventId}/groups/${groupId}`, {
+    method: "DELETE",
+    headers: getHeaders(),
+    credentials: "include",
+  });
+
+  return handleResponse<{ removed: boolean }>(
+    response,
+    "Error al quitar el grupo del evento",
+  );
+}
+
 // ─── Revocar invitación de un grupo ──────────────────────────────────────────
 
 export async function revokeInvitation(

@@ -10,7 +10,10 @@ import {
   removeEventPhoto,
   getAvailableProducts,
   updateEventProducts,
+  sendInvitation,
+  removeGroupFromEvent,
 } from "../../../../services/events";
+import { getAllGroups } from "../../../../services/groups";
 import type {
   Event,
   EventType,
@@ -64,12 +67,15 @@ const convertFileToBase64 = (file: File): Promise<string> =>
 
 export default function EditEvent() {
   const { uid } = useParams<{ uid: string }>();
+  const BASE_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
 
   // ── Datos ──────────────────────────────────────────────────────────────────
-  const [event, setEvent]                   = useState<Event | null>(null);
-  const [availableProducts, setAvailableProducts] = useState<AvailableProduct[]>([]);
-  const [isFetching, setIsFetching]         = useState(true);
+  const [event, setEvent]   = useState<Event | null>(null);
+  const [isFetching, setIsFetching] = useState(true);
+
+  // Map groupId → available products for that group
+  const [productsByGroup, setProductsByGroup] = useState<Record<string, AvailableProduct[]>>({});
 
   // ── Formulario info ────────────────────────────────────────────────────────
   const [form, setForm] = useState({
@@ -85,20 +91,26 @@ export default function EditEvent() {
     streamingUrl:"",
   });
 
-  // ── Fotos nuevas (subir) ───────────────────────────────────────────────────
-  const [newPhotoItems, setNewPhotoItems]   = useState<ImageUploaderItem[]>([]);
+  // ── Fotos nuevas ───────────────────────────────────────────────────────────
+  const [newPhotoItems, setNewPhotoItems]     = useState<ImageUploaderItem[]>([]);
   const [selectedPhotoType, setSelectedPhotoType] = useState<EventPhotoType>("PROMO");
-  const [uploaderKey, setUploaderKey]       = useState(0);
+  const [uploaderKey, setUploaderKey]         = useState(0);
+  const [carouselIndex, setCarouselIndex]     = useState(0);
 
-  // ── Obras seleccionadas ────────────────────────────────────────────────────
+  // ── Obras seleccionadas (flat, cross-group) ────────────────────────────────
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
-  const [requestingGroupId, setRequestingGroupId] = useState("");
-  const [productSearch, setProductSearch] = useState("");
-  const [carouselIndex, setCarouselIndex] = useState(0);
+  const [productSearch, setProductSearch]     = useState("");
+
+  // ── Gestión de grupos ──────────────────────────────────────────────────────
+  const [allGroupsForPicker, setAllGroupsForPicker] = useState<{ uid: string; name: string }[]>([]);
+  const [showGroupPicker, setShowGroupPicker] = useState(false);
+  const [pickerGroupId, setPickerGroupId]     = useState("");
+  const [isInviting, setIsInviting]           = useState(false);
+  const [isRemovingGroup, setIsRemovingGroup] = useState<string | null>(null);
 
   // ── UI ─────────────────────────────────────────────────────────────────────
-  const [activeTab, setActiveTab]           = useState<"info" | "photos" | "products">("info");
-  const [isLoadingInfo, setIsLoadingInfo]   = useState(false);
+  const [activeTab, setActiveTab]             = useState<"info" | "photos" | "products">("info");
+  const [isLoadingInfo, setIsLoadingInfo]     = useState(false);
   const [isLoadingPhotos, setIsLoadingPhotos] = useState(false);
   const [isLoadingProducts, setIsLoadingProducts] = useState(false);
 
@@ -126,18 +138,30 @@ export default function EditEvent() {
           streamingUrl: data.streamingUrl ?? "",
         });
 
-        // Preseleccionar obras actuales del evento
-        const currentProductIds = data.products.map((p) => p.product.uid);
-        setSelectedProducts(currentProductIds);
+        setSelectedProducts(data.products.map((p) => p.product.uid));
 
-        // Cargar obras disponibles del primer grupo
+        // Cargar obras de TODOS los grupos en paralelo
         if (data.groups.length > 0) {
-          const gid = data.groups[0].group.uid;
-          setRequestingGroupId(gid);
-          const prods = await getAvailableProducts(gid);
-          setAvailableProducts(prods);
+          const results = await Promise.allSettled(
+            data.groups.map(({ group }) =>
+              getAvailableProducts(group.uid).then((prods) => ({ groupId: group.uid, prods }))
+            )
+          );
+          const map: Record<string, AvailableProduct[]> = {};
+          results.forEach((r) => {
+            if (r.status === "fulfilled") map[r.value.groupId] = r.value.prods;
+          });
+          setProductsByGroup(map);
         }
-      } catch (err) {
+
+        // Cargar todos los grupos para el picker de invitación
+        try {
+          const groups = await getAllGroups();
+          setAllGroupsForPicker(groups.map((g) => ({ uid: g.uid, name: g.name })));
+        } catch {
+          // silencioso — el picker simplemente no tendrá opciones
+        }
+      } catch {
         sileo.error({ title: "No se pudo cargar el evento" });
       } finally {
         setIsFetching(false);
@@ -190,10 +214,12 @@ export default function EditEvent() {
       for (const item of newItems) {
         const base64 = await convertFileToBase64(item.file!);
         await addEventPhoto(uid!, {
-          base64,
-          name: item.file!.name,
-          folder: "events",
-          photoType: selectedPhotoType,
+          images: [{
+            base64,
+            name: item.file!.name,
+            folder: "events",
+            photoType: selectedPhotoType,
+          }],
         });
       }
       const updated = await getEventById(uid!);
@@ -208,7 +234,7 @@ export default function EditEvent() {
     }
   };
 
-  // ── Eliminar foto existente ────────────────────────────────────────────────
+  // ── Eliminar foto ──────────────────────────────────────────────────────────
 
   const handleDeletePhoto = async (photoId: string) => {
     try {
@@ -218,23 +244,32 @@ export default function EditEvent() {
           ? { ...prev, photos: prev.photos.filter((p) => p.photo.uid !== photoId) }
           : prev
       );
+      setCarouselIndex((i) => Math.max(0, i - 1));
     } catch (err) {
       sileo.error({ title: err instanceof Error ? err.message : "Error al eliminar foto" });
     }
   };
 
-  // ── Guardar obras ──────────────────────────────────────────────────────────
+  // ── Guardar obras (por grupo) ──────────────────────────────────────────────
 
   const handleSaveProducts = async () => {
-    if (!requestingGroupId) { sileo.warning({ title: "No hay grupo seleccionado" }); return; }
-
+    if (!event) return;
     setIsLoadingProducts(true);
     try {
-      await updateEventProducts(uid!, {
-        productIds: selectedProducts,
-        groupId: requestingGroupId,
+      for (const { group } of event.groups) {
+        const groupProds = productsByGroup[group.uid] ?? [];
+        const selectedFromGroup = selectedProducts.filter((pid) =>
+          groupProds.some((p) => p.uid === pid)
+        );
+        await updateEventProducts(uid!, {
+          productIds: selectedFromGroup,
+          groupId: group.uid,
+        });
+      }
+      sileo.success({
+        title: "Obras actualizadas",
+        description: "El evento volvió a PENDIENTE para revisión.",
       });
-      sileo.success({ title: "Obras actualizadas", description: "El evento volvió a PENDIENTE para revisión." });
     } catch (err) {
       sileo.error({ title: err instanceof Error ? err.message : "Error al actualizar obras" });
     } finally {
@@ -248,6 +283,51 @@ export default function EditEvent() {
         ? prev.filter((id) => id !== productUid)
         : [...prev, productUid]
     );
+  };
+
+  // ── Quitar grupo del evento ────────────────────────────────────────────────
+
+  const handleRemoveGroup = async (groupId: string) => {
+    if (!event) return;
+    setIsRemovingGroup(groupId);
+    try {
+      await removeGroupFromEvent(uid!, groupId);
+      const removedProds = (productsByGroup[groupId] ?? []).map((p) => p.uid);
+      setSelectedProducts((prev) => prev.filter((id) => !removedProds.includes(id)));
+      setProductsByGroup((prev) => {
+        const next = { ...prev };
+        delete next[groupId];
+        return next;
+      });
+      setEvent((prev) =>
+        prev ? { ...prev, groups: prev.groups.filter((g) => g.group.uid !== groupId) } : prev
+      );
+      sileo.success({ title: "Grupo quitado del evento" });
+    } catch (err) {
+      sileo.error({ title: err instanceof Error ? err.message : "Error al quitar el grupo" });
+    } finally {
+      setIsRemovingGroup(null);
+    }
+  };
+
+  // ── Invitar nuevo grupo ────────────────────────────────────────────────────
+
+  const handleInviteGroup = async () => {
+    if (!pickerGroupId) return;
+    setIsInviting(true);
+    try {
+      await sendInvitation(uid!, { groupId: pickerGroupId });
+      setShowGroupPicker(false);
+      setPickerGroupId("");
+      sileo.success({
+        title: "Invitación enviada",
+        description: "El grupo deberá aceptar la invitación para participar.",
+      });
+    } catch (err) {
+      sileo.error({ title: err instanceof Error ? err.message : "Error al enviar invitación" });
+    } finally {
+      setIsInviting(false);
+    }
   };
 
   // ─── Render ────────────────────────────────────────────────────────────────
@@ -272,10 +352,6 @@ export default function EditEvent() {
       </div>
     );
   }
-
-  const heroPhotos  = event.photos.filter((p) => p.photoType === "HERO");
-  const promoPhotos = event.photos.filter((p) => p.photoType === "PROMO");
-  const memPhotos   = event.photos.filter((p) => p.photoType === "MEMORY");
 
   return (
     <div className={styles.card}>
@@ -427,26 +503,21 @@ export default function EditEvent() {
               {/* ── Carrusel grande ── */}
               {allPhotos.length > 0 ? (
                 <div className={styles.carouselSection}>
-                  {/* Imagen principal */}
                   <div className={styles.carouselMain}>
                     <img
                       key={currentPhoto?.photo.uid}
-                      src={currentPhoto?.photo.url}
+                      src={`${BASE_URL}${currentPhoto?.photo.url}`}
                       alt="foto evento"
                       className={styles.carouselMainImage}
                     />
 
-                    {/* Overlay: tipo + botón eliminar */}
                     <div className={styles.carouselOverlay}>
                       <span className={styles.carouselTypeBadge}>
                         {PHOTO_TYPE_LABELS[currentPhoto?.photoType ?? ""] ?? currentPhoto?.photoType}
                       </span>
                       <button
                         className={styles.carouselDeleteBtn}
-                        onClick={() => {
-                          handleDeletePhoto(currentPhoto!.photo.uid);
-                          setCarouselIndex((i) => Math.max(0, i - 1));
-                        }}
+                        onClick={() => handleDeletePhoto(currentPhoto!.photo.uid)}
                         title="Eliminar esta foto"
                       >
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
@@ -458,7 +529,6 @@ export default function EditEvent() {
                       </button>
                     </div>
 
-                    {/* Flechas de navegación */}
                     {allPhotos.length > 1 && (
                       <>
                         <button
@@ -482,13 +552,11 @@ export default function EditEvent() {
                       </>
                     )}
 
-                    {/* Contador */}
                     <div className={styles.carouselCounter}>
                       {carouselIndex + 1} / {allPhotos.length}
                     </div>
                   </div>
 
-                  {/* Miniaturas */}
                   <div className={styles.carouselThumbs}>
                     {allPhotos.map((p, i) => (
                       <div
@@ -497,7 +565,7 @@ export default function EditEvent() {
                         onClick={() => setCarouselIndex(i)}
                         title={PHOTO_TYPE_LABELS[p.photoType] ?? p.photoType}
                       >
-                        <img src={p.photo.url} alt={`foto-${i}`} className={styles.carouselThumbImg} />
+                        <img src={`${BASE_URL}${p.photo.url}`} alt={`foto-${i}`} className={styles.carouselThumbImg} />
                         <span className={styles.carouselThumbBadge}>
                           {p.photoType === "HERO" ? "⭐" : p.photoType === "PROMO" ? "📸" : "🎞️"}
                         </span>
@@ -527,12 +595,7 @@ export default function EditEvent() {
                 </div>
 
                 <div className={styles.imageUploaderContainer}>
-                  <ImageUploader
-                    key={uploaderKey}
-                    onChange={setNewPhotoItems}
-                    limit={10}
-                    hideMainSelector
-                  />
+                  <ImageUploader key={uploaderKey} onChange={setNewPhotoItems} limit={10} />
                 </div>
 
                 <button
@@ -549,41 +612,101 @@ export default function EditEvent() {
 
         {/* ══ TAB: Obras ══ */}
         {activeTab === "products" && (() => {
-          const inEvent   = availableProducts.filter((p) => selectedProducts.includes(p.uid));
-          const notInEvent = availableProducts
-            .filter((p) => !selectedProducts.includes(p.uid))
-            .filter((p) => p.name.toLowerCase().includes(productSearch.toLowerCase()));
-          const allFiltered = availableProducts.filter((p) =>
-            p.name.toLowerCase().includes(productSearch.toLowerCase())
-          );
+          // Productos disponibles de todos los grupos (flat)
+          const allAvailable = Object.values(productsByGroup).flat();
+
+          // Productos del evento que no están en ningún grupo disponible
+          // (fueron desaprobados o su grupo fue removido)
+          const eventProductsAsAvailable: AvailableProduct[] = event.products
+            .filter((ep) => !allAvailable.some((ap) => ap.uid === ep.product.uid))
+            .map((ep) => ({
+              uid:         ep.product.uid,
+              name:        ep.product.name,
+              description: ep.product.description,
+              photos:      ep.product.photos,
+              authors:     [],
+            }));
+
+          const allKnownProducts = [...allAvailable, ...eventProductsAsAvailable];
+          const inEvent = allKnownProducts.filter((p) => selectedProducts.includes(p.uid));
+
+          const getProductGroupName = (pid: string): string => {
+            for (const { group } of event.groups) {
+              if (productsByGroup[group.uid]?.some((p) => p.uid === pid)) return group.name;
+            }
+            return "";
+          };
+
+          const currentGroupIds = new Set(event.groups.map((g) => g.group.uid));
+          const availableForInvite = allGroupsForPicker.filter((g) => !currentGroupIds.has(g.uid));
 
           return (
             <div className={styles.productsTab}>
 
-              {/* Selector de grupo (multi-grupo) */}
-              {event.groups.length > 1 && (
-                <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Grupo</label>
-                  <select className={styles.formInput} value={requestingGroupId}
-                    onChange={async (e) => {
-                      const gid = e.target.value;
-                      setRequestingGroupId(gid);
-                      try {
-                        const prods = await getAvailableProducts(gid);
-                        setAvailableProducts(prods);
-                        setSelectedProducts([]);
-                      } catch (err) {
-                        sileo.error({ title: err instanceof Error ? err.message : "Error al cargar obras del grupo" });
-                      }
-                    }}>
-                    {event.groups.map(({ group }) => (
-                      <option key={group.uid} value={group.uid}>{group.name}</option>
-                    ))}
-                  </select>
+              {/* ── Gestión de grupos ── */}
+              <div className={styles.groupsSection}>
+                <div className={styles.productsSectionHeader}>
+                  <h3 className={styles.productsSectionTitle}>
+                    Grupos en el evento
+                    <span className={styles.sectionCount}>{event.groups.length}</span>
+                  </h3>
+                  <button
+                    className={styles.inviteGroupBtn}
+                    onClick={() => { setShowGroupPicker((v) => !v); setPickerGroupId(""); }}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <line x1="12" y1="5" x2="12" y2="19" strokeLinecap="round" />
+                      <line x1="5" y1="12" x2="19" y2="12" strokeLinecap="round" />
+                    </svg>
+                    Invitar grupo
+                  </button>
                 </div>
-              )}
 
-              {/* ── Obras en el evento ── */}
+                <div className={styles.groupChipsList}>
+                  {event.groups.length === 0 ? (
+                    <p className={styles.groupsEmpty}>Sin grupos asignados</p>
+                  ) : (
+                    event.groups.map(({ group }) => (
+                      <div key={group.uid} className={styles.groupChip}>
+                        <span className={styles.groupChipName}>{group.name}</span>
+                        <button
+                          className={styles.groupChipRemove}
+                          onClick={() => handleRemoveGroup(group.uid)}
+                          disabled={isRemovingGroup === group.uid}
+                          title="Quitar grupo del evento"
+                        >
+                          {isRemovingGroup === group.uid ? "…" : "×"}
+                        </button>
+                      </div>
+                    ))
+                  )}
+                </div>
+
+                {showGroupPicker && (
+                  <div className={styles.inviteRow}>
+                    <select
+                      className={styles.formInput}
+                      value={pickerGroupId}
+                      onChange={(e) => setPickerGroupId(e.target.value)}
+                      style={{ flex: 1 }}
+                    >
+                      <option value="">Selecciona un grupo para invitar</option>
+                      {availableForInvite.map((g) => (
+                        <option key={g.uid} value={g.uid}>{g.name}</option>
+                      ))}
+                    </select>
+                    <button
+                      className={styles.inviteConfirmBtn}
+                      onClick={handleInviteGroup}
+                      disabled={!pickerGroupId || isInviting}
+                    >
+                      {isInviting ? "Enviando…" : "Enviar invitación"}
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* ── En el evento ── */}
               {inEvent.length > 0 && (
                 <div className={styles.productsSection}>
                   <div className={styles.productsSectionHeader}>
@@ -593,10 +716,7 @@ export default function EditEvent() {
                   <div className={styles.productsGrid}>
                     {inEvent.map((product) => {
                       const heroUrl = product.photos[0]?.photo.url ?? "";
-                      const authors = product.authors
-                        .filter((a) => a.isAuthor)
-                        .map((a) => `${a.user.name} ${a.user.lastName}`)
-                        .join(", ");
+                      const groupName = getProductGroupName(product.uid);
                       return (
                         <div
                           key={product.uid}
@@ -617,7 +737,7 @@ export default function EditEvent() {
                           </div>
                           <div className={styles.productCardInfo}>
                             <p className={styles.productCardName}>{product.name}</p>
-                            <p className={styles.productCardAuthor}>{authors}</p>
+                            {groupName && <p className={styles.productCardGroup}>{groupName}</p>}
                           </div>
                         </div>
                       );
@@ -626,13 +746,10 @@ export default function EditEvent() {
                 </div>
               )}
 
-              {/* ── Buscador ── */}
+              {/* ── Buscador global ── */}
               <div className={styles.productsSectionHeader}>
                 <h3 className={styles.productsSectionTitle}>
                   Obras disponibles
-                  <span className={styles.sectionCount} style={{ marginLeft: 8 }}>
-                    {availableProducts.length}
-                  </span>
                 </h3>
                 <div className={styles.searchWrapper}>
                   <svg className={styles.searchIcon} width="15" height="15" viewBox="0 0 24 24"
@@ -657,57 +774,79 @@ export default function EditEvent() {
                 </div>
               </div>
 
-              {/* Grid de obras NO en el evento (filtradas por búsqueda) */}
-              {availableProducts.length === 0 ? (
+              {/* ── Obras por grupo ── */}
+              {event.groups.length === 0 ? (
                 <div className={styles.productsEmpty}>
                   <span>🎨</span>
-                  <p>No hay obras APPROVED disponibles en este grupo</p>
-                </div>
-              ) : notInEvent.length > 0 ? (
-                <div className={styles.productsGrid}>
-                  {notInEvent.map((product) => {
-                    const heroUrl = product.photos[0]?.photo.url ?? "";
-                    const authors = product.authors
-                      .filter((a) => a.isAuthor)
-                      .map((a) => `${a.user.name} ${a.user.lastName}`)
-                      .join(", ");
-                    return (
-                      <div
-                        key={product.uid}
-                        className={styles.productCard}
-                        onClick={() => toggleProduct(product.uid)}
-                        title="Click para agregar al evento"
-                      >
-                        <div className={styles.productCardImage}>
-                          {heroUrl
-                            ? <img src={heroUrl} alt={product.name} className={styles.productCardImg} />
-                            : <div className={styles.productCardPlaceholder}>🎨</div>
-                          }
-                          <div className={styles.productCardAddIcon}>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
-                              <line x1="12" y1="5" x2="12" y2="19" strokeLinecap="round" />
-                              <line x1="5" y1="12" x2="19" y2="12" strokeLinecap="round" />
-                            </svg>
-                          </div>
-                        </div>
-                        <div className={styles.productCardInfo}>
-                          <p className={styles.productCardName}>{product.name}</p>
-                          <p className={styles.productCardAuthor}>{authors}</p>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : productSearch && allFiltered.length === 0 ? (
-                <div className={styles.productsEmpty}>
-                  <span>🔍</span>
-                  <p>No se encontraron obras con ese nombre</p>
+                  <p>Invita un grupo para poder agregar obras al evento</p>
                 </div>
               ) : (
-                <div className={styles.productsEmpty}>
-                  <span>✅</span>
-                  <p>Todas las obras disponibles ya están en el evento</p>
-                </div>
+                event.groups.map(({ group }) => {
+                  const groupProds = productsByGroup[group.uid] ?? [];
+                  const notInEvent = groupProds
+                    .filter((p) => !selectedProducts.includes(p.uid))
+                    .filter((p) => p.name.toLowerCase().includes(productSearch.toLowerCase()));
+                  const authors = (p: AvailableProduct) =>
+                    p.authors.filter((a) => a.isAuthor).map((a) => `${a.user.name} ${a.user.lastName}`).join(", ");
+
+                  return (
+                    <div key={group.uid} className={styles.productsSection}>
+                      <div className={styles.productsSectionHeader}>
+                        <h3 className={styles.productsSectionTitle}>
+                          {group.name}
+                          <span className={styles.sectionCount}>{groupProds.length} disponibles</span>
+                        </h3>
+                      </div>
+
+                      {groupProds.length === 0 ? (
+                        <div className={styles.productsEmpty}>
+                          <span>🎨</span>
+                          <p>No hay obras APPROVED en este grupo</p>
+                        </div>
+                      ) : notInEvent.length === 0 ? (
+                        <div className={styles.productsEmpty}>
+                          <span>✅</span>
+                          <p>
+                            {productSearch
+                              ? "No se encontraron obras con ese nombre"
+                              : "Todas las obras de este grupo ya están en el evento"}
+                          </p>
+                        </div>
+                      ) : (
+                        <div className={styles.productsGrid}>
+                          {notInEvent.map((product) => {
+                            const heroUrl = product.photos[0]?.photo.url ?? "";
+                            return (
+                              <div
+                                key={product.uid}
+                                className={styles.productCard}
+                                onClick={() => toggleProduct(product.uid)}
+                                title="Click para agregar al evento"
+                              >
+                                <div className={styles.productCardImage}>
+                                  {heroUrl
+                                    ? <img src={heroUrl} alt={product.name} className={styles.productCardImg} />
+                                    : <div className={styles.productCardPlaceholder}>🎨</div>
+                                  }
+                                  <div className={styles.productCardAddIcon}>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
+                                      <line x1="12" y1="5" x2="12" y2="19" strokeLinecap="round" />
+                                      <line x1="5" y1="12" x2="19" y2="12" strokeLinecap="round" />
+                                    </svg>
+                                  </div>
+                                </div>
+                                <div className={styles.productCardInfo}>
+                                  <p className={styles.productCardName}>{product.name}</p>
+                                  <p className={styles.productCardAuthor}>{authors(product)}</p>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })
               )}
 
               <div className={styles.warningBox}>

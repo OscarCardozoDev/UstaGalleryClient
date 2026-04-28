@@ -620,6 +620,120 @@
 .productsEmpty span { font-size: 2.5rem; opacity: 0.5; }
 .productsEmpty p    { margin: 0; color: #999; }
 
+/* ─── Gestión de grupos ──────────────────────────────────────────────────── */
+
+.groupsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: #fafafa;
+  border: 1.5px solid #ebebeb;
+  border-radius: 12px;
+}
+
+.groupChipsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.groupsEmpty {
+  font-size: 0.83rem;
+  color: #aaa;
+  margin: 0;
+}
+
+.groupChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px 6px 14px;
+  background: #fff;
+  border: 1.5px solid #d4d4d4;
+  border-radius: 20px;
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.groupChipName { white-space: nowrap; }
+
+.groupChipRemove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: none;
+  border-radius: 50%;
+  background: #e8e8e8;
+  color: #555;
+  font-size: 0.9rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.groupChipRemove:hover:not(:disabled) { background: #dc2626; color: #fff; }
+.groupChipRemove:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.inviteGroupBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border: 1.5px dashed #aaa;
+  border-radius: 8px;
+  background: transparent;
+  color: #666;
+  font-size: 0.83rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.inviteGroupBtn:hover { border-color: #171717; color: #171717; background: #f5f5f5; }
+
+.inviteRow {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding-top: 4px;
+}
+
+.inviteConfirmBtn {
+  padding: 11px 18px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #fff;
+  background: #171717;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.inviteConfirmBtn:hover:not(:disabled) { background: #333; }
+.inviteConfirmBtn:disabled { background: #ccc; cursor: not-allowed; }
+
+/* ─── Etiqueta de grupo en card ──────────────────────────────────────────── */
+
+.productCardGroup {
+  font-size: 0.68rem;
+  color: #888;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-style: italic;
+}
+
 /* ─── Responsive ─────────────────────────────────────────────────────────── */
 
 @media (max-width: 768px) {
