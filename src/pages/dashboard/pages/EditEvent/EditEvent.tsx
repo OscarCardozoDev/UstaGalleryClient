@@ -800,12 +800,10 @@ export default function EditEvent() {
 
                       {groupProds.length === 0 ? (
                         <div className={styles.productsEmpty}>
-                          <span>🎨</span>
-                          <p>No hay obras APPROVED en este grupo</p>
+                          <p>No hay obras aprovadas en este grupo</p>
                         </div>
                       ) : notInEvent.length === 0 ? (
                         <div className={styles.productsEmpty}>
-                          <span>✅</span>
                           <p>
                             {productSearch
                               ? "No se encontraron obras con ese nombre"

@@ -37,6 +37,7 @@ export default function ReviewEvents() {
     try {
       const data = await getAllEvents({ page: 1, limit: 100 });
       setEvents(data);
+      console.log("Eventos cargados:", data);
     } catch (err) {
       setFetchError(err instanceof Error ? err.message : "Error al cargar los eventos");
     } finally {

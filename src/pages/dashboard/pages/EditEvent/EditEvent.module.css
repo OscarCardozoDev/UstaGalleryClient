@@ -1,10 +1,32 @@
 /* ─── Wrapper ────────────────────────────────────────────────────────────── */
 
 .card {
+  height: 100%;
   background: #ffffff;
   border-radius: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  overflow-y: auto;
+  scrollbar-gutter: stable; /* Reserva espacio para el scrollbar */
+}
+
+.card::-webkit-scrollbar {
+  width: 12px;
+}
+
+.card::-webkit-scrollbar-track {
+  background: transparent;
+  margin-top: 5px; /* Espacio arriba y abajo del scrollbar */
+  margin-bottom: 20px;
+}
+
+.card::-webkit-scrollbar-thumb {
+  background: #3a3a3a;
+  border-radius: 6px;
+  border: 3px solid #f8f5f8; /* Crea un "padding" visual */
+}
+
+.card::-webkit-scrollbar-thumb:hover {
+  background: #171717;
 }
 
 .cardContent {
@@ -739,7 +761,7 @@
 @media (max-width: 768px) {
   .cardContent          { padding: 20px 16px; }
   .inlineGroup          { grid-template-columns: 1fr; }
-  .tabs                 { overflow-x: auto; }
+  .tabs                 { overflow-x: auto; overflow-y: hidden; }
   .tab                  { white-space: nowrap; padding: 10px 14px; }
   .carouselMain         { aspect-ratio: 4 / 3; }
   .carouselArrow        { width: 36px; height: 36px; }
@@ -748,4 +770,5 @@
   .searchWrapper        { width: 100%; }
   .productsSectionHeader { flex-direction: column; align-items: flex-start; }
   .uploadPhotosSectionHeader { flex-direction: column; align-items: flex-start; }
+  .warningBox           { flex-direction: column; align-items: center; text-align: center; }
 }
