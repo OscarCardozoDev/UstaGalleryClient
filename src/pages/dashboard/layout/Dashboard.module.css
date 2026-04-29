@@ -22,3 +22,10 @@
 .customScrollbar::-webkit-scrollbar-thumb:hover {
   background: #171717;
 }
+
+@media (max-width: 768px) {
+  .customScrollbar {
+    padding: 0 !important;
+    scrollbar-gutter: auto;
+  }
+}

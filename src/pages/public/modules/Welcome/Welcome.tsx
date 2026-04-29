@@ -7,7 +7,9 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import styles from "./Welcome.module.css";
+import { getGalleryProducts } from "../../../../services/products";
 import { getHomeEvents } from "../../../../services/events";
+import type { ProductGallery } from "../../../../interfaces/products";
 import type { EventHome } from "../../../../interfaces/events";
 
 /* ── Variantes de animación ─────────────────────────────── */
@@ -55,9 +57,12 @@ const scaleIn = {
 export default function Welcome() {
   const navigate = useNavigate();
   const [events, setEvents] = useState<EventHome[]>([]);
+  const [products, setProducts] = useState<ProductGallery[]>([]);
+  console.log("Eventos cargados:", products);
 
   useEffect(() => {
     getHomeEvents({ limit: 2 }).then(setEvents).catch(() => {});
+    getGalleryProducts({ limit: 2 }).then(setProducts).catch(() => {});
   }, []);
 
   const formatEventDate = (dateStr: string) => {

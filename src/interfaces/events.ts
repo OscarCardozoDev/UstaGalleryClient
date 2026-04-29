@@ -121,6 +121,7 @@ export interface EventSummary {
   description?: string;
   eventType: EventType;
   status?: EventStatus;
+  feedback?: string | null;
   startDate: string;
   endDate: string | null;
   isVirtual?: boolean;

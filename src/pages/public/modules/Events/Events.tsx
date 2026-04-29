@@ -25,7 +25,8 @@ function formatDate(iso: string): string {
 }
 
 function getHeroUrl(event: EventSummary): string {
-  return event.photos.find((p) => p.photoType === "HERO")?.photo.url ?? "";
+  const BASE_URL = import.meta.env.VITE_API_URL;
+  return `${BASE_URL}${event.photos.find((p) => p.photoType === "HERO")?.photo.url ?? ""}`;
 }
 
 // ─────────────────────────────────────────────────────────────

@@ -19,6 +19,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    @apply border-border;
   }
 
   html {
@@ -68,6 +69,12 @@
 
   button {
     cursor: pointer;
+  }
+
+  .logo {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
   }
 }
 

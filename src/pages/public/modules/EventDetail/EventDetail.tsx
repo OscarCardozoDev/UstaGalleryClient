@@ -52,6 +52,7 @@ interface PhotoCarouselProps {
 }
 
 function PhotoCarousel({ photos, label, sublabel }: PhotoCarouselProps) {
+  const BASE_URL = import.meta.env.VITE_API_URL;
   const trackRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
   const startX = useRef(0);
@@ -88,11 +89,11 @@ function PhotoCarousel({ photos, label, sublabel }: PhotoCarouselProps) {
         <div className={styles.carouselControls}>
           <button className={styles.carouselBtn} onClick={() => scroll("left")}
             aria-label="Anterior">
-            <span className="material-symbols-outlined">chevron_left</span>
+            <span className="material-symbols-outlined">&lt;</span>
           </button>
           <button className={styles.carouselBtn} onClick={() => scroll("right")}
             aria-label="Siguiente">
-            <span className="material-symbols-outlined">chevron_right</span>
+            <span className="material-symbols-outlined">&gt;</span>
           </button>
         </div>
       </div>
@@ -107,7 +108,7 @@ function PhotoCarousel({ photos, label, sublabel }: PhotoCarouselProps) {
       >
         {photos.map((p, i) => (
           <div key={i} className={styles.carouselItem}>
-            <img src={p.photo.url} alt={`Foto ${i + 1}`} className={styles.carouselImage} />
+            <img src={BASE_URL + p.photo.url} alt={`Foto ${i + 1}`} className={styles.carouselImage} />
           </div>
         ))}
       </div>
@@ -123,6 +124,7 @@ interface ArtworksGridProps {
 }
 
 function ArtworksGrid({ products, onNavigate }: ArtworksGridProps) {
+  const BASE_URL = import.meta.env.VITE_API_URL;
   if (!products.length) return null;
 
   return (
@@ -137,7 +139,7 @@ function ArtworksGrid({ products, onNavigate }: ArtworksGridProps) {
 
       <div className={styles.artworksGrid}>
         {products.map(({ product }, index) => {
-          const heroUrl = product.photos[0]?.photo.url ?? "";
+          const heroUrl = `${BASE_URL}${product.photos[0]?.photo.url ?? ""}`;
           // Alterna tamaños: el primero es wide (8 cols), el resto narrow (4 cols)
           const isWide = index === 0 || index % 5 === 0;
 
@@ -172,6 +174,7 @@ function ArtworksGrid({ products, onNavigate }: ArtworksGridProps) {
 const EventDetail = () => {
   const { uid } = useParams<{ uid: string }>();
   const navigate = useNavigate();
+  const BASE_URL = import.meta.env.VITE_API_URL;
 
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
@@ -232,7 +235,7 @@ const EventDetail = () => {
         <div className={styles.heroBg}>
           {heroPhoto && (
             <img
-              src={heroPhoto.photo.url}
+              src={`${BASE_URL}${heroPhoto.photo.url}`}
               alt={event.name}
               className={styles.heroBgImage}
             />
@@ -249,7 +252,10 @@ const EventDetail = () => {
               </span>
               <span className={styles.locationBadge}>
                 <span className="material-symbols-outlined">
-                  {event.isVirtual ? "videocam" : "location_on"}
+                  {event.isVirtual ? 
+                    <img src="/public/logos/art.public.png" alt="virtual" className="logo"/> : 
+                    <img src="/public/logos/ubication.public.png" alt="presencial" className="logo"/>
+                  }
                 </span>
                 {event.isVirtual ? "Virtual" : "Presencial"}
               </span>
@@ -309,7 +315,7 @@ const EventDetail = () => {
                     className={styles.ctaPrimary}
                   >
                     Ver ubicación
-                    <span className="material-symbols-outlined">arrow_right_alt</span>
+                    <span className="material-symbols-outlined">&gt;</span>
                   </a>
                 )}
                 {event.isVirtual && event.streamingUrl && (
@@ -372,7 +378,7 @@ const EventDetail = () => {
       {promoPhotos.length > 0 && (
         <PhotoCarousel
           photos={promoPhotos}
-          label="Fotos Promocionales"
+          label="Recorrido Visual"
           sublabel="Gallery Experience"
         />
       )}

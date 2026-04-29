@@ -2,11 +2,12 @@ import { sileo } from "sileo";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./Home.module.css";
+import { useAuth } from "../../../../context/AuthContext";
+import { getCurrentClass, attendClass } from "../../../../services/classes";
 import type { ProductGallery } from "../../../../interfaces/products";
 import { getProductByAuthor } from "../../../../services/products";
 import { getHomeEvents } from "../../../../services/events";
 import type { EventHome } from "../../../../interfaces/events";
-import { useAuth } from '../../../../context/AuthContext';
 
 const EVENT_TYPE_LABELS: Record<string, string> = {
   EXHIBITION: "Exposición",
@@ -27,13 +28,15 @@ interface Notification {
 
 export default function Home() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, currentGroup } = useAuth();
   const BASE_URL = import.meta.env.VITE_API_URL;
   const [artworks, setArtworks] = useState<ProductGallery[]>([]);
   const [upcomingEvents, setUpcomingEvents] = useState<EventHome[]>([]);
   const [attendanceTaken, setAttendanceTaken] = useState(false);
   const [currentTime] = useState(new Date());
   const [isLoading, setIsLoading] = useState(true);
+  const [currentClassId, setCurrentClassId] = useState<string | null>(null);
+  const [checkingClass, setCheckingClass] = useState(true);
 
   useEffect(() => {
     setIsLoading(true);
@@ -60,8 +63,8 @@ export default function Home() {
   }, [user?.uid]);
 
   // Datos mock
-  const attendanceCount = 0;
-  
+  const [attendanceCount] = useState(0);
+
   const notifications: Notification[] = [
     {
       id: "1",
@@ -69,7 +72,7 @@ export default function Home() {
       title: "Nuevo comentario en tu obra",
       message: "Carlos comentó en 'Astronauta Neon'",
       time: "Hace 5 min",
-      read: false
+      read: false,
     },
     {
       id: "2",
@@ -77,7 +80,7 @@ export default function Home() {
       title: "Recordatorio de evento",
       message: "Taller de Pintura mañana a las 10:00 AM",
       time: "Hace 1 hora",
-      read: false
+      read: false,
     },
     {
       id: "3",
@@ -85,7 +88,7 @@ export default function Home() {
       title: "Nuevo anuncio",
       message: "Convocatoria abierta para exposición de fin de semestre",
       time: "Hace 3 horas",
-      read: true
+      read: true,
     },
     {
       id: "4",
@@ -93,7 +96,7 @@ export default function Home() {
       title: "Te mencionaron",
       message: "María te agregó al proyecto 'Mural Colaborativo'",
       time: "Hace 1 día",
-      read: true
+      read: true,
     },
     {
       id: "5",
@@ -101,17 +104,38 @@ export default function Home() {
       title: "Fecha límite próxima",
       message: "Entrega de proyecto final en 3 días",
       time: "Hace 2 días",
-      read: true
-    }
+      read: true,
+    },
   ];
 
-  const handleTakeAttendance = () => {
-    setAttendanceTaken(true);
-    console.log("Asistencia registrada");
+  useEffect(() => {
+    if (!currentGroup) {
+      setCheckingClass(false);
+      return;
+    }
+    getCurrentClass(currentGroup)
+      .then((result) => {
+        if (result.active && result.classId) {
+          setCurrentClassId(result.classId);
+        }
+      })
+      .catch(() => {
+        /* silently ignore */
+      })
+      .finally(() => setCheckingClass(false));
+  }, [currentGroup]);
+
+  const handleTakeAttendance = async () => {
+    if (!currentClassId) return;
+    try {
+      await attendClass({ classId: currentClassId });
+      setAttendanceTaken(true);
+    } catch {
+      setAttendanceTaken(true);
+    }
   };
 
   const handleArtworkClick = (artworkId: string) => {
-    
     // navigate(`/obras/${artworkId}`);
   };
 
@@ -140,37 +164,58 @@ export default function Home() {
 
   const formatTime = (date: Date) => {
     const hours = date.getHours();
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    const ampm = hours >= 12 ? "PM" : "AM";
     const displayHours = hours % 12 || 12;
     return `${displayHours}:${minutes} ${ampm}`;
   };
 
   const formatDate = (date: Date) => {
-    const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-    const months = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
-    
+    const days = [
+      "Domingo",
+      "Lunes",
+      "Martes",
+      "Miércoles",
+      "Jueves",
+      "Viernes",
+      "Sábado",
+    ];
+    const months = [
+      "enero",
+      "febrero",
+      "marzo",
+      "abril",
+      "mayo",
+      "junio",
+      "julio",
+      "agosto",
+      "septiembre",
+      "octubre",
+      "noviembre",
+      "diciembre",
+    ];
+
     return `${days[date.getDay()]}, ${months[date.getMonth()]} ${date.getDate()} de ${date.getFullYear()}`;
   };
 
-  const getNotificationIcon = (type: Notification['type']) => {
+  const getNotificationIcon = (type: Notification["type"]) => {
     switch (type) {
-      case 'comment':
-        return '💬';
-      case 'event':
-        return '📅';
-      case 'announcement':
-        return '📢';
-      case 'mention':
-        return '👤';
-      case 'deadline':
-        return '⏰';
+      case "comment":
+        return "💬";
+      case "event":
+        return "📅";
+      case "announcement":
+        return "📢";
+      case "mention":
+        return "👤";
+      case "deadline":
+        return "⏰";
       default:
-        return '🔔';
+        return "🔔";
     }
   };
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   return (
     <div className={styles.homeContainer}>
@@ -179,23 +224,30 @@ export default function Home() {
         {isLoading ? (
           <>
             <div className={styles.welcomeText}>
-              <div className={`${styles.skeleton} ${styles.skeletonTitle}`}></div>
-              <div className={`${styles.skeleton} ${styles.skeletonText}`}></div>
+              <div
+                className={`${styles.skeleton} ${styles.skeletonTitle}`}
+              ></div>
+              <div
+                className={`${styles.skeleton} ${styles.skeletonText}`}
+              ></div>
             </div>
             <div className={`${styles.skeleton} ${styles.skeletonHero}`}></div>
           </>
         ) : (
           <>
             <div className={styles.welcomeText}>
-              <h1 className={styles.welcomeTitle}>Bienvenida, {user?.name || "Usuario"}</h1>
+              <h1 className={styles.welcomeTitle}>
+                Bienvenida, {user?.name || "Usuario"}
+              </h1>
               <p className={styles.welcomeSubtitle}>
-                Marca tu asistencia, explora tus obras y mantente al día con los eventos del semillero.
+                Marca tu asistencia, explora tus obras y mantente al día con los
+                eventos del semillero.
               </p>
             </div>
             <div className={styles.heroImage}>
-              <img 
-                src="https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=300&h=150&fit=crop" 
-                alt="Arte" 
+              <img
+                src="https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=300&h=150&fit=crop"
+                alt="Arte"
                 className={styles.heroImageElement}
               />
             </div>
@@ -209,43 +261,78 @@ export default function Home() {
         <div className={`${styles.gridItem} ${styles.div1}`}>
           {isLoading ? (
             <div className={styles.skeletonCard}>
-              <div className={`${styles.skeleton} ${styles.skeletonCardTitle}`}></div>
-              <div className={`${styles.skeleton} ${styles.skeletonTime}`}></div>
-              <div className={`${styles.skeleton} ${styles.skeletonButton}`}></div>
+              <div
+                className={`${styles.skeleton} ${styles.skeletonCardTitle}`}
+              ></div>
+              <div
+                className={`${styles.skeleton} ${styles.skeletonTime}`}
+              ></div>
+              <div
+                className={`${styles.skeleton} ${styles.skeletonButton}`}
+              ></div>
             </div>
           ) : (
             <div className={styles.attendanceCard}>
               <h2 className={styles.cardTitle}>Marcar Asistencia</h2>
               <div className={styles.timeDisplay}>
-                <span className={styles.timeNumber}>{formatTime(currentTime)}</span>
+                <span className={styles.timeNumber}>
+                  {formatTime(currentTime)}
+                </span>
               </div>
               <p className={styles.dateText}>{formatDate(currentTime)}</p>
-              
-              <button 
-                className={`${styles.attendanceButton} ${attendanceTaken ? styles.attendanceButtonTaken : ''}`}
+
+              <button
+                className={`${styles.attendanceButton} ${attendanceTaken ? styles.attendanceButtonTaken : ""}`}
                 onClick={handleTakeAttendance}
-                disabled={attendanceTaken}
+                disabled={attendanceTaken || !currentClassId || checkingClass}
               >
-                {attendanceTaken ? (
+                {checkingClass ? (
+                  <>Verificando clase...</>
+                ) : attendanceTaken ? (
                   <>
-                    <svg className={styles.checkIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    <svg
+                      className={styles.checkIcon}
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
                     </svg>
                     Asistencia Tomada
                   </>
-                ) : (
+                ) : currentClassId ? (
                   <>
-                    <svg className={styles.checkIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <svg
+                      className={styles.checkIcon}
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                    >
                       <circle cx="12" cy="12" r="10" strokeWidth={2} />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4" />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 12l2 2 4-4"
+                      />
                     </svg>
                     Tomar Asistencia
                   </>
+                ) : (
+                  <>No hay clase en el momento</>
                 )}
               </button>
 
               <p className={styles.attendanceCount}>
-                Asistencias este mes: <strong>{attendanceTaken ? attendanceCount + 1 : attendanceCount}</strong>
+                Asistencias este mes:{" "}
+                <strong>
+                  {attendanceTaken ? attendanceCount + 1 : attendanceCount}
+                </strong>
               </p>
             </div>
           )}
@@ -255,11 +342,19 @@ export default function Home() {
         <div className={`${styles.gridItem} ${styles.div2}`}>
           {isLoading ? (
             <div className={styles.skeletonCard}>
-              <div className={`${styles.skeleton} ${styles.skeletonCardTitle}`}></div>
+              <div
+                className={`${styles.skeleton} ${styles.skeletonCardTitle}`}
+              ></div>
               <div className={styles.skeletonArtworksScroll}>
-                <div className={`${styles.skeleton} ${styles.skeletonArtwork}`}></div>
-                <div className={`${styles.skeleton} ${styles.skeletonArtwork}`}></div>
-                <div className={`${styles.skeleton} ${styles.skeletonArtwork}`}></div>
+                <div
+                  className={`${styles.skeleton} ${styles.skeletonArtwork}`}
+                ></div>
+                <div
+                  className={`${styles.skeleton} ${styles.skeletonArtwork}`}
+                ></div>
+                <div
+                  className={`${styles.skeleton} ${styles.skeletonArtwork}`}
+                ></div>
               </div>
             </div>
           ) : (
@@ -271,9 +366,23 @@ export default function Home() {
                     <strong>{artworks.length}</strong> obras subidas
                   </p>
                 </div>
-                <button className={styles.uploadButton} onClick={handleUploadArtwork}>
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 3v10M3 8h10" />
+                <button
+                  className={styles.uploadButton}
+                  onClick={handleUploadArtwork}
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8 3v10M3 8h10"
+                    />
                   </svg>
                   Subir Obra
                 </button>
@@ -281,14 +390,18 @@ export default function Home() {
 
               <div className={styles.artworksScrollContainer}>
                 {artworks.map((artwork) => (
-                  <div 
-                    key={artwork.uid} 
+                  <div
+                    key={artwork.uid}
                     className={styles.artworkCardHorizontal}
                     onClick={() => handleArtworkClick(artwork.uid)}
                   >
                     <div className={styles.artworkImageHorizontal}>
                       <div className={styles.artworkPlaceholder}>
-                        <img key={artwork.name} src={`${BASE_URL}${artwork.photos[0].photo.url}`} alt="Arte" />
+                        <img
+                          key={artwork.name}
+                          src={`${BASE_URL}${artwork.photos[0].photo.url}`}
+                          alt="Arte"
+                        />
                       </div>
                     </div>
                     <div className={styles.artworkInfoHorizontal}>
@@ -305,11 +418,19 @@ export default function Home() {
         <div className={`${styles.gridItem} ${styles.div3}`}>
           {isLoading ? (
             <div className={styles.skeletonCard}>
-              <div className={`${styles.skeleton} ${styles.skeletonCardTitle}`}></div>
+              <div
+                className={`${styles.skeleton} ${styles.skeletonCardTitle}`}
+              ></div>
               <div className={styles.skeletonNotificationsList}>
-                <div className={`${styles.skeleton} ${styles.skeletonNotification}`}></div>
-                <div className={`${styles.skeleton} ${styles.skeletonNotification}`}></div>
-                <div className={`${styles.skeleton} ${styles.skeletonNotification}`}></div>
+                <div
+                  className={`${styles.skeleton} ${styles.skeletonNotification}`}
+                ></div>
+                <div
+                  className={`${styles.skeleton} ${styles.skeletonNotification}`}
+                ></div>
+                <div
+                  className={`${styles.skeleton} ${styles.skeletonNotification}`}
+                ></div>
               </div>
             </div>
           ) : (
@@ -318,30 +439,43 @@ export default function Home() {
                 <h2 className={styles.cardTitle}>
                   Notificaciones
                   {unreadCount > 0 && (
-                    <span className={styles.notificationBadge}>{unreadCount}</span>
+                    <span className={styles.notificationBadge}>
+                      {unreadCount}
+                    </span>
                   )}
                 </h2>
-                <button className={styles.viewAllButton} onClick={handleViewAllNotifications}>
+                <button
+                  className={styles.viewAllButton}
+                  onClick={handleViewAllNotifications}
+                >
                   Ver todas
                 </button>
               </div>
 
               <div className={styles.notificationsList}>
                 {notifications.slice(0, 5).map((notification) => (
-                  <div 
-                    key={notification.id} 
-                    className={`${styles.notificationItem} ${!notification.read ? styles.notificationUnread : ''}`}
+                  <div
+                    key={notification.id}
+                    className={`${styles.notificationItem} ${!notification.read ? styles.notificationUnread : ""}`}
                     onClick={() => handleNotificationClick(notification.id)}
                   >
                     <div className={styles.notificationIcon}>
                       {getNotificationIcon(notification.type)}
                     </div>
                     <div className={styles.notificationContent}>
-                      <p className={styles.notificationTitle}>{notification.title}</p>
-                      <p className={styles.notificationMessage}>{notification.message}</p>
-                      <span className={styles.notificationTime}>{notification.time}</span>
+                      <p className={styles.notificationTitle}>
+                        {notification.title}
+                      </p>
+                      <p className={styles.notificationMessage}>
+                        {notification.message}
+                      </p>
+                      <span className={styles.notificationTime}>
+                        {notification.time}
+                      </span>
                     </div>
-                    {!notification.read && <div className={styles.notificationDot}></div>}
+                    {!notification.read && (
+                      <div className={styles.notificationDot}></div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -353,11 +487,19 @@ export default function Home() {
         <div className={`${styles.gridItem} ${styles.div4}`}>
           {isLoading ? (
             <div className={styles.skeletonCard}>
-              <div className={`${styles.skeleton} ${styles.skeletonCardTitle}`}></div>
+              <div
+                className={`${styles.skeleton} ${styles.skeletonCardTitle}`}
+              ></div>
               <div className={styles.skeletonEventsList}>
-                <div className={`${styles.skeleton} ${styles.skeletonEvent}`}></div>
-                <div className={`${styles.skeleton} ${styles.skeletonEvent}`}></div>
-                <div className={`${styles.skeleton} ${styles.skeletonEvent}`}></div>
+                <div
+                  className={`${styles.skeleton} ${styles.skeletonEvent}`}
+                ></div>
+                <div
+                  className={`${styles.skeleton} ${styles.skeletonEvent}`}
+                ></div>
+                <div
+                  className={`${styles.skeleton} ${styles.skeletonEvent}`}
+                ></div>
               </div>
             </div>
           ) : (
@@ -370,8 +512,15 @@ export default function Home() {
                 <div className={styles.eventsTimeline}>
                   {upcomingEvents.map((event, index) => {
                     const date = new Date(event.startDate);
-                    const dateLabel = date.toLocaleDateString("es-CO", { weekday: "short", day: "numeric", month: "short" });
-                    const timeLabel = date.toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit" });
+                    const dateLabel = date.toLocaleDateString("es-CO", {
+                      weekday: "short",
+                      day: "numeric",
+                      month: "short",
+                    });
+                    const timeLabel = date.toLocaleTimeString("es-CO", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    });
                     return (
                       <div
                         key={event.uid}
@@ -379,16 +528,21 @@ export default function Home() {
                         onClick={() => handleEventClick(event.uid)}
                       >
                         <div className={styles.eventTimelineDot}></div>
-                        {index < upcomingEvents.length - 1 && <div className={styles.eventTimelineLine}></div>}
+                        {index < upcomingEvents.length - 1 && (
+                          <div className={styles.eventTimelineLine}></div>
+                        )}
 
                         <div className={styles.eventTimelineContent}>
                           <div className={styles.eventDate}>{dateLabel}</div>
                           <div className={styles.eventTimelineCard}>
                             <div className={styles.eventHeader}>
                               <span className={styles.eventBadge}>
-                                {EVENT_TYPE_LABELS[event.eventType] ?? event.eventType}
+                                {EVENT_TYPE_LABELS[event.eventType] ??
+                                  event.eventType}
                               </span>
-                              <span className={styles.eventTime}>{timeLabel}</span>
+                              <span className={styles.eventTime}>
+                                {timeLabel}
+                              </span>
                             </div>
                             <h3 className={styles.eventTitle}>{event.name}</h3>
                           </div>

@@ -74,10 +74,9 @@ export default function EventCard({
     return () => document.removeEventListener("mousedown", handleOutside);
   }, [menuOpen]);
 
-  const sc = STATUS_CONFIG[event.status];
+  const sc = STATUS_CONFIG[event.status || "PENDING"];
   const heroPhoto = event.photos.find((p) => p.photoType === "HERO");
   const imageUrl = heroPhoto?.photo.url ?? null;
-  console.log(baseUrl + imageUrl);
   const isPending = event.status === "PENDING";
   const isApproved = event.status === "APPROVED";
 
@@ -378,6 +377,16 @@ export default function EventCard({
                         </span>
                       ))}
                     </div>
+                  </div>
+                )}
+
+                {/* Motivo de rechazo / cancelación */}
+                {(event.status === "REJECTED" || event.status === "CANCELLED") && event.feedback && (
+                  <div className={styles.feedbackBox}>
+                    <p className={styles.infoLabel}>
+                      {event.status === "REJECTED" ? "Motivo del rechazo" : "Motivo de cancelación"}
+                    </p>
+                    <p className={styles.feedbackText}>{event.feedback}</p>
                   </div>
                 )}
 

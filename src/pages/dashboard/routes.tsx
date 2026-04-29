@@ -7,8 +7,10 @@ import YourGalleryReviewPage from "./pages/YourGalleryReview/YourGalleryReview";
 import CreateEventPage from "./pages/CreateEvent/CreateEvent";
 import ReviewEvents from "./pages/ReviewEvents/ReviewEvents";
 import EditEventPage from "./pages/EditEvent/EditEvent";
+import Calendar from "./pages/Calendar/Calendar";
 import InvitationsPage from "./pages/Invitations/Invitations";
 import MyEventsPage from "./pages/MyEvents/MyEvents";
+import ClasesPage from "./pages/Clases/Clases";
 
 export default function DashboardRoutes() {
   return (
@@ -23,8 +25,11 @@ export default function DashboardRoutes() {
       <Route path="/create-event" element={<CreateEventPage />} />
       <Route path="/events/" element={<ReviewEvents />} />
       <Route path="/events/edit/:uid" element={<EditEventPage />} />
+      <Route path="/calendar" element={<Calendar />} />
       <Route path="/invitations" element={<InvitationsPage />} />
       <Route path="/my-events" element={<MyEventsPage />} />
+
+      <Route path="/clases" element={<ClasesPage />} />
 
       {/* futuras rutas */}
       {/* <Route path="users" element={<UsersPage />} /> */}
