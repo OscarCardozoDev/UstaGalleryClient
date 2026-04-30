@@ -198,7 +198,157 @@
   background: rgba(186, 26, 26, 0.06);
 }
 
-/* ── Mobile: ocultar nav central ────────────────────────── */
+/* ── Mobile menu button ──────────────────────────────────── */
+.mobileMenuBtn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: #1a1a1a;
+  flex-shrink: 0;
+  transition: background 0.2s ease;
+}
+
+.mobileMenuBtn:hover {
+  background: rgba(163, 163, 164, 0.1);
+}
+
+/* ── Backdrop ────────────────────────────────────────────── */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 90;
+}
+
+/* ── Mobile drawer ───────────────────────────────────────── */
+.mobileDrawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 280px;
+  height: 100dvh;
+  z-index: 95;
+  display: flex;
+  flex-direction: column;
+  background: #fafafa;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+  overflow-y: auto;
+}
+
+.drawerTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 72px;
+  padding: 0 1.25rem;
+  border-bottom: 1px solid rgba(163, 163, 164, 0.15);
+  flex-shrink: 0;
+}
+
+.drawerClose {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1a1a1a;
+  transition: background 0.2s ease;
+}
+
+.drawerClose:hover {
+  background: rgba(163, 163, 164, 0.1);
+}
+
+.drawerNav {
+  display: flex;
+  flex-direction: column;
+  padding: 0.75rem 0;
+  flex: 1;
+}
+
+.drawerLink {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0.875rem 1.5rem;
+  background: none;
+  border: none;
+  border-left: 3px solid transparent;
+  cursor: pointer;
+  font-family: var(--font-sans, sans-serif);
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #555555;
+  text-align: left;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.drawerLink:hover {
+  color: #1a1a1a;
+  background: rgba(163, 163, 164, 0.06);
+}
+
+.drawerLinkActive {
+  color: #1a1a1a;
+  border-left-color: #c9a84c;
+  font-weight: 600;
+}
+
+.drawerLinkDanger {
+  color: #ba1a1a !important;
+}
+
+.drawerLinkDanger:hover {
+  background: rgba(186, 26, 26, 0.06) !important;
+}
+
+.drawerFooter {
+  padding: 0.75rem 0;
+  border-top: 1px solid rgba(163, 163, 164, 0.15);
+  flex-shrink: 0;
+}
+
+.drawerLoginBtn {
+  display: block;
+  width: calc(100% - 3rem);
+  margin: 0.5rem 1.5rem;
+  padding: 0.75rem 1.25rem;
+  background: #1a1a1a;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-sans, sans-serif);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: background 0.25s ease;
+}
+
+.drawerLoginBtn:hover {
+  background: #333333;
+}
+
+.drawerUser {
+  display: flex;
+  flex-direction: column;
+}
+
+.drawerUserInfo {
+  padding: 0.5rem 1.5rem 0.25rem;
+}
+
+/* ── Mobile: ocultar nav central, mostrar hamburger ─────── */
 @media (max-width: 767px) {
   .nav {
     display: none;
@@ -206,5 +356,9 @@
 
   .header {
     padding: 0 1.25rem;
+  }
+
+  .mobileMenuBtn {
+    display: flex;
   }
 }

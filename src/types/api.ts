@@ -55,6 +55,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/auth/send-code": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Enviar código de verificación por correo */
+        post: operations["AuthController_sendCode"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/verify-code": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Verificar código de correo */
+        post: operations["AuthController_verifyCode"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/user/create": {
         parameters: {
             query?: never;
@@ -311,7 +345,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/styles/all/{groupId}": {
+    "/styles/all/{category}": {
         parameters: {
             query?: never;
             header?: never;
@@ -1042,6 +1076,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/events/{uid}/groups/{groupId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Quitar un grupo del evento directamente (coordinador/admin) */
+        delete: operations["EventController_removeGroup"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/schedule/create": {
         parameters: {
             query?: never;
@@ -1206,6 +1257,10 @@ export interface components {
             /** @example password123 */
             password: string;
         };
+        VerifyCodeDto: {
+            /** @example 123456 */
+            code: string;
+        };
         PhotoDto: {
             /** @example /9j/4AAQSkZJRgAB... */
             base64: string;
@@ -1275,6 +1330,8 @@ export interface components {
             /** @example /9j/4AAQSkZJRgAB... */
             base64: string;
         };
+        /** @enum {string} */
+        Category: "ARTES" | "TEATRO" | "DANZAS" | "MUSICA" | "CANTO";
         CreateStyleDto: {
             /** @example Expresionismo */
             name: string;
@@ -1282,12 +1339,16 @@ export interface components {
             description: string;
             /** @example uuid-del-grupo */
             groupId: string;
+            /** @example ARTES */
+            category: components["schemas"]["Category"];
         };
         UpdateStyleDto: {
             /** @example Surrealismo */
             name?: string;
             /** @example Nueva descripción */
             description?: string;
+            /** @example ARTES */
+            category: components["schemas"]["Category"];
         };
         CreateGroupDto: {
             /** @example Grupo A 2025 */
@@ -1634,6 +1695,44 @@ export interface operations {
             };
         };
     };
+    AuthController_sendCode: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AuthController_verifyCode: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VerifyCodeDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     UserController_createUser: {
         parameters: {
             query?: never;
@@ -1955,7 +2054,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                groupId: string;
+                category: components["schemas"]["Category"];
             };
             cookie?: never;
         };
@@ -2844,6 +2943,26 @@ export interface operations {
         };
     };
     EventController_revokeInvitation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                uid: string;
+                groupId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EventController_removeGroup: {
         parameters: {
             query?: never;
             header?: never;

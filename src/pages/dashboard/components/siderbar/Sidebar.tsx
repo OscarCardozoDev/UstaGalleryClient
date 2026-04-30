@@ -34,7 +34,7 @@ export default function Sidebar({ open, onClose }: Props) {
   const getGroupImage = (groupName: string): string => {
     const imgName = {
       "Musica Instrumental": "musica.jpg",
-      "Dibujo y pintura": "artes.jpg",
+      "Grupo de artes y fotografía": "artes.jpg",
       "Tecnica Vocal": "vocal.jpg",
     };
     return `/groups/${imgName[groupName as keyof typeof imgName]}`;

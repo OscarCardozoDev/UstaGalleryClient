@@ -1,8 +1,28 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../../../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import styles from "./Topbar.module.css";
+
+const routeTitles: Record<string, string> = {
+  "/dashboard/home": "Inicio",
+  "/dashboard/upload": "Subir Galería",
+  "/dashboard/your-gallery": "Tu Galería",
+  "/dashboard/review-art": "Revisar Obras",
+  "/dashboard/calendar": "Calendario",
+  "/dashboard/create-event": "Crear Evento",
+  "/dashboard/events": "Revisar Eventos",
+  "/dashboard/invitations": "Invitaciones",
+  "/dashboard/my-events": "Mis Eventos",
+  "/dashboard/clases": "Clases",
+};
+
+function getPageTitle(pathname: string): string {
+  if (routeTitles[pathname]) return routeTitles[pathname];
+  if (pathname.startsWith("/dashboard/update/")) return "Editar Obra";
+  if (pathname.startsWith("/dashboard/events/edit/")) return "Editar Evento";
+  return "Dashboard";
+}
 
 interface Props {
   onMenuClick: () => void;
@@ -38,6 +58,7 @@ export default function Topbar({ onMenuClick }: Props) {
   const BASE_URL = import.meta.env.VITE_API_URL;
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -85,7 +106,7 @@ export default function Topbar({ onMenuClick }: Props) {
             </svg>
           </button>
           <h1 className="ml-4 text-[#171717] text-2xl font-semibold">
-            Dashboard
+            {getPageTitle(location.pathname)}
           </h1>
         </div>
 

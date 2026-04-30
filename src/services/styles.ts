@@ -1,4 +1,4 @@
-import type { Style, CreateStyleDto, UpdateStyleDto } from "../interfaces/styles";
+import type { Style, CreateStyleDto, UpdateStyleDto, Category } from "../interfaces/styles";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -33,8 +33,8 @@ export async function getAllStyles(): Promise<Style[]> {
 
 // ─── Obtener todos los estilos por grupo ───────────────────────────────────────────────
 
-export async function getAllStylesByGroup(groupId: string): Promise<Style[]> {
-  const response = await fetch(`${API_URL}/styles/all/${groupId}`, {
+export async function getAllStylesByGroup(category: Category): Promise<Style[]> {
+  const response = await fetch(`${API_URL}/styles/all/${category}`, {
     headers: getHeaders(true),
   });
 

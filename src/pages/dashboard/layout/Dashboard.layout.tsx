@@ -57,19 +57,24 @@ function DashboardContent({ children }: Props) {
 
   // Renderizar dashboard normal
   return (
-    <div style={{ 
-      backgroundColor: "#171717", 
-      display: "flex", 
+    <div style={{
+      backgroundColor: "#171717",
+      display: "flex",
       height: "100vh",
       overflow: "hidden"
     }}>
+      {/* Overlay móvil — cierra sidebar al tocar fuera */}
+      {open && (
+        <div
+          className={styles.mobileOverlay}
+          onClick={() => setOpen(false)}
+        />
+      )}
+
       <Sidebar groups={user.groups} open={open} onClose={() => setOpen(false)} />
-      <div style={{ 
-        flexGrow: 1, 
-        display: "flex",
-        overflow: "hidden"
-      }}>
-        <div style={{ 
+
+      <div className={`${styles.mainWrapper} ${open ? styles.mainShifted : ""}`}>
+        <div style={{
           padding: 30,
           display: "flex",
           flexDirection: "column",
@@ -77,13 +82,13 @@ function DashboardContent({ children }: Props) {
           overflow: "hidden"
         }}>
           <Topbar onMenuClick={() => setOpen(!open)} />
-            
-          <div 
+
+          <div
             className={styles.customScrollbar}
-            style={{ 
-              backgroundColor: "#f8f5f8", 
-              borderEndEndRadius: 20, 
-              borderEndStartRadius: 20, 
+            style={{
+              backgroundColor: "#f8f5f8",
+              borderEndEndRadius: 20,
+              borderEndStartRadius: 20,
               padding: 30,
               overflow: 'auto',
               flexGrow: 1,

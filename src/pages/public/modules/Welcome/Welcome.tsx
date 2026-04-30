@@ -58,11 +58,10 @@ export default function Welcome() {
   const navigate = useNavigate();
   const [events, setEvents] = useState<EventHome[]>([]);
   const [products, setProducts] = useState<ProductGallery[]>([]);
-  console.log("Eventos cargados:", products);
 
   useEffect(() => {
-    getHomeEvents({ limit: 2 }).then(setEvents).catch(() => {});
-    getGalleryProducts({ limit: 2 }).then(setProducts).catch(() => {});
+    getHomeEvents({ limit: 3 }).then(setEvents).catch(() => {});
+    getGalleryProducts({ limit: 3 }).then(setProducts).catch(() => {});
   }, []);
 
   const formatEventDate = (dateStr: string) => {
@@ -108,7 +107,7 @@ export default function Welcome() {
             className="font-sans text-[0.65rem] tracking-[0.4em] uppercase text-tertiary mt-5"
             variants={fadeUp} initial="hidden" animate="visible" custom={0.65}
           >
-            Curating Excellence Since 1924
+            Excelencia curatorial desde 1924
           </motion.p>
         </div>
 
@@ -119,31 +118,34 @@ export default function Welcome() {
         >
           <div className={`${styles.glassCard} bg-neutral/70 p-8 space-y-4`}>
             <span className="font-sans text-[0.6rem] tracking-[0.15em] uppercase text-tertiary block mb-5">
-              Newest Acquisitions
+              Nuevas Adquisiciones
             </span>
 
             <div className="space-y-5">
-              <div className="cursor-pointer border-b border-neutral-200 pb-4">
-                <p className="font-serif italic text-xl text-primary leading-tight">
-                  The Ethereal Plane
+              {products.length === 0 ? (
+                <p className="font-sans text-[0.6rem] uppercase tracking-[0.12em] text-tertiary">
+                  Sin obras disponibles
                 </p>
-                <p className="font-sans text-[0.6rem] uppercase tracking-[0.12em] text-tertiary mt-1">
-                  S. Morandi, 2023
-                </p>
-              </div>
-              <div className="cursor-pointer pb-2">
-                <p className="font-serif italic text-xl text-primary leading-tight">
-                  Vessels of Memory
-                </p>
-                <p className="font-sans text-[0.6rem] uppercase tracking-[0.12em] text-tertiary mt-1">
-                  Ceramic Installation
-                </p>
-              </div>
+              ) : (
+                products.slice(0, 2).map((product, i) => (
+                  <div
+                    key={product.uid}
+                    className={`cursor-pointer pb-2${i < products.slice(0, 2).length - 1 ? " border-b border-neutral-200 pb-4" : ""}`}
+                  >
+                    <p className="font-serif italic text-xl text-primary leading-tight">
+                      {product.name}
+                    </p>
+                  </div>
+                ))
+              )}
             </div>
 
-            <button className={`${styles.viewAllBtn} font-sans text-[0.6rem] tracking-[0.2em] uppercase text-primary mt-3`}>
-              View All
-              <span className="material-symbols-outlined text-sm">arrow_forward</span>
+            <button
+              className={`${styles.viewAllBtn} font-sans text-[0.6rem] tracking-[0.2em] uppercase text-primary mt-3`}
+              onClick={() => navigate("/gallery")}
+            >
+              Ver Todo
+              <span className="material-symbols-outlined text-[0.6rem]">&gt;</span>
             </button>
           </div>
         </motion.div>
@@ -196,7 +198,7 @@ export default function Welcome() {
           variants={fadeIn} initial="hidden" animate="visible" custom={1.1}
         >
           <span className="font-sans text-[0.55rem] uppercase tracking-[0.35em] text-primary">
-            Explore
+            Explorar
           </span>
           <div className={`${styles.exploreLine} text-primary`} />
         </motion.div>
@@ -232,10 +234,10 @@ export default function Welcome() {
                 variants={fadeUp} initial="hidden" animate="visible" custom={0.55}
               >
                 <span className="font-sans text-[0.55rem] tracking-[0.2em] uppercase text-tertiary block mb-1">
-                  Current Exhibition
+                  Exposición Actual
                 </span>
                 <p className="font-serif italic text-lg leading-tight text-primary">
-                  Ephemeral Shadows
+                  {products[0]?.name ?? "Galería USTA"}
                 </p>
               </motion.div>
             </motion.div>
@@ -262,15 +264,14 @@ export default function Welcome() {
               variants={fadeUp} initial="hidden" animate="visible" custom={0.5}
             >
               <h2 className="font-serif italic text-fluid-2xl text-primary leading-none mb-4">
-                Curated <br />Modernity.
+                Arte <br />Curado.
               </h2>
               <p className="font-sans text-sm text-tertiary leading-relaxed max-w-[240px] mb-8">
-                Discover a digital sanctuary for contemporary masterpieces and
-                emerging voices.
+                Descubre un santuario digital para obras maestras contemporáneas y voces emergentes.
               </p>
-              <button className={`${styles.collectionBtn} bg-primary text-neutral px-8 py-4`}>
+              <button className={`${styles.collectionBtn} bg-primary text-neutral px-8 py-4`} onClick={() => navigate("/gallery")}>
                 <span className="font-sans text-[0.7rem] tracking-[0.2em] uppercase">
-                  Collection
+                  Colección
                 </span>
                 <span className="material-symbols-outlined text-sm">arrow_forward</span>
               </button>
@@ -283,7 +284,7 @@ export default function Welcome() {
             variants={fadeIn} initial="hidden" animate="visible" custom={1.0}
           >
             <span className="font-sans text-[0.55rem] uppercase tracking-[0.3em] text-primary">
-              Scroll
+              Explorar
             </span>
             <span className="material-symbols-outlined text-primary">expand_more</span>
           </motion.div>
@@ -299,88 +300,49 @@ export default function Welcome() {
               custom={0}
             >
               <h3 className="font-serif italic text-fluid-xl text-primary">
-                Newest Works
+                Últimas Obras
               </h3>
-              <span className="font-sans text-[0.6rem] tracking-[0.2em] uppercase text-tertiary">
-                Vol. 04
-              </span>
             </motion.div>
 
             <div className="flex flex-col gap-16">
-
-              {/* Item 1 */}
-              <motion.div
-                variants={fadeUp} initial="hidden"
-                whileInView="visible" viewport={{ once: true, margin: "-60px" }}
-                custom={0.05}
-              >
-                <div className={`${styles.galleryImageFrame} portrait shadow-brand-sm`}>
-                  <img
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSxJskcBghXTd-7rMj3mjcfLmQBxa2PX2h0nmVjo9wvMgnpvEJEdJ4o7pG3wLv1UdiKiIYHNW-KoVbWDY7xySK-M7ld3MLhLJOIT5rmgppESvNH-3rzNLG038WpUrL3pEAfN4vl4zyX7EAPltKUrIBHXSGgUL07jOL0MjUvw2qmOK7Rn5PfE7sNR-TpnzpQgQCsiNEtpVL4QqTAa2es3DWcdSVn9QTE4G4GU8n140tBosaXL_buhaw5ZQvMXop0DyqXp2jcri0KA"
-                    alt="Atmospheric abstract"
-                    className="grayscale"
-                  />
-                </div>
-                <div className="flex justify-between items-end pt-5 pb-4 border-b border-neutral-200 mt-6">
-                  <div>
-                    <h4 className="font-serif italic text-xl text-primary">Vesper's Breath</h4>
-                    <p className="font-sans text-[0.6rem] uppercase tracking-[0.12em] text-tertiary mt-1">
-                      Oil on Canvas, 2024
-                    </p>
-                  </div>
-                  <span className="font-serif italic text-lg text-primary/30">01</span>
-                </div>
-              </motion.div>
-
-              {/* Item 2 */}
-              <motion.div
-                className={styles.galleryItemOffset}
-                variants={fadeUp} initial="hidden"
-                whileInView="visible" viewport={{ once: true, margin: "-60px" }}
-                custom={0.05}
-              >
-                <div className={`${styles.galleryImageFrame} square shadow-brand-sm`}>
-                  <img
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuADVoZKdVMlyrxfd-v2tObpJuNtCYg63rdpTvrWmvVDd2uXQ4jpvbg3ScUqFenmskZHyBYL1GYbriFSv_kmWj569bjYd71V3023BnU881IZ-bvrJRdAr5818rIJUz2rMGo2eP09nRCyJxvU8esRCp2kYu762p1leDRJXTjzkgLVwtix5hIbc2s8Pb9zyPjfjHBdzG4x49NDjjUme9e5pvMC_RxLYVLt0p32k-EPtlH2jz-t25Vkuj1zkv_9QOXIFvEeWHsuw0G0PQ"
-                    alt="Minimalist sculpture detail"
-                    className="grayscale"
-                  />
-                </div>
-                <div className="flex justify-between items-end pt-5 pb-4 border-b border-neutral-200 mt-6">
-                  <div>
-                    <h4 className="font-serif italic text-xl text-primary">Quietude No. 7</h4>
-                    <p className="font-sans text-[0.6rem] uppercase tracking-[0.12em] text-tertiary mt-1">
-                      Carrara Marble, 2023
-                    </p>
-                  </div>
-                  <span className="font-serif italic text-lg text-primary/30">02</span>
-                </div>
-              </motion.div>
-
-              {/* Item 3 */}
-              <motion.div
-                className={styles.galleryItemRight}
-                variants={fadeUp} initial="hidden"
-                whileInView="visible" viewport={{ once: true, margin: "-60px" }}
-                custom={0.05}
-              >
-                <div className={`${styles.galleryImageFrame} tall shadow-brand-sm`}>
-                  <img
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSxJskcBghXTd-7rMj3mjcfLmQBxa2PX2h0nmVjo9wvMgnpvEJEdJ4o7pG3wLv1UdiKiIYHNW-KoVbWDY7xySK-M7ld3MLhLJOIT5rmgppESvNH-3rzNLG038WpUrL3pEAfN4vl4zyX7EAPltKUrIBHXSGgUL07jOL0MjUvw2qmOK7Rn5PfE7sNR-TpnzpQgQCsiNEtpVL4QqTAa2es3DWcdSVn9QTE4G4GU8n140tBosaXL_buhaw5ZQvMXop0DyqXp2jcri0KA"
-                    alt="Abstract landscape"
-                    className="grayscale"
-                  />
-                </div>
-                <div className="flex justify-between items-end pt-5 pb-4 border-b border-neutral-200 mt-6">
-                  <div>
-                    <h4 className="font-serif italic text-xl text-primary">Aeolian Plains</h4>
-                    <p className="font-sans text-[0.6rem] uppercase tracking-[0.12em] text-tertiary mt-1">
-                      Mixed Media, 2024
-                    </p>
-                  </div>
-                  <span className="font-serif italic text-lg text-primary/30">03</span>
-                </div>
-              </motion.div>
+              {products.length === 0 ? (
+                <p className="font-sans text-[0.6rem] uppercase tracking-[0.15em] text-tertiary text-center py-8">
+                  Sin obras disponibles
+                </p>
+              ) : (
+                products.slice(0, 3).map((product, i) => {
+                  const mainPhoto = product.photos.find(p => p.isMain) ?? product.photos[0];
+                  const offsetClass = i === 1 ? styles.galleryItemOffset : i === 2 ? styles.galleryItemRight : "";
+                  const frameShape = i === 0 ? "portrait" : i === 1 ? "square" : "tall";
+                  return (
+                    <motion.div
+                      key={product.uid}
+                      className={offsetClass}
+                      variants={fadeUp} initial="hidden"
+                      whileInView="visible" viewport={{ once: true, margin: "-60px" }}
+                      custom={0.05}
+                    >
+                      <div className={`${styles.galleryImageFrame} ${frameShape} shadow-brand-sm`}>
+                        {mainPhoto ? (
+                          <img src={mainPhoto.photo.url} alt={product.name} className="grayscale" />
+                        ) : (
+                          <div className="w-full h-full bg-neutral-200 flex items-center justify-center">
+                            <span className="material-symbols-outlined text-tertiary text-4xl">image</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex justify-between items-end pt-5 pb-4 border-b border-neutral-200 mt-6">
+                        <div>
+                          <h4 className="font-serif italic text-xl text-primary">{product.name}</h4>
+                        </div>
+                        <span className="font-serif italic text-lg text-primary/30">
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
+                      </div>
+                    </motion.div>
+                  );
+                })
+              )}
             </div>
 
             <motion.button
@@ -388,8 +350,75 @@ export default function Welcome() {
               variants={fadeUp} initial="hidden"
               whileInView="visible" viewport={{ once: true, margin: "-40px" }}
               custom={0.05}
+              onClick={() => navigate("/gallery")}
             >
-              View Archives
+              Ver Galería
+            </motion.button>
+          </div>
+        </section>
+
+        {/* ── Upcoming Events (mobile) ──────────────────────── */}
+        <section className="bg-neutral py-24 px-6 border-t border-secondary/30">
+          <div className="max-w-sm mx-auto">
+            <motion.div
+              className="flex items-baseline justify-between mb-12"
+              variants={fadeUp} initial="hidden"
+              whileInView="visible" viewport={{ once: true, margin: "-80px" }}
+              custom={0}
+            >
+              <h3 className="font-serif italic text-fluid-xl text-primary">
+                Próximos Eventos
+              </h3>
+            </motion.div>
+
+            <div className="flex flex-col gap-0">
+              {events.length === 0 ? (
+                <p className="font-sans text-[0.6rem] uppercase tracking-[0.15em] text-tertiary py-8">
+                  Sin eventos próximos
+                </p>
+              ) : (
+                events.slice(0, 3).map((event, i) => {
+                  const heroPhoto = event.photos.find(p => p.photoType === "HERO") ?? event.photos[0];
+                  return (
+                    <motion.div
+                      key={event.uid}
+                      className="flex gap-5 py-7 border-b border-neutral-200"
+                      variants={fadeUp} initial="hidden"
+                      whileInView="visible" viewport={{ once: true, margin: "-60px" }}
+                      custom={i * 0.1}
+                    >
+                      <div className="flex-shrink-0 w-20 h-20 overflow-hidden bg-neutral-100">
+                        {heroPhoto ? (
+                          <img src={heroPhoto.photo.url} alt={event.name} className="w-full h-full object-cover grayscale-[20%]" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <span className="material-symbols-outlined text-tertiary text-2xl">event</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex flex-col justify-center">
+                        <h4 className="font-serif italic text-lg text-primary leading-tight">{event.name}</h4>
+                        <p className="font-sans text-[0.6rem] uppercase tracking-[0.12em] text-tertiary mt-1">
+                          {formatEventDate(event.startDate)}
+                        </p>
+                        <p className="font-sans text-[0.55rem] uppercase tracking-[0.1em] text-tertiary/60 mt-0.5">
+                          {event.eventType}
+                        </p>
+                      </div>
+                    </motion.div>
+                  );
+                })
+              )}
+            </div>
+
+            <motion.button
+              className="block mx-auto mt-14 px-12 py-5 bg-primary text-neutral font-sans text-[0.65rem] tracking-[0.3em] uppercase hover:bg-primary-800 transition-all duration-500"
+              variants={fadeUp} initial="hidden"
+              whileInView="visible" viewport={{ once: true, margin: "-40px" }}
+              custom={0.05}
+              onClick={() => navigate("/events")}
+            >
+              Ver Eventos
             </motion.button>
           </div>
         </section>

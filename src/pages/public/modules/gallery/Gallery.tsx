@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import GalleryCard from "../../components/GalleryCard/GalleryCard";
 import { getGalleryProducts } from "../../../../services/products";
-import { getAllStyles } from "../../../../services/styles";
+import { getAllStylesByGroup } from "../../../../services/styles";
 import type { ProductGallery } from "../../../../interfaces/products";
 import type { Style } from "../../../../interfaces/styles";
 import styles from "./Gallery.module.css";
@@ -106,7 +106,7 @@ const Gallery = () => {
   useEffect(() => {
     const fetchStyles = async () => {
       try {
-        const data = await getAllStyles();
+        const data = await getAllStylesByGroup("ARTES");
         setAllStyles(data);
       } catch (err) {
         console.error("Error al cargar estilos:", err);
