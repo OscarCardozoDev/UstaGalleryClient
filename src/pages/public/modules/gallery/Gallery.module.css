@@ -62,12 +62,25 @@
    FILTER SYSTEM
    ═══════════════════════════════════════════════════════════════════ */
 
-.filterSystem {
+.filterWrapper {
   display: flex;
-  flex-wrap: wrap;
-  gap: 32px;
+  align-items: flex-start;
+  gap: 24px;
   padding-bottom: 16px;
   border-bottom: 1px solid rgba(119, 119, 119, 0.1);
+}
+
+.filterSystem {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 32px;
+  overflow: hidden;
+  flex: 1;
+  align-items: center;
+}
+
+.filterSystemExpanded {
+  flex-wrap: wrap;
 }
 
 .filterButton {
@@ -81,6 +94,8 @@
   border: none;
   cursor: pointer;
   padding: 0;
+  white-space: nowrap;
+  flex-shrink: 0;
   transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   position: relative;
 }
@@ -107,6 +122,27 @@
 
 .filterButtonActive::after {
   transform: scaleX(1);
+}
+
+.filterToggle {
+  font-family: 'Manrope', sans-serif;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #777777;
+  background: none;
+  border: 1px solid rgba(119, 119, 119, 0.3);
+  cursor: pointer;
+  padding: 4px 10px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.filterToggle:hover {
+  color: #000000;
+  border-color: #000000;
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -385,11 +421,15 @@
     font-size: 13px;
   }
 
-  .filterSystem {
-    gap: 16px;
+  .filterWrapper {
     flex-direction: column;
     align-items: flex-start;
     border-bottom: none;
+    gap: 12px;
+  }
+
+  .filterSystem {
+    gap: 16px;
   }
 
   .filterButton {

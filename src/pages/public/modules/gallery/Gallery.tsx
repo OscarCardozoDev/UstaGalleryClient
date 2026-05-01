@@ -96,6 +96,7 @@ const Gallery = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [selectedStyle, setSelectedStyle] = useState("todos");
+  const [filterExpanded, setFilterExpanded] = useState(false);
 
   const loadingRef = useRef<HTMLDivElement>(null);
 
@@ -232,27 +233,40 @@ const Gallery = () => {
           </div>
 
           {/* Filter System */}
-          <div className={styles.filterSystem}>
-            <button
-              className={`${styles.filterButton} ${
-                selectedStyle === "todos" ? styles.filterButtonActive : ""
-              }`}
-              onClick={() => setSelectedStyle("todos")}
+          <div className={styles.filterWrapper}>
+            <div
+              className={`${styles.filterSystem} ${filterExpanded ? styles.filterSystemExpanded : ""}`}
             >
-              Todas las Obras
-            </button>
-
-            {allStyles.map((style) => (
               <button
-                key={style.uid}
                 className={`${styles.filterButton} ${
-                  selectedStyle === style.uid ? styles.filterButtonActive : ""
+                  selectedStyle === "todos" ? styles.filterButtonActive : ""
                 }`}
-                onClick={() => setSelectedStyle(style.uid)}
+                onClick={() => setSelectedStyle("todos")}
               >
-                {style.name}
+                Todas las Obras
               </button>
-            ))}
+
+              {allStyles.map((style) => (
+                <button
+                  key={style.uid}
+                  className={`${styles.filterButton} ${
+                    selectedStyle === style.uid ? styles.filterButtonActive : ""
+                  }`}
+                  onClick={() => setSelectedStyle(style.uid)}
+                >
+                  {style.name}
+                </button>
+              ))}
+            </div>
+
+            {allStyles.length > 0 && (
+              <button
+                className={styles.filterToggle}
+                onClick={() => setFilterExpanded((prev) => !prev)}
+              >
+                {filterExpanded ? "Cerrar ↑" : "Ver todos ↓"}
+              </button>
+            )}
           </div>
         </section>
 
