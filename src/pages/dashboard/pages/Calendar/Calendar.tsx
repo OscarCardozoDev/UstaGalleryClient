@@ -153,7 +153,7 @@ export default function CalendarPage() {
 
   return (
     <CalendarProvider events={events} users={users}>
-      <div className="mx-auto flex h-full max-w-screen-2xl flex-col gap-4 p-4">
+      <div className="mx-auto flex max-w-screen-2xl flex-col gap-4 p-4 pb-8">
         <ClientContainer />
       </div>
     </CalendarProvider>

@@ -82,7 +82,7 @@ export function ClientContainer() {
   }, [filteredEvents]);
 
   return (
-    <div className="overflow-hidden rounded-xl border">
+    <div className="overflow-hidden rounded-xl border bg-white">
       <CalendarHeader events={filteredEvents} />
 
       <DndProviderWrapper>

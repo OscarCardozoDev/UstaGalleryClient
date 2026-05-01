@@ -130,7 +130,7 @@ export default function Sidebar({ open, onClose }: Props) {
             </button>
           </li>
 
-          {user?.userType?.name === "Profesor" && (
+          {user?.userType?.name === "professor" && (
             <>
               <li>
                 <button
@@ -236,7 +236,7 @@ export default function Sidebar({ open, onClose }: Props) {
             </>
           )}
 
-          {user?.userType?.name === "Administrador" && (
+          {user?.userType?.name === "admin" && (
             <>
               <li>
                 <button
