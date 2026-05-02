@@ -62,7 +62,6 @@ const transformUser = (data: any): UserSession => ({
   name: data.name,
   lastName: data.lastName,
   username: data.username,
-  isProfesor: data.isProfesor,
   userType: data.userType,
   photo: data.photo ?? null,
   groups: data.groups.map((g: any) => ({

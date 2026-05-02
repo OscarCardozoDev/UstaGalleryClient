@@ -17,7 +17,7 @@ interface IProps {
 
 export function EventDetailsDialog({ event, children }: IProps) {
   const { user } = useAuth();
-  const isProfessor = user?.isProfesor ?? false;
+  const isProfessor = user?.userType?.name === 'professor';
 
   const [attendance, setAttendance] = useState<AttendanceRecord[]>([]);
   const [loadingAttendance, setLoadingAttendance] = useState(false);
