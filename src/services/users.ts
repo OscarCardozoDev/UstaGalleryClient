@@ -1,6 +1,6 @@
 import type {
   UserWithRelations,
-  CreateUserDto,
+  CreateStudentDto,
   UpdateUserDto,
   UpdateUserPhotoDto,
   UserUidResult,
@@ -31,7 +31,7 @@ async function handleResponse<T>(
 // ─── Crear usuario ──────────────────────────────────────────────────────────
 
 export async function createUser(
-  dto: CreateUserDto,
+  dto: CreateStudentDto,
 ): Promise<UserUidResult> {
   const response = await fetch(`${API_URL}/user/create`, {
     method: "POST",

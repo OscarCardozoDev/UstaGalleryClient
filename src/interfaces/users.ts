@@ -1,10 +1,13 @@
-import type { components } from "../types/api";
-import type { Photo } from "./photos";
+// UstaGallery/src/interfaces/users.ts
+import type { components } from '../types/api';
+import type { Photo } from './photos';
+import type { Role } from './roles';
 
-// ─── Requests (codegen) ───────────────────────────────────────────────────────
-export type CreateUserDto      = components["schemas"]["CreateUserDto"];
-export type UpdateUserDto      = components["schemas"]["UpdateUserDto"];
-export type UpdateUserPhotoDto = components["schemas"]["UpdateUserPhotoDto"];
+// ─── Requests (codegen) ──────────────────────────────────────────────────────
+export type CreateStudentDto      = components['schemas']['CreateStudentDto'];
+export type CreateProfessorDto    = components['schemas']['CreateProfessorDto'];
+export type UpdateUserDto         = components['schemas']['UpdateUserDto'];
+export type UpdateUserPhotoDto    = components['schemas']['UpdateUserPhotoDto'];
 
 // ─── Responses (manual) ──────────────────────────────────────────────────────
 export interface UserType {
@@ -19,14 +22,12 @@ export interface User {
   username: string;
   description?: string | null;
   gender: string;
-  idCard: string;
-  degree: string;
-  semester: string;
   telNumber: string;
   isActive: boolean;
-  isProfesor: boolean;
   userTypeId: string;
   photoId?: string | null;
+  roleId?: string | null;
+  roleData?: Record<string, string> | null;
   createdAt?: string;
   updatedAt?: string;
   finishAt?: string | null;
@@ -45,6 +46,7 @@ export interface AuthorDetail {
 export interface UserWithRelations extends User {
   userType?: UserType | null;
   photo?: Photo | null;
+  role?: Role | null;
 }
 
 export interface UserUidResult {

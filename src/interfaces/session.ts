@@ -1,9 +1,9 @@
+// UstaGallery/src/interfaces/session.ts
 export interface UserSession {
   uid: string;
   name: string;
   lastName: string;
   username: string;
-  isProfesor: boolean;
   userType: {
     uid: string;
     name: string;
