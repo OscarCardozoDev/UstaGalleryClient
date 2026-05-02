@@ -1,4 +1,4 @@
-import type { CreateCredentialDto } from "../interfaces/auth";
+import type { CreateCredentialDto, CredentialWithoutProfile } from "../interfaces/auth";
 const API_URL = import.meta.env.VITE_API_URL;
 
 export async function Register({ mail, password }: CreateCredentialDto) {
@@ -87,4 +87,21 @@ export async function verifyCode(code: string): Promise<{ verified: boolean }> {
   }
 
   return response.json();
+}
+
+export async function getUsersWithoutProfile(): Promise<CredentialWithoutProfile[]> {
+  try {
+    const response = await fetch(API_URL + '/auth/without-profile', {
+      credentials: 'include',
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => null);
+      throw new Error(errorData?.message || 'Error al obtener usuarios sin perfil');
+    }
+
+    return await response.json();
+  } catch (error) {
+    throw new Error((error as Error).message || 'Error al obtener usuarios sin perfil');
+  }
 }
