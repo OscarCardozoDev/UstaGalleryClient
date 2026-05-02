@@ -98,8 +98,25 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Crear perfil de usuario */
+        /** Crear perfil de estudiante */
         post: operations["UserController_createUser"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/user/professor": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Crear perfil de profesor (solo admin) — el profesor debe haber hecho register primero */
+        post: operations["UserController_createProfessor"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1247,6 +1264,23 @@ export interface paths {
         patch: operations["ClassesController_updateTopic"];
         trace?: never;
     };
+    "/roles": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtener todos los roles */
+        get: operations["RolesController_getAllRoles"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1269,7 +1303,7 @@ export interface components {
             /** @example users */
             folder: string;
         };
-        CreateUserDto: {
+        CreateStudentDto: {
             /** @example Juan */
             name: string;
             /** @example Pérez */
@@ -1280,18 +1314,33 @@ export interface components {
             description?: string;
             /** @example M */
             gender: string;
-            /** @example 123456789 */
-            idCard: string;
-            /** @example Artes Plásticas */
-            degree: string;
-            /** @example 5 */
-            semester: string;
             /** @example 3001234567 */
             telNumber: string;
-            /** @example false */
-            isProfesor?: boolean;
-            /** @example uuid-del-tipo */
-            userTypeId: string;
+            /** @example uuid-del-rol */
+            roleId: string;
+            /**
+             * @example {
+             *       "career": "Ingeniería de Sistemas",
+             *       "semester": "5"
+             *     }
+             */
+            roleData: Record<string, never>;
+            photo?: components["schemas"]["PhotoDto"];
+        };
+        CreateProfessorDto: {
+            /** @description UID de las Credentials del profesor (ya debe haber hecho register) */
+            uid: string;
+            /** @example María */
+            name: string;
+            /** @example López */
+            lastName: string;
+            /** @example maria_lopez */
+            username: string;
+            description?: string;
+            /** @example F */
+            gender: string;
+            /** @example 3009876543 */
+            telNumber: string;
             photo?: components["schemas"]["PhotoDto"];
         };
         UpdateUserDto: {
@@ -1304,10 +1353,7 @@ export interface components {
             description?: string;
             /** @example M */
             gender?: string;
-            degree?: string;
-            semester?: string;
             telNumber?: string;
-            isProfesor?: boolean;
             userTypeId?: string;
         };
         UpdateUserPhotoDto: {
@@ -1742,7 +1788,28 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CreateUserDto"];
+                "application/json": components["schemas"]["CreateStudentDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UserController_createProfessor: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateProfessorDto"];
             };
         };
         responses: {
@@ -3180,6 +3247,23 @@ export interface operations {
                 "application/json": components["schemas"]["UpdateTopicDto"];
             };
         };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    RolesController_getAllRoles: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             200: {
                 headers: {
