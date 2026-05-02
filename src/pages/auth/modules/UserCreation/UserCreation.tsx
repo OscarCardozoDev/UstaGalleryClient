@@ -129,8 +129,7 @@ const UserCreation: React.FC<UserCreationProps> = ({ onUserCreated, isCreated })
         gender: userData.gender,
         telNumber: userData.telNumber,
         roleId: userData.roleId,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        roleData: buildRoleData() as any,
+        roleData: buildRoleData(),
       };
 
       if (userData.profileImage) {

@@ -1,3 +1,4 @@
+import { sileo } from "sileo";
 import { useEffect, useState } from "react";
 import { format, parseISO } from "date-fns";
 import { Calendar, Clock, Text, User, BookOpen, ClipboardList } from "lucide-react";
@@ -42,6 +43,8 @@ export function EventDetailsDialog({ event, children }: IProps) {
     setSaving(true);
     try {
       await updateClassTopic(event.id, { topic: topic || undefined, review: review || undefined });
+    } catch {
+      sileo.error({ title: 'Error', description: 'No se pudo actualizar el tema de la clase' });
     } finally {
       setSaving(false);
     }

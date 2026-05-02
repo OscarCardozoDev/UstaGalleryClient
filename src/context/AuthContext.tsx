@@ -64,7 +64,7 @@ const transformUser = (data: any): UserSession => ({
   username: data.username,
   userType: data.userType,
   photo: data.photo ?? null,
-  groups: data.groups.map((g: any) => ({
+  groups: (data.groups ?? []).map((g: any) => ({
     uid: g.group.uid,
     name: g.group.name,
   })),
@@ -101,7 +101,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Carga inicial: sessionStorage → backend
   useEffect(() => {
     const init = async () => {
-      const cached = await getUser();
+      const cached = getUser();
       if (cached) {
         setUser(cached);
         setCurrentGroupState(resolveGroup(cached));
@@ -147,12 +147,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const isAuthenticated = (): boolean => {
-    try {
-      const stored = sessionStorage.getItem('user_session');
-      return stored !== null;
-    } catch {
-      return false;
-    }
+    return !!getUser();
   };
 
   // ── logout ────────────────────────────────────────────────

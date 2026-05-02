@@ -12,6 +12,6 @@ async function handleResponse<T>(response: Response, fallback: string): Promise<
 }
 
 export async function getRoles(): Promise<Role[]> {
-  const response = await fetch(`${API_URL}/roles`);
+  const response = await fetch(`${API_URL}/roles`, { credentials: 'include' });
   return handleResponse<Role[]>(response, 'Error al obtener roles');
 }

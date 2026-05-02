@@ -4,7 +4,9 @@ import type { Photo } from './photos';
 import type { Role } from './roles';
 
 // ─── Requests (codegen) ──────────────────────────────────────────────────────
-export type CreateStudentDto      = components['schemas']['CreateStudentDto'];
+export type CreateStudentDto      = Omit<components['schemas']['CreateStudentDto'], 'roleData'> & {
+  roleData: Record<string, string>;
+};
 export type CreateProfessorDto    = components['schemas']['CreateProfessorDto'];
 export type UpdateUserDto         = components['schemas']['UpdateUserDto'];
 export type UpdateUserPhotoDto    = components['schemas']['UpdateUserPhotoDto'];
