@@ -11,6 +11,7 @@ import Calendar from "./pages/Calendar/Calendar";
 import InvitationsPage from "./pages/Invitations/Invitations";
 import MyEventsPage from "./pages/MyEvents/MyEvents";
 import ClasesPage from "./pages/Clases/Clases";
+import ProfessorsPage from "./pages/Professors/Professors";
 
 export default function DashboardRoutes() {
   return (
@@ -30,6 +31,8 @@ export default function DashboardRoutes() {
       <Route path="/my-events" element={<MyEventsPage />} />
 
       <Route path="/clases" element={<ClasesPage />} />
+
+      <Route path="/professors" element={<ProfessorsPage />} />
 
       {/* futuras rutas */}
       {/* <Route path="users" element={<UsersPage />} /> */}
