@@ -1,6 +1,7 @@
 import type {
   UserWithRelations,
   CreateStudentDto,
+  CreateProfessorDto,
   UpdateUserDto,
   UpdateUserPhotoDto,
   UserUidResult,
@@ -41,6 +42,21 @@ export async function createUser(
   });
 
   return handleResponse<UserUidResult>(response, "Error al crear usuario");
+}
+
+// ─── Crear profesor ─────────────────────────────────────────────────────────
+
+export async function createProfessor(
+  dto: CreateProfessorDto,
+): Promise<UserUidResult> {
+  const response = await fetch(`${API_URL}/user/professor`, {
+    method: 'POST',
+    headers: getHeaders(true),
+    body: JSON.stringify(dto),
+    credentials: 'include',
+  });
+
+  return handleResponse<UserUidResult>(response, 'Error al crear profesor');
 }
 
 // ─── Obtener todos los usuarios activos ─────────────────────────────────────

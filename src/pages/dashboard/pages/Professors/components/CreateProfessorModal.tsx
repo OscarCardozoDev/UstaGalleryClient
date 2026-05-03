@@ -1,5 +1,5 @@
 import { sileo } from 'sileo';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { getUsersWithoutProfile } from '../../../../../services/auth';
 import { createProfessor } from '../../../../../services/users';
 import type { CredentialWithoutProfile } from '../../../../../interfaces/auth';

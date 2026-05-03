@@ -1,0 +1,404 @@
+.page {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-height: 100%;
+}
+
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.pageTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.pageSubtitle {
+  font-size: 0.85rem;
+  color: #888;
+  margin: 4px 0 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+/* ─── Card ─────────────────────────────────────────────────────────────────── */
+
+.card {
+  background: var(--card-bg, #1a1a2e);
+  border: 1px solid var(--border, #2a2a4a);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: opacity 0.2s;
+}
+
+.cardInactive {
+  opacity: 0.6;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #6c63ff33;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.avatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatarInitial {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #6c63ff;
+}
+
+.cardInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.cardName {
+  font-weight: 600;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cardUsername {
+  color: #888;
+  font-size: 0.8rem;
+}
+
+.badge {
+  font-size: 0.72rem;
+  padding: 3px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.badgeActive {
+  background: #1db95422;
+  color: #1db954;
+  border: 1px solid #1db95444;
+}
+
+.badgeInactive {
+  background: #ff444422;
+  color: #ff6b6b;
+  border: 1px solid #ff444444;
+}
+
+.cardDetails {
+  font-size: 0.8rem;
+  color: #aaa;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-top: 1px solid var(--border, #2a2a4a);
+  padding-top: 10px;
+}
+
+/* ─── Card actions ──────────────────────────────────────────────────────────── */
+
+.btnDeactivate {
+  width: 100%;
+  padding: 7px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  background: #ff444422;
+  color: #ff6b6b;
+  border: 1px solid #ff444444;
+  transition: background 0.15s;
+}
+
+.btnDeactivate:hover {
+  background: #ff444433;
+}
+
+.btnReactivate {
+  width: 100%;
+  padding: 7px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  background: #1db95422;
+  color: #1db954;
+  border: 1px solid #1db95444;
+  transition: background 0.15s;
+}
+
+.btnReactivate:hover {
+  background: #1db95433;
+}
+
+.confirmRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.confirmText {
+  flex: 1;
+  font-size: 0.82rem;
+  color: #aaa;
+}
+
+.btnConfirm {
+  padding: 5px 14px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  background: #ff4444;
+  color: #fff;
+  border: none;
+}
+
+.btnCancel {
+  padding: 5px 14px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  background: transparent;
+  color: #888;
+  border: 1px solid #444;
+}
+
+/* ─── Page buttons ──────────────────────────────────────────────────────────── */
+
+.btnPrimary {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  background: #6c63ff;
+  color: #fff;
+  border: none;
+  transition: opacity 0.15s;
+  white-space: nowrap;
+}
+
+.btnPrimary:hover {
+  opacity: 0.88;
+}
+
+.btnPrimary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btnSecondary {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  cursor: pointer;
+  background: transparent;
+  color: #888;
+  border: 1px solid #444;
+}
+
+/* ─── Modal ────────────────────────────────────────────────────────────────── */
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+}
+
+.modal {
+  background: var(--card-bg, #1a1a2e);
+  border: 1px solid var(--border, #2a2a4a);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid var(--border, #2a2a4a);
+}
+
+.modalTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.modalClose {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.modalBody {
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+}
+
+.modalSubtitle {
+  font-size: 0.85rem;
+  color: #aaa;
+  margin: 0;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+/* ─── Step 1 — credential list ─────────────────────────────────────────────── */
+
+.searchInput {
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border, #2a2a4a);
+  background: var(--input-bg, #12122a);
+  color: inherit;
+  font-size: 0.88rem;
+  box-sizing: border-box;
+}
+
+.credentialList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.credentialItem {
+  width: 100%;
+  text-align: left;
+  background: var(--card-bg, #1a1a2e);
+  border: 1px solid var(--border, #2a2a4a);
+  border-radius: 8px;
+  padding: 10px 14px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: border-color 0.15s;
+}
+
+.credentialSelected {
+  border-color: #6c63ff;
+  background: #6c63ff11;
+}
+
+.credentialMail {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: inherit;
+}
+
+.credentialDate {
+  font-size: 0.75rem;
+  color: #888;
+}
+
+/* ─── Step 2 — profile form ────────────────────────────────────────────────── */
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.formLabel {
+  font-size: 0.78rem;
+  color: #aaa;
+}
+
+.formInput {
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border, #2a2a4a);
+  background: var(--input-bg, #12122a);
+  color: inherit;
+  font-size: 0.88rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.formTextarea {
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border, #2a2a4a);
+  background: var(--input-bg, #12122a);
+  color: inherit;
+  font-size: 0.88rem;
+  resize: vertical;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.fieldError {
+  font-size: 0.75rem;
+  color: #ff6b6b;
+}
+
+/* ─── States ────────────────────────────────────────────────────────────────── */
+
+.loadingText,
+.emptyText {
+  font-size: 0.9rem;
+  color: #888;
+  text-align: center;
+  padding: 32px 0;
+}
