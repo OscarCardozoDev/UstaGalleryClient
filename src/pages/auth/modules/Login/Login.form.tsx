@@ -126,6 +126,7 @@ export default function LoginForm({
       <ForgotPasswordModal
         open={openForgotPasswordModal}
         onClose={() => setOpenForgotPasswordModal(false)}
+        setOpenSnackbar={setOpenSnackbar}
       />
     </div>
   );

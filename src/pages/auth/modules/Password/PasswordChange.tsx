@@ -1,13 +1,18 @@
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { forgotPassword, resetPassword } from "../../../../services/auth";
 import styles from "./PasswordChange.module.css";
 
 interface PasswordChangeProps {
     open: boolean;
     onClose: () => void;
+    setOpenSnackbar: (
+        type: "error" | "success" | "warning",
+        message: { title: string; description: string },
+    ) => void;
 }
 
-export default function PasswordChange({ open, onClose }: PasswordChangeProps) {
+export default function PasswordChange({ open, onClose, setOpenSnackbar }: PasswordChangeProps) {
     const [step, setStep] = useState<1 | 2>(1);
     const [mail, setMail] = useState("");
     const [code, setCode] = useState("");
@@ -58,15 +63,24 @@ export default function PasswordChange({ open, onClose }: PasswordChangeProps) {
         setError(null);
         try {
             await resetPassword(mail, code, newPassword);
+            setOpenSnackbar("success", {
+                title: "Contraseña actualizada",
+                description: "Tu contraseña se cambió correctamente. Ya puedes iniciar sesión.",
+            });
             handleClose();
         } catch (err) {
-            setError(err instanceof Error ? err.message : "Error al cambiar la contraseña");
+            const message = err instanceof Error ? err.message : "Error al cambiar la contraseña";
+            setError(message);
+            setOpenSnackbar("error", {
+                title: "Error al cambiar contraseña",
+                description: message,
+            });
         } finally {
             setLoading(false);
         }
     };
 
-    return (
+    return createPortal(
         <div className={styles.modalOverlay}>
             <div className={styles.backdrop} onClick={handleClose} />
             <div className={styles.modal}>
@@ -154,6 +168,7 @@ export default function PasswordChange({ open, onClose }: PasswordChangeProps) {
                     </form>
                 )}
             </div>
-        </div>
+        </div>,
+        document.body,
     );
 }
