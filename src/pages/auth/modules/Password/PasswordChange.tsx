@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { forgotPassword, resetPassword } from "../../../../services/auth";
 import styles from "./PasswordChange.module.css";
 
@@ -14,6 +14,17 @@ export default function PasswordChange({ open, onClose }: PasswordChangeProps) {
     const [newPassword, setNewPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (!open) {
+            setStep(1);
+            setMail("");
+            setCode("");
+            setNewPassword("");
+            setLoading(false);
+            setError(null);
+        }
+    }, [open]);
 
     if (!open) return null;
 
@@ -84,7 +95,7 @@ export default function PasswordChange({ open, onClose }: PasswordChangeProps) {
                             className={styles.closeButton}
                             disabled={loading}
                         >
-                            {loading ? "" : "Enviar código"}
+                            {loading ? "Enviando..." : "Enviar código"}
                         </button>
                     </form>
                 ) : (
@@ -125,7 +136,7 @@ export default function PasswordChange({ open, onClose }: PasswordChangeProps) {
                             className={styles.closeButton}
                             disabled={loading}
                         >
-                            {loading ? "" : "Cambiar contraseña"}
+                            {loading ? "Cambiando..." : "Cambiar contraseña"}
                         </button>
                         <button
                             type="button"
