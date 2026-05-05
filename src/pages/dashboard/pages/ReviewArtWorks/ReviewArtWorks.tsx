@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
+import { sileo } from "sileo";
 import { getProductByGroup, approveManyProducts } from "../../../../services/products";
 import { getStudentsByGroup } from "../../../../services/groups";
 import type { Product, ProductStatus } from "../../../../interfaces/products";
@@ -26,9 +27,6 @@ export default function ReviewArtWorks() {
   const [selectedUids, setSelectedUids]         = useState<Set<string>>(new Set());
   const [isProcessingMany, setIsProcessingMany] = useState(false);
   const [showConfirmMany, setShowConfirmMany]   = useState(false);
-
-  // Toast
-  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
   // ── Carga ────────────────────────────────────────────────────────────────
 
@@ -77,10 +75,10 @@ export default function ReviewArtWorks() {
 
   // ── Toast ────────────────────────────────────────────────────────────────
 
-  const showToast = (message: string, type: "success" | "error") => {
-    setToast({ message, type });
-    setTimeout(() => setToast(null), 3500);
-  };
+  const showToast = useCallback((message: string, type: "success" | "error") => {
+    if (type === "success") sileo.success({ title: message });
+    else sileo.error({ title: message });
+  }, []);
 
   // ── Callbacks de selección ────────────────────────────────────────────────
 
@@ -391,12 +389,6 @@ export default function ReviewArtWorks() {
         </div>
       )}
 
-      {/* ── Toast ── */}
-      {toast && (
-        <div className={`${styles.toast} ${toast.type === "success" ? styles.toastSuccess : styles.toastError}`}>
-          {toast.type === "success" ? "✅" : "❌"} {toast.message}
-        </div>
-      )}
     </div>
   );
 }

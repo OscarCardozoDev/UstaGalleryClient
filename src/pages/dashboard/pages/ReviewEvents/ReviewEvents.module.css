@@ -239,31 +239,6 @@
 
 .retryBtn:hover { background: #2a2a2a; }
 
-/* ─── Toast ──────────────────────────────────────────────────────── */
-
-.toast {
-  position: fixed;
-  bottom: 28px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 300;
-  padding: 14px 24px;
-  border-radius: 12px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-  animation: toastIn 0.3s ease;
-  white-space: nowrap;
-}
-
-.toastSuccess { background: #171717; color: #fff; }
-.toastError   { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
-
-@keyframes toastIn {
-  from { opacity: 0; transform: translateX(-50%) translateY(12px); }
-  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
-}
-
 /* ─── Skeleton ───────────────────────────────────────────────────── */
 
 @keyframes shimmer {

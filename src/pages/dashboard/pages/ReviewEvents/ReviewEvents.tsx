@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
+import { sileo } from "sileo";
 import { getAllEvents } from "../../../../services/events";
 import type { EventSummary, EventStatus, EventType } from "../../../../interfaces/events";
 import EventCard from "../../components/eventCard/EventCard";
@@ -25,9 +26,6 @@ export default function ReviewEvents() {
   const [searchName, setSearchName]           = useState("");
   const [filterStatus, setFilterStatus]       = useState<EventStatus | "all">("all");
   const [filterType, setFilterType]           = useState<EventType | "all">("all");
-
-  // Toast
-  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
   // ── Carga ─────────────────────────────────────────────────────────────────
 
@@ -68,10 +66,10 @@ export default function ReviewEvents() {
 
   // ── Toast ─────────────────────────────────────────────────────────────────
 
-  const showToast = (message: string, type: "success" | "error") => {
-    setToast({ message, type });
-    setTimeout(() => setToast(null), 3500);
-  };
+  const showToast = useCallback((message: string, type: "success" | "error") => {
+    if (type === "success") sileo.success({ title: message });
+    else sileo.error({ title: message });
+  }, []);
 
   // ── Callbacks ─────────────────────────────────────────────────────────────
 
@@ -344,12 +342,6 @@ export default function ReviewEvents() {
         </div>
       )}
 
-      {/* ── Toast ── */}
-      {toast && (
-        <div className={`${styles.toast} ${toast.type === "success" ? styles.toastSuccess : styles.toastError}`}>
-          {toast.type === "success" ? "✅" : "❌"} {toast.message}
-        </div>
-      )}
     </div>
   );
 }

@@ -1,0 +1,69 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+.mixer {
+  display: flex;
+  align-items: stretch;
+  border-radius: 15px;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+}
+
+.sliderCol {
+  width: 38px;
+  position: relative;
+  background: #f0f0f0;
+  border-right: 2px solid #111;
+  cursor: pointer;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.barFill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  transition: height 0.05s;
+}
+
+.pctLabel {
+  position: absolute;
+  bottom: 6px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #000000;
+  pointer-events: none;
+  user-select: none;
+  z-index: 1;
+}
+
+.preview {
+  flex: 1;
+  transition: background 0.06s;
+}
+
+.confirmBtn {
+  background: #161616;
+  color: #fff;
+  margin-top: 15px;
+  border: none;
+  border-radius: 8px;
+  padding: 0.625rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.confirmBtn:hover {
+  background: #000000;
+}

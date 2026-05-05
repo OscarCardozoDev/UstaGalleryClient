@@ -8,6 +8,7 @@ import { getProductById, updateProduct } from "../../../../services/products";
 import type { UpdateProductDto, UpdateProductImageDto } from "../../../../interfaces/products";
 import type { GroupStudent } from "../../../../interfaces/groups";
 import type { Style } from "../../../../interfaces/styles";
+import { sileo } from "sileo";
 import styles from "./UpdatePictures.module.css";
 
 export default function EditProduct() {
@@ -27,8 +28,6 @@ export default function EditProduct() {
   const [isAuthorsOpen, setIsAuthorsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
 
   // ── Estado del formulario ─────────────────────────────────────────────────
   const [form, setForm] = useState({
@@ -87,7 +86,7 @@ export default function EditProduct() {
 
       } catch (err) {
         console.error("Error al cargar el producto:", err);
-        setError("No se pudo cargar la información de la obra");
+        sileo.error({ title: "No se pudo cargar la información de la obra" });
       } finally {
         setIsFetching(false);
       }
@@ -145,12 +144,9 @@ export default function EditProduct() {
   };
 
   const handleSubmit = async () => {
-    setError(null);
-    setSuccess(false);
-
     const validationError = validateForm();
     if (validationError) {
-      setError(validationError);
+      sileo.warning({ title: validationError });
       return;
     }
 
@@ -191,14 +187,11 @@ export default function EditProduct() {
         images: imagesPayload as UpdateProductDto["images"],
       };
       await updateProduct(uid!, payload);
-      setSuccess(true);
-      setTimeout(() => {
-        setSuccess(false);
-        navigate("/dashboard/your-gallery");
-      }, 2000);
+      sileo.success({ title: "¡Obra actualizada exitosamente!" });
+      navigate("/dashboard/your-gallery");
     } catch (err) {
       console.error("Error al actualizar producto:", err);
-      setError(err instanceof Error ? err.message : "Error al actualizar la obra");
+      sileo.error({ title: err instanceof Error ? err.message : "Error al actualizar la obra" });
     } finally {
       setIsLoading(false);
     }
@@ -228,11 +221,6 @@ export default function EditProduct() {
     <div className={styles.uploadCard}>
       <div className={styles.uploadCardContent}>
         <h2 className={styles.uploadTitle}>Editar obra</h2>
-
-        {error && <div className={styles.errorMessage}>❌ {error}</div>}
-        {success && (
-          <div className={styles.successMessage}>✅ ¡Obra actualizada exitosamente!</div>
-        )}
 
         <div className={styles.uploadGrid}>
 
