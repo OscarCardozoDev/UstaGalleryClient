@@ -105,3 +105,35 @@ export async function getUsersWithoutProfile(): Promise<CredentialWithoutProfile
     throw new Error((error as Error).message || 'Error al obtener usuarios sin perfil');
   }
 }
+
+export async function forgotPassword(mail: string): Promise<void> {
+  const response = await fetch(API_URL + '/auth/forgot-password', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ mail }),
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => null);
+    throw new Error(errorData?.message || 'Error al enviar el código');
+  }
+}
+
+export async function resetPassword(
+  mail: string,
+  code: string,
+  newPassword: string,
+): Promise<void> {
+  const response = await fetch(API_URL + '/auth/reset-password', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ mail, code, newPassword }),
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => null);
+    throw new Error(errorData?.message || 'Error al cambiar la contraseña');
+  }
+}
