@@ -1,10 +1,10 @@
 import { Routes, Route, useParams } from "react-router-dom";
-import WelcomePage from "./modules/Welcome/Welcome";
-import GalleryPage from "./modules/Gallery/Gallery";
-import ShowImagePage from "./modules/ShowImage/ShowImage";
-import Events from "./modules/Events/Events";
-import EventDetail from "./modules/EventDetail/EventDetail";
-import ArtistPage from "./modules/ArtistPage/ArtistPage";
+import WelcomePage from "./pages/Welcome/Welcome";
+import GalleryPage from "./pages/Gallery/Gallery";
+import ShowImagePage from "./pages/ShowImage/ShowImage";
+import Events from "./pages/Events/Events";
+import EventDetail from "./pages/EventDetail/EventDetail";
+import ArtistPage from "./pages/ArtistPage/ArtistPage";
 
 export default function MainPageRoutes() {
   return (

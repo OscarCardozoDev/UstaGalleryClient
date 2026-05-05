@@ -256,25 +256,29 @@ export default function ShowImage() {
                     </p>
                   </div>
 
-                  {allStyles.length > 0 && (
+                  {product.styles.length > 0 && (
                     <div className={styles.stylesSection}>
                       <span className={styles.stylesLabel}>Estilos</span>
                       <div className={styles.styleChips}>
-                        {allStyles.map((style) => (
-                          <div key={style.uid} className={styles.styleChip}>
-                            {style.name}
-                          </div>
-                        ))}
+                        {allStyles
+                          .filter((style) =>
+                            product.styles.some((s) => s.styleId === style.uid)
+                          )
+                          .map((style) => (
+                            <div key={style.uid} className={styles.styleChip}>
+                              {style.name}
+                            </div>
+                          ))}
                       </div>
                     </div>
                   )}
 
                   <div className={styles.actionButtons}>
-                    <button className={styles.primaryButton}>
+                    {/* <button className={styles.primaryButton}>
                       Consultar Detalles
                       <span className={styles.buttonIcon}>→</span>
-                    </button>
-                    <button 
+                    </button> */}
+                    <button
                       className={styles.secondaryButton}
                       onClick={() => setActiveView('artist')}
                     >

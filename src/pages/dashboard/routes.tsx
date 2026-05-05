@@ -1,18 +1,18 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import HomePage from "./pages/Home/Home";
-import UploadGalleryPage from "./pages/UploadPicture/UploadPictures";
-import UpdatePicture from "./pages/UpdatePicture/UpdatePicture";
-import ReviewArtWorksPage from "./pages/ReviewArtWorks/ReviewArtWorks";
-import YourGalleryReviewPage from "./pages/YourGalleryReview/YourGalleryReview";
-import CreateEventPage from "./pages/CreateEvent/CreateEvent";
-import ReviewEvents from "./pages/ReviewEvents/ReviewEvents";
-import EditEventPage from "./pages/EditEvent/EditEvent";
-import Calendar from "./pages/Calendar/Calendar";
-import InvitationsPage from "./pages/Invitations/Invitations";
-import MyEventsPage from "./pages/MyEvents/MyEvents";
-import ClasesPage from "./pages/Clases/Clases";
-import ProfessorsPage from "./pages/Professors/Professors";
-import GamesModule from "./pages/Games";
+import HomePage from "./modules/Home/Home";
+import UploadGalleryPage from "./modules/UploadPicture/UploadPictures";
+import UpdatePicture from "./modules/UpdatePicture/UpdatePicture";
+import ReviewArtWorksPage from "./modules/ReviewArtWorks/ReviewArtWorks";
+import YourGalleryReviewPage from "./modules/YourGalleryReview/YourGalleryReview";
+import CreateEventPage from "./modules/CreateEvent/CreateEvent";
+import ReviewEvents from "./modules/ReviewEvents/ReviewEvents";
+import EditEventPage from "./modules/EditEvent/EditEvent";
+import Calendar from "./modules/Calendar/Calendar";
+import InvitationsPage from "./modules/Invitations/Invitations";
+import MyEventsPage from "./modules/MyEvents/MyEvents";
+import ClasesPage from "./modules/Clases/Clases";
+import ProfessorsPage from "./modules/Professors/Professors";
+import GamesModule from "./modules/Games";
 
 export default function DashboardRoutes() {
   return (

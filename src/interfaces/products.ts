@@ -11,6 +11,7 @@ export type UpdateProductImageDto = components["schemas"]["UpdateProductImageDto
 export interface GetProductsOptions {
   page?: number;
   limit?: number;
+  styleId?: string;
 }
 
 // ─── Tipos para revisión de obras ────────────────────────────────────────────

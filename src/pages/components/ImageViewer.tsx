@@ -158,7 +158,7 @@ export default function ImageViewer({ images, baseUrl = "" }: Props) {
             }}
           >
             <img
-              src="/logoFav.png"
+              src="/logos/logoFav.png"
               alt="logo"
               style={{ width: "20px", height: "20px", objectFit: "contain" }}
             />
@@ -263,7 +263,7 @@ export default function ImageViewer({ images, baseUrl = "" }: Props) {
                       }}
                     >
                       <img
-                        src="/logoFav.png"
+                        src="/logos/logoFav.png"
                         alt="main"
                         style={{ width: "18px", height: "18px", objectFit: "contain" }}
                       />

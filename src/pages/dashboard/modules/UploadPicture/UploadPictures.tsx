@@ -1,6 +1,6 @@
 import { sileo } from "sileo";
 import { useState, useEffect } from "react";
-import ImageUploader from "../../../components/ImageUploader";
+import ImageUploader, { type ImageUploaderItem } from "../../../components/ImageUploader";
 import { useAuth } from "../../../../context/AuthContext";
 import { getStudentsByGroup } from "../../../../services/groups";
 import { getAllStylesByGroup } from "../../../../services/styles";
@@ -100,8 +100,8 @@ export default function UploadPictures() {
   // HANDLERS
   // ═══════════════════════════════════════════════════════════════════════════
 
-  const handleImages = (files: File[]) => {
-    setImageFiles(files);
+  const handleImages = (items: ImageUploaderItem[]) => {
+    setImageFiles(items.filter((i) => !i.isExisting && i.file).map((i) => i.file!));
   };
 
   const handleInputChange = (

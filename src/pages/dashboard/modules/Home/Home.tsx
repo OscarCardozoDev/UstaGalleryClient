@@ -87,7 +87,7 @@ export default function Home() {
     }
   };
 
-  const handleArtworkClick = (artworkId: string) => {};
+  const handleArtworkClick = (artworkId: string) => {navigate(`/dashboard/update/${artworkId}`);};
   const handleUploadArtwork  = () => navigate("/dashboard/upload");
   const handleEventClick     = (eventId: string)       => { console.log("Evento seleccionado:", eventId); };
   const handleNotificationClick   = (id: string) => { console.log("Notificación seleccionada:", id); };
@@ -315,14 +315,32 @@ export default function Home() {
                 </button>
               </div>
               <div className={styles.notifsList}>
-                  <AnimatedList
-                    items={upcomingEvents.map(e => `${e.name} - ${new Date(e.startDate).toLocaleDateString("es-CO")}`)}
-                    onItemSelect={(upcomingEvents) => console.log(upcomingEvents.date)}
-                    showGradients
-                    enableArrowNavigation
-                    displayScrollbar
-                  />
-
+                <AnimatedList
+                  items={notifications.map((n) => n.id)}
+                  onItemSelect={(id) => handleNotificationClick(id)}
+                  showGradients
+                  enableArrowNavigation
+                  displayScrollbar={false}
+                  gradientColor="#ffffff"
+                  renderItem={(_id, index, isSelected) => {
+                    const n = notifications[index];
+                    return (
+                      <div
+                        className={`${styles.notifItem} ${!n.read ? styles.notifItemUnread : ""} ${isSelected ? "!bg-[#f2f2f2]" : ""}`}
+                      >
+                        <span className={styles.notifIcon}>{getNotificationIcon(n.type)}</span>
+                        <div className={styles.notifBody}>
+                          <p className={styles.notifTitle}>{n.title}</p>
+                          <p className={styles.notifMsg}>{n.message}</p>
+                        </div>
+                        <div className={styles.notifRight}>
+                          <span className={styles.notifTime}>{n.time}</span>
+                          {!n.read && <span className={styles.notifDot} />}
+                        </div>
+                      </div>
+                    );
+                  }}
+                />
               </div>
             </>
           )}

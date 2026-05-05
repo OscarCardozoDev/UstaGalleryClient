@@ -4,7 +4,6 @@ import { format, parseISO } from "date-fns";
 import { Calendar, Clock, Text, User, BookOpen, ClipboardList } from "lucide-react";
 
 import { Button } from "../../../ui/button";
-import { EditEventDialog } from "../../components/dialogs/edit-event-dialog";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../../../ui/dialog";
 import { getClassAttendance, updateClassTopic } from "../../../../../../../services/classes";
 import { useAuth } from "../../../../../../../context/AuthContext";
@@ -166,11 +165,6 @@ export function EventDetailsDialog({ event, children }: IProps) {
               {saving ? "Guardando..." : "Guardar cambios"}
             </Button>
           )}
-          <EditEventDialog event={event}>
-            <Button type="button" variant="outline">
-              Editar horario
-            </Button>
-          </EditEventDialog>
         </DialogFooter>
       </DialogContent>
     </Dialog>

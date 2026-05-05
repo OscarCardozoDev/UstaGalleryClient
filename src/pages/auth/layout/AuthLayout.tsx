@@ -125,7 +125,7 @@ export default function AuthLayout() {
               />
             </Step>
             <Step>
-              <GroupSelection onGroupsSelected={() => navigate("/dashboard")} />
+              <GroupSelection onGroupsSelected={() => navigate("/dashboard/home")} />
             </Step>
           </Stepper>
         </div>

@@ -296,22 +296,6 @@ export default function Sidebar({ open, onClose }: Props) {
           <li>
             <button
               className={styles.listItem}
-              onClick={() => handleNavigation("/dashboard/your-gallery")}
-            >
-              <img
-                className={styles.icon}
-                src="../../../../../public/logos/art_gallery.dashboard.svg"
-                alt=""
-                width="20"
-                height="20"
-              />
-              <span>Tu galería</span>
-            </button>
-          </li>
-
-          <li>
-            <button
-              className={styles.listItem}
               onClick={() => handleNavigation("/dashboard/games")}
             >
               <svg

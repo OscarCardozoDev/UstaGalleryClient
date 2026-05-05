@@ -121,7 +121,7 @@ const Gallery = () => {
   // Fetch products
   // ─────────────────────────────────────────────────────────────
 
-  const fetchProducts = async (nextPage: number, reset = false) => {
+  const fetchProducts = async (nextPage: number, reset = false, styleFilter = selectedStyle) => {
     try {
       nextPage === 1 ? setLoading(true) : setLoadingMore(true);
       setError(null);
@@ -129,6 +129,7 @@ const Gallery = () => {
       const data = await getGalleryProducts({
         page: nextPage,
         limit: PAGE_LIMIT,
+        styleId: styleFilter !== "todos" ? styleFilter : undefined,
       });
 
       if (data.length < PAGE_LIMIT) {
@@ -145,12 +146,14 @@ const Gallery = () => {
   };
 
   // ─────────────────────────────────────────────────────────────
-  // Initial load
+  // Fetch on mount and on style change
   // ─────────────────────────────────────────────────────────────
 
   useEffect(() => {
-    fetchProducts(1, true);
-  }, []);
+    setPage(1);
+    setHasMore(true);
+    fetchProducts(1, true, selectedStyle);
+  }, [selectedStyle]);
 
   // ─────────────────────────────────────────────────────────────
   // Infinite scroll

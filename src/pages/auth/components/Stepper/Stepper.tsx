@@ -1,4 +1,4 @@
-import React, { useState, Children, useRef, useLayoutEffect } from 'react';
+import React, { useState, Children } from 'react';
 import type { HTMLAttributes, ReactNode } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import type { Variants } from 'motion/react';
@@ -82,7 +82,7 @@ export default function Stepper({
       {...rest}
     >
       <div
-        className={`bg-zinc-50 mx-auto w-1/3 min-w-[350px] overflow-auto min-h-[500px] max-h-[650px] rounded-3xl shadow-xl ${stepCircleContainerClassName}`}
+        className={`bg-zinc-50 mx-auto w-1/3 min-w-[350px] min-h-[500px] max-h-[650px] rounded-3xl shadow-xl ${stepCircleContainerClassName}`}
         style={{ border: '1px solid #222' }}
       >
         <div className={`${stepContainerClassName} flex w-full items-center p-8`}>
@@ -121,7 +121,7 @@ export default function Stepper({
           isCompleted={isCompleted}
           currentStep={currentStep}
           direction={direction}
-          className={`space-y-2 min-h-[400px] px-8 ${contentClassName}`}
+          className={`space-y-2 h-[400px] px-8 ${contentClassName}`}
         >
           {stepsArray[currentStep - 1]}
         </StepContentWrapper>
@@ -172,51 +172,37 @@ function StepContentWrapper({
   children,
   className = ''
 }: StepContentWrapperProps) {
-  const [parentHeight, setParentHeight] = useState<number>(0);
-
   return (
-    <motion.div
+    <div
       style={{ position: 'relative', overflow: 'hidden' }}
-      animate={{ height: isCompleted ? 0 : parentHeight }}
-      transition={{ type: 'spring', duration: 0.4 }}
       className={className}
     >
       <AnimatePresence initial={false} mode="sync" custom={direction}>
         {!isCompleted && (
-          <SlideTransition key={currentStep} direction={direction} onHeightReady={h => setParentHeight(h)}>
+          <SlideTransition key={currentStep} direction={direction}>
             {children}
           </SlideTransition>
         )}
       </AnimatePresence>
-    </motion.div>
+    </div>
   );
 }
 
 interface SlideTransitionProps {
   children: ReactNode;
   direction: number;
-  onHeightReady: (height: number) => void;
 }
 
-function SlideTransition({ children, direction, onHeightReady }: SlideTransitionProps) {
-  const containerRef = useRef<HTMLDivElement | null>(null);
-
-  useLayoutEffect(() => {
-    if (containerRef.current) {
-      onHeightReady(containerRef.current.offsetHeight);
-    }
-  }, [children, onHeightReady]);
-
+function SlideTransition({ children, direction }: SlideTransitionProps) {
   return (
     <motion.div
-      ref={containerRef}
       custom={direction}
       variants={stepVariants}
       initial="enter"
       animate="center"
       exit="exit"
       transition={{ duration: 0.4 }}
-      style={{ position: 'absolute', left: 0, right: 0, top: 0 }}
+      style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, overflowY: 'auto' }}
     >
       {children}
     </motion.div>

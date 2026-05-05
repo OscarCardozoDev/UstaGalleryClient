@@ -52,11 +52,12 @@ export async function getProducts(
 export async function getGalleryProducts(
   options: GetProductsOptions = {},
 ): Promise<ProductGallery[]> {
-  const { page = 1, limit = 10 } = options;
+  const { page = 1, limit = 10, styleId } = options;
   const params = new URLSearchParams({
     page: String(page),
     limit: String(limit),
   });
+  if (styleId) params.set("styleId", styleId);
 
   const response = await fetch(`${API_URL}/products/getGalleryHome?${params}`, {
     headers: getHeaders(),

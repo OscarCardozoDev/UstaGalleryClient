@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useCallback} from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import type { ReactNode, MouseEventHandler, UIEvent } from 'react';
 import { motion, useInView } from 'motion/react';
 
@@ -22,7 +22,7 @@ const AnimatedItem: React.FC<AnimatedItemProps> = ({ children, delay = 0, index,
       initial={{ scale: 0.7, opacity: 0 }}
       animate={inView ? { scale: 1, opacity: 1 } : { scale: 0.7, opacity: 0 }}
       transition={{ duration: 0.2, delay }}
-      className="mb-4 cursor-pointer"
+      className="mb-2 cursor-pointer"
     >
       {children}
     </motion.div>
@@ -38,33 +38,21 @@ interface AnimatedListProps {
   itemClassName?: string;
   displayScrollbar?: boolean;
   initialSelectedIndex?: number;
+  renderItem?: (item: string, index: number, isSelected: boolean) => ReactNode;
+  gradientColor?: string;
 }
 
 const AnimatedList: React.FC<AnimatedListProps> = ({
-  items = [
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 4',
-    'Item 5',
-    'Item 6',
-    'Item 7',
-    'Item 8',
-    'Item 9',
-    'Item 10',
-    'Item 11',
-    'Item 12',
-    'Item 13',
-    'Item 14',
-    'Item 15'
-  ],
+  items = ['Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5'],
   onItemSelect,
   showGradients = true,
   enableArrowNavigation = true,
   className = '',
   itemClassName = '',
   displayScrollbar = true,
-  initialSelectedIndex = -1
+  initialSelectedIndex = -1,
+  renderItem,
+  gradientColor = '#ffffff',
 }) => {
   const listRef = useRef<HTMLDivElement>(null);
   const [selectedIndex, setSelectedIndex] = useState<number>(initialSelectedIndex);
@@ -83,7 +71,7 @@ const AnimatedList: React.FC<AnimatedListProps> = ({
         onItemSelect(item, index);
       }
     },
-    [onItemSelect]
+    [onItemSelect],
   );
 
   const handleScroll = (e: UIEvent<HTMLDivElement>) => {
@@ -99,11 +87,11 @@ const AnimatedList: React.FC<AnimatedListProps> = ({
       if (e.key === 'ArrowDown' || (e.key === 'Tab' && !e.shiftKey)) {
         e.preventDefault();
         setKeyboardNav(true);
-        setSelectedIndex(prev => Math.min(prev + 1, items.length - 1));
+        setSelectedIndex((prev) => Math.min(prev + 1, items.length - 1));
       } else if (e.key === 'ArrowUp' || (e.key === 'Tab' && e.shiftKey)) {
         e.preventDefault();
         setKeyboardNav(true);
-        setSelectedIndex(prev => Math.max(prev - 1, 0));
+        setSelectedIndex((prev) => Math.max(prev - 1, 0));
       } else if (e.key === 'Enter') {
         if (selectedIndex >= 0 && selectedIndex < items.length) {
           e.preventDefault();
@@ -131,54 +119,65 @@ const AnimatedList: React.FC<AnimatedListProps> = ({
       if (itemTop < containerScrollTop + extraMargin) {
         container.scrollTo({ top: itemTop - extraMargin, behavior: 'smooth' });
       } else if (itemBottom > containerScrollTop + containerHeight - extraMargin) {
-        container.scrollTo({
-          top: itemBottom - containerHeight + extraMargin,
-          behavior: 'smooth'
-        });
+        container.scrollTo({ top: itemBottom - containerHeight + extraMargin, behavior: 'smooth' });
       }
     }
     setKeyboardNav(false);
   }, [selectedIndex, keyboardNav]);
 
   return (
-    <div className={`relative w-[500px] ${className}`}>
+    <div className={`relative w-full ${className}`}>
       <div
         ref={listRef}
-        className={`max-h-[400px] overflow-y-auto p-4 ${
+        className={`h-full overflow-y-auto p-1 ${
           displayScrollbar
-            ? '[&::-webkit-scrollbar]:w-[8px] [&::-webkit-scrollbar-track]:bg-[#120F17] [&::-webkit-scrollbar-thumb]:bg-[#222] [&::-webkit-scrollbar-thumb]:rounded-[4px]'
+            ? '[&::-webkit-scrollbar]:w-[4px] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#e0e0e0] [&::-webkit-scrollbar-thumb]:rounded-[4px]'
             : 'scrollbar-hide'
         }`}
         onScroll={handleScroll}
         style={{
           scrollbarWidth: displayScrollbar ? 'thin' : 'none',
-          scrollbarColor: '#222 #120F17'
+          scrollbarColor: '#e0e0e0 transparent',
         }}
       >
         {items.map((item, index) => (
           <AnimatedItem
             key={index}
-            delay={0.1}
+            delay={0.05}
             index={index}
             onMouseEnter={() => handleItemMouseEnter(index)}
             onClick={() => handleItemClick(item, index)}
           >
-            <div className={`p-4 bg-[#111] rounded-lg ${selectedIndex === index ? 'bg-[#222]' : ''} ${itemClassName}`}>
-              <p className="text-white m-0">{item}</p>
-            </div>
+            {renderItem ? (
+              renderItem(item, index, selectedIndex === index)
+            ) : (
+              <div
+                className={`p-3 rounded-lg transition-colors ${
+                  selectedIndex === index ? 'bg-[#f2f2f2]' : 'bg-transparent hover:bg-[#f7f7f7]'
+                } ${itemClassName}`}
+              >
+                <p className="text-[#171717] m-0 text-sm">{item}</p>
+              </div>
+            )}
           </AnimatedItem>
         ))}
       </div>
       {showGradients && (
         <>
           <div
-            className="absolute top-0 left-0 right-0 h-[50px] bg-gradient-to-b from-[#120F17] to-transparent pointer-events-none transition-opacity duration-300 ease"
-            style={{ opacity: topGradientOpacity }}
-          ></div>
+            className="absolute top-0 left-0 right-0 h-[40px] pointer-events-none transition-opacity duration-300 ease"
+            style={{
+              opacity: topGradientOpacity,
+              background: `linear-gradient(to bottom, ${gradientColor}, transparent)`,
+            }}
+          />
           <div
-            className="absolute bottom-0 left-0 right-0 h-[100px] bg-gradient-to-t from-[#120F17] to-transparent pointer-events-none transition-opacity duration-300 ease"
-            style={{ opacity: bottomGradientOpacity }}
-          ></div>
+            className="absolute bottom-0 left-0 right-0 h-[60px] pointer-events-none transition-opacity duration-300 ease"
+            style={{
+              opacity: bottomGradientOpacity,
+              background: `linear-gradient(to top, ${gradientColor}, transparent)`,
+            }}
+          />
         </>
       )}
     </div>
