@@ -58,7 +58,7 @@ export default function UploadPictures() {
 
     const loadStyles = async () => {
       try {
-        const stylesData = await getAllStylesByGroup(currentGroup);
+        const stylesData = await getAllStylesByGroup("ARTES");
         setAvailableStyles(stylesData);
       } catch (err) {
         console.error("Error al cargar estilos:", err);

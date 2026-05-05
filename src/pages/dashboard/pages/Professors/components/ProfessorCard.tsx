@@ -23,61 +23,52 @@ export default function ProfessorCard({
 
   return (
     <div className={`${styles.card} ${!professor.isActive ? styles.cardInactive : ''}`}>
-      <div className={styles.cardHeader}>
-        <div className={styles.avatar}>
-          {photoUrl ? (
-            <img src={photoUrl} alt={professor.name} className={styles.avatarImg} />
-          ) : (
-            <span className={styles.avatarInitial}>
+      <div className={styles.cardPhotoWrap}>
+        {photoUrl ? (
+          <img src={photoUrl} alt={professor.name} className={styles.cardPhotoImg} />
+        ) : (
+          <div className={styles.cardPhotoPlaceholder}>
+            <span className={styles.cardPhotoInitial}>
               {professor.name.charAt(0).toUpperCase()}
             </span>
+          </div>
+        )}
+      </div>
+
+      <div className={styles.cardOverlayTop}>
+        <div className={styles.cardName}>{professor.name} {professor.lastName}</div>
+        <div className={styles.cardRole}>{professor.role?.name ?? 'Profesor'}</div>
+      </div>
+
+      <div className={styles.cardBottom}>
+        <div className={styles.cardBottomLeft}>
+          <span className={styles.cardUsername}>{professor.role?.name ?? 'Sin grupo'}</span>
+          <span className={`${styles.badge} ${professor.isActive ? styles.badgeActive : styles.badgeInactive}`}>
+            {professor.isActive ? 'Activo' : 'Inactivo'}
+          </span>
+        </div>
+
+        <div>
+          {isConfirming ? (
+            <div className={styles.confirmRow}>
+              <button className={styles.btnConfirm} onClick={() => onConfirmDeactivate(professor.uid)}>
+                Sí
+              </button>
+              <button className={styles.btnCancel} onClick={onCancelConfirm}>
+                No
+              </button>
+            </div>
+          ) : professor.isActive ? (
+            <button className={styles.btnDeactivate} onClick={() => onDeactivateClick(professor.uid)}>
+              Desactivar
+            </button>
+          ) : (
+            <button className={styles.btnReactivate} onClick={() => onReactivateClick(professor.uid)}>
+              Reactivar
+            </button>
           )}
         </div>
-        <div className={styles.cardInfo}>
-          <div className={styles.cardName}>{professor.name} {professor.lastName}</div>
-          <div className={styles.cardUsername}>@{professor.username}</div>
-        </div>
-        <span className={`${styles.badge} ${professor.isActive ? styles.badgeActive : styles.badgeInactive}`}>
-          {professor.isActive ? 'Activo' : 'Inactivo'}
-        </span>
       </div>
-
-      <div className={styles.cardDetails}>
-        <span>📱 {professor.telNumber}</span>
-        <span>🎭 {professor.role?.name ?? 'Profesor Particular'}</span>
-      </div>
-
-      {isConfirming ? (
-        <div className={styles.confirmRow}>
-          <span className={styles.confirmText}>¿Desactivar?</span>
-          <button
-            className={styles.btnConfirm}
-            onClick={() => onConfirmDeactivate(professor.uid)}
-          >
-            Sí
-          </button>
-          <button
-            className={styles.btnCancel}
-            onClick={onCancelConfirm}
-          >
-            No
-          </button>
-        </div>
-      ) : professor.isActive ? (
-        <button
-          className={styles.btnDeactivate}
-          onClick={() => onDeactivateClick(professor.uid)}
-        >
-          Desactivar
-        </button>
-      ) : (
-        <button
-          className={styles.btnReactivate}
-          onClick={() => onReactivateClick(professor.uid)}
-        >
-          Reactivar
-        </button>
-      )}
     </div>
   );
 }

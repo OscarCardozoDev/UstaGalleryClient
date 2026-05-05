@@ -53,7 +53,7 @@ export default function EditProduct() {
       try {
         const [product, stylesData, groupStudents] = await Promise.all([
           getProductById(uid),
-          getAllStylesByGroup(currentGroup).catch(() => {
+          getAllStylesByGroup("ARTES").catch(() => {
             const stored = localStorage.getItem("styles");
             return stored ? (JSON.parse(stored) as Style[]) : [];
           }),
