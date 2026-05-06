@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Register } from "../../../../services/auth";
 import styles from "./RegisterForm.module.css";
-
-const TERMS_URL = "https://tu-sitio.com/terminos"; // 🔗 Cambia esta URL
+import TermsModal from "./TermsModal";
 
 export default function RegisterForm({
   setOpenSnackbar,
@@ -16,6 +15,7 @@ export default function RegisterForm({
   const [confirm_password, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -30,6 +30,10 @@ export default function RegisterForm({
 
     setLoading(true);
     try {
+      // TEMPORAL: solo se permiten correos institucionales de la Santo Tomás
+      if (!correo_usuario.endsWith("@usantoto.edu.co"))
+        throw new Error("Solo se permiten correos institucionales (@usantoto.edu.co)");
+
       if (password_usuario !== confirm_password)
         throw new Error("Las contraseñas no coinciden");
 
@@ -121,15 +125,13 @@ export default function RegisterForm({
           />
           <label htmlFor="register-terms" className={styles.termsLabel}>
             He leído y acepto los{" "}
-            <a
-              href={TERMS_URL}
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              type="button"
               className={styles.termsLink}
-              onClick={(e) => e.stopPropagation()}
+              onClick={(e) => { e.stopPropagation(); setShowTermsModal(true); }}
             >
               Términos y Condiciones
-            </a>
+            </button>
           </label>
         </div>
 
@@ -137,6 +139,8 @@ export default function RegisterForm({
           {loading ? "" : "Crear Cuenta"}
         </button>
       </form>
+
+      {showTermsModal && <TermsModal onClose={() => setShowTermsModal(false)} />}
     </div>
   );
 }
