@@ -6,6 +6,8 @@ import { getStudentsByGroup } from "../../../../services/groups";
 import { getAllStylesByGroup } from "../../../../services/styles";
 import { getProductById, updateProduct } from "../../../../services/products";
 import type { UpdateProductDto, UpdateProductImageDto } from "../../../../interfaces/products";
+
+type ImageItem = UpdateProductImageDto & { file?: File };
 import type { GroupStudent } from "../../../../interfaces/groups";
 import type { Style } from "../../../../interfaces/styles";
 import { sileo } from "sileo";
@@ -20,7 +22,7 @@ export default function EditProduct() {
   // ── Estados de datos ──────────────────────────────────────────────────────
   const [availableStyles, setAvailableStyles] = useState<Style[]>([]);
   const [students, setStudents] = useState<GroupStudent[]>([]);
-  const [imageItems, setImageItems] = useState<UpdateProductImageDto[]>([]);
+  const [imageItems, setImageItems] = useState<ImageItem[]>([]);
   const [existingImages, setExistingImages] = useState<{ uid: string; url: string; isMain: boolean }[]>([]);
 
   // ── Estados de UI ─────────────────────────────────────────────────────────

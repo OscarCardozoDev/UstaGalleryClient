@@ -149,8 +149,6 @@ export default function ShowImage() {
   // Obtener autor principal
   // ─────────────────────────────────────────────────────────────
 
-  const mainAuthor = product.authors.find((a) => a.isAuthor);
-
   // ─────────────────────────────────────────────────────────────
   // Render
   // ─────────────────────────────────────────────────────────────
@@ -199,18 +197,6 @@ export default function ShowImage() {
 
           {/* Supporting Info Bar */}
           <div className={styles.supportingInfo}>
-            <div className={styles.infoGroup}>
-              <p className={styles.infoLabel}>Técnica</p>
-              <p className={styles.infoValue}>
-                {product.technique || "No especificada"}
-              </p>
-            </div>
-            <div className={styles.infoGroup}>
-              <p className={styles.infoLabel}>Disponibilidad</p>
-              <p className={styles.infoValue}>
-                {product.isAvailable ? "Disponible" : "No Disponible"}
-              </p>
-            </div>
             <div className={styles.infoGroup}>
               <p className={styles.infoLabel}>Referencia</p>
               <p className={styles.infoValue}>#{product.uid.slice(0, 8)}</p>
@@ -400,7 +386,7 @@ const RelatedWorks = ({ products, currentProductUid }: RelatedWorksProps) => {
   return (
     <div className={styles.relatedGrid}>
       {filtered.slice(0, 6).map((product) => (
-        <GalleryCard key={product.uid} product={product} variant="carousel" />
+        <GalleryCard key={product.uid} product={product} />
       ))}
     </div>
   );

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
-import Sidebar from "../components/Siderbar/Sidebar";
-import Topbar from "../components/Topbar/Topbar";
+import Sidebar from "../components/siderbar/Sidebar";
+import Topbar from "../components/topbar/Topbar";
 import LoadingScreen from "../components/Loanding/LoadingScreen";
 import { useAuth } from "../../../context/AuthContext";
 import styles from "./Dashboard.module.css";

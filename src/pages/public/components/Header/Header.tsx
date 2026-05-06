@@ -1,16 +1,17 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import type { Variants } from "framer-motion";
 import { useAuth } from "../../../../context/AuthContext";
 import styles from "./Header.module.css";
 
-const dropdownVariants = {
+const dropdownVariants: Variants = {
   hidden: { opacity: 0, scale: 0.95, y: -6 },
   visible: {
     opacity: 1,
     scale: 1,
     y: 0,
-    transition: { duration: 0.2, ease: [0.16, 1, 0.3, 1] },
+    transition: { duration: 0.2, ease: [0.16, 1, 0.3, 1] as const },
   },
   exit: {
     opacity: 0,
@@ -20,11 +21,11 @@ const dropdownVariants = {
   },
 };
 
-const drawerVariants = {
+const drawerVariants: Variants = {
   hidden: { x: "-100%" },
   visible: {
     x: 0,
-    transition: { type: "tween" as const, duration: 0.25, ease: [0.16, 1, 0.3, 1] },
+    transition: { type: "tween" as const, duration: 0.25, ease: [0.16, 1, 0.3, 1] as const },
   },
   exit: {
     x: "-100%",
