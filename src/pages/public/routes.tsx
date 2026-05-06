@@ -5,6 +5,7 @@ import ShowImagePage from "./modules/ShowImage/ShowImage";
 import Events from "./modules/Events/Events";
 import EventDetail from "./modules/EventDetail/EventDetail";
 import ArtistPage from "./modules/ArtistPage/ArtistPage";
+import TermsConditions from "./modules/TermsConditions/TermsConditions";
 
 export default function MainPageRoutes() {
   return (
@@ -15,6 +16,7 @@ export default function MainPageRoutes() {
       <Route path="/events" element={<Events />} />
       <Route path="/events/:uid" element={<EventDetail />} />
       <Route path="/artist/:uid" element={<ArtistPageWrapper />} />
+      <Route path="/terms" element={<TermsConditions />} />
     </Routes>
   );
 }
