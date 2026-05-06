@@ -24,6 +24,7 @@ const ART_PERIODS: ArtPeriod[] = [
     description: "Cave paintings, Venus figurines, megaliths",
     styles: ["Cave painting", "Megalithic art"],
     region: "Global",
+    lastUpdated: 0,
   },
   {
     id: "ancient",
@@ -33,6 +34,7 @@ const ART_PERIODS: ArtPeriod[] = [
     description: "Egyptian, Greek, Roman civilizations",
     styles: ["Ancient Egyptian art", "Ancient Greek art", "Ancient Roman art"],
     region: "Mediterranean, Middle East",
+    lastUpdated: 0,
   },
   {
     id: "medieval",
@@ -42,6 +44,7 @@ const ART_PERIODS: ArtPeriod[] = [
     description: "Byzantine, Romanesque, Gothic",
     styles: ["Byzantine art", "Romanesque art", "Gothic art"],
     region: "Europe, Byzantine Empire",
+    lastUpdated: 0,
   },
   {
     id: "renaissance",
@@ -52,6 +55,7 @@ const ART_PERIODS: ArtPeriod[] = [
     styles: ["Renaissance", "Mannerism"],
     keyArtists: ["Leonardo da Vinci", "Michelangelo", "Raphael"],
     region: "Italy, Northern Europe",
+    lastUpdated: 0,
   },
   {
     id: "baroque",
@@ -62,6 +66,7 @@ const ART_PERIODS: ArtPeriod[] = [
     styles: ["Baroque"],
     keyArtists: ["Caravaggio", "Rembrandt", "Bernini"],
     region: "Europe",
+    lastUpdated: 0,
   },
   {
     id: "neoclassicism",
@@ -71,6 +76,7 @@ const ART_PERIODS: ArtPeriod[] = [
     description: "Return to classical order vs emotional expression",
     styles: ["Neoclassicism", "Romanticism"],
     region: "Europe",
+    lastUpdated: 0,
   },
   {
     id: "modern-early",
@@ -81,6 +87,7 @@ const ART_PERIODS: ArtPeriod[] = [
     styles: ["Impressionism", "Post-Impressionism", "Art Nouveau"],
     keyArtists: ["Monet", "Van Gogh", "Cézanne"],
     region: "France, Europe",
+    lastUpdated: 0,
   },
   {
     id: "modern-mid",
@@ -91,6 +98,7 @@ const ART_PERIODS: ArtPeriod[] = [
     styles: ["Cubism", "Expressionism", "Surrealism", "Abstract art", "Dada"],
     keyArtists: ["Picasso", "Dalí", "Kandinsky"],
     region: "Global",
+    lastUpdated: 0,
   },
   {
     id: "contemporary",
@@ -100,6 +108,7 @@ const ART_PERIODS: ArtPeriod[] = [
     description: "Pop Art, Minimalism, Conceptual, Digital",
     styles: ["Pop art", "Minimalism", "Conceptual art", "Digital art"],
     region: "Global",
+    lastUpdated: 0,
   },
 ];
 
@@ -134,14 +143,7 @@ export const getArtPeriodById = async (
 // ─────────────────────────────────────────────
 export const getStylesByPeriod = async (
   periodId: string,
-): Promise<ArtStyle[]> => {
+): Promise<string[]> => {
   const period = ART_PERIODS.find((p) => p.id === periodId);
-
-  if (!period) return [];
-
-  const styles = await Promise.all(
-    period.styles.map((styleName) => getArtStyleByName(styleName)),
-  );
-
-  return styles;
+  return period?.styles ?? [];
 };

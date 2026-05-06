@@ -1,20 +1,22 @@
 import * as React from "react";
 import { DayPicker } from "react-day-picker";
+import type { PropsSingle, PropsBase } from "react-day-picker";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { buttonVariants } from "./button";
 import { cn } from "@/lib/utils";
 
 // react-day-picker v9 — classNames and components API changed from v8
-type SingleCalendarProps = React.ComponentProps<typeof DayPicker>;
+type SingleCalendarProps = PropsBase & PropsSingle;
 
-function SingleCalendar({ className, classNames, showOutsideDays = true, selected, ...props }: SingleCalendarProps) {
+function SingleCalendar({ className, classNames, showOutsideDays = true, selected, mode: _mode, ...props }: SingleCalendarProps) {
   const [currentMonth, setCurrentMonth] = React.useState<Date | undefined>(
     selected instanceof Date ? selected : undefined
   );
 
   return (
     <DayPicker
+      mode="single"
       selected={selected}
       showOutsideDays={showOutsideDays}
       month={currentMonth}

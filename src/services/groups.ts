@@ -8,6 +8,7 @@ import type {
   UpdateStudentsDto,
   DeleteStudentDto,
   AddStudentToGroupsResult,
+  AddStudentDto,
 } from "../interfaces/groups";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -125,7 +126,7 @@ export async function deleteGroup(uid: string): Promise<{ success: boolean }> {
 // ─── Agregar estudiante a varios grupos ────────────────────────────────────────────
 
 export async function addStudentToGroups(
-  dto: CreateGroupDto,
+  dto: AddStudentDto,
 ): Promise<AddStudentToGroupsResult> {
   const response = await fetch(`${API_URL}/groups/student/add`, {
     method: "POST",
