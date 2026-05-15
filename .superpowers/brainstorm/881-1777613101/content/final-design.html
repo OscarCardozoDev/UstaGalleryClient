@@ -1,0 +1,209 @@
+<h2>Diseño final — para aprobación</h2>
+<p class="subtitle">Layout A · Mobile M1 · Estilo S1 (minimal). Aprueba o dime qué cambiarías.</p>
+
+<div style="display:flex;flex-direction:column;gap:32px;margin-top:8px;">
+
+  <!-- Desktop -->
+  <div>
+    <p class="label">DESKTOP (≥1100px)</p>
+    <div style="background:#f0f0f0;border-radius:16px;padding:16px;margin-top:8px;">
+      <div style="display:grid;grid-template-columns:220px 1fr 1fr 220px;grid-template-rows:130px 1fr 1fr;gap:8px;height:420px;grid-template-areas:'attend welcome welcome events' 'attend artworks artworks events' 'attend notifs notifs events';">
+
+        <div style="grid-area:attend;background:#171717;border-radius:14px;padding:18px;display:flex;flex-direction:column;justify-content:space-between;">
+          <div>
+            <div style="font-size:8px;color:rgba(255,255,255,.4);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;">Semillero de Arte</div>
+            <div style="display:flex;align-items:center;gap:4px;">
+              <div style="width:6px;height:6px;border-radius:50%;background:#4ade80;box-shadow:0 0 5px rgba(74,222,128,.5);"></div>
+              <span style="font-size:7px;color:rgba(255,255,255,.5);">Clase en curso</span>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:38px;font-weight:700;color:#fff;line-height:1;letter-spacing:-.03em;">09:45</div>
+            <div style="font-size:8px;color:rgba(255,255,255,.4);margin-top:4px;">AM</div>
+            <div style="font-size:7px;color:rgba(255,255,255,.35);margin-top:2px;">Miércoles, 30 de abril</div>
+          </div>
+          <div>
+            <div style="background:#fff;border-radius:10px;padding:10px;text-align:center;margin-bottom:8px;">
+              <span style="font-size:8px;font-weight:700;color:#171717;">✓ Tomar asistencia</span>
+            </div>
+            <div style="font-size:7px;color:rgba(255,255,255,.3);text-align:center;">0 asistencias este mes</div>
+          </div>
+        </div>
+
+        <div style="grid-area:welcome;background:#fff;border:1px solid #e8e8e8;border-radius:14px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 3px rgba(0,0,0,.04);">
+          <div>
+            <div style="font-size:9px;color:#bbb;font-weight:500;">Bienvenida,</div>
+            <div style="font-size:22px;font-weight:700;color:#171717;letter-spacing:-.02em;margin:2px 0;">Oscar Cardozo</div>
+            <div style="font-size:9px;color:#999;max-width:300px;line-height:1.5;">Marca tu asistencia, explora tus obras y mantente al día con los eventos del semillero.</div>
+          </div>
+          <div style="width:56px;height:56px;background:#f5f5f5;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;margin-left:16px;">🎨</div>
+        </div>
+
+        <div style="grid-area:artworks;background:#fff;border:1px solid #e8e8e8;border-radius:14px;padding:14px 18px;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.04);">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;">
+            <div>
+              <div style="font-size:9px;font-weight:600;color:#171717;">Mis Obras</div>
+              <div style="font-size:7px;color:#bbb;margin-top:1px;">5 obras subidas</div>
+            </div>
+            <div style="background:#f2f2f2;border-radius:7px;padding:5px 10px;">
+              <span style="font-size:7px;font-weight:500;color:#171717;">↑ Subir obra</span>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;flex:1;align-items:flex-start;">
+            <div style="width:80px;height:100%;background:#ebebeb;border-radius:10px;flex-shrink:0;"></div>
+            <div style="width:80px;height:100%;background:#e4e4e4;border-radius:10px;flex-shrink:0;"></div>
+            <div style="width:80px;height:100%;background:#ddd;border-radius:10px;flex-shrink:0;"></div>
+            <div style="width:80px;height:100%;background:#d6d6d6;border-radius:10px;flex-shrink:0;"></div>
+          </div>
+        </div>
+
+        <div style="grid-area:events;background:#fafafa;border:1px solid #e8e8e8;border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.04);">
+          <div style="font-size:9px;font-weight:600;color:#171717;margin-bottom:10px;">Próximos Eventos</div>
+          <div style="display:flex;flex-direction:column;gap:6px;flex:1;overflow:hidden;">
+            <div style="background:#fff;border:1px solid #ebebeb;border-radius:9px;padding:9px 11px;">
+              <div style="font-size:7px;color:#bbb;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;">Vie, 2 may</div>
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
+                <div style="background:#f0f0f0;border-radius:3px;padding:2px 5px;font-size:6px;font-weight:600;color:#555;text-transform:uppercase;">Taller</div>
+                <div style="font-size:7px;color:#aaa;">10:00 AM</div>
+              </div>
+              <div style="font-size:8px;font-weight:600;color:#171717;">Técnica de Acuarela</div>
+            </div>
+            <div style="background:#fff;border:1px solid #ebebeb;border-radius:9px;padding:9px 11px;">
+              <div style="font-size:7px;color:#bbb;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;">Sáb, 10 may</div>
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
+                <div style="background:#f0f0f0;border-radius:3px;padding:2px 5px;font-size:6px;font-weight:600;color:#555;text-transform:uppercase;">Exposición</div>
+                <div style="font-size:7px;color:#aaa;">02:00 PM</div>
+              </div>
+              <div style="font-size:8px;font-weight:600;color:#171717;">Muestra fin de semestre</div>
+            </div>
+            <div style="background:#fff;border:1px solid #ebebeb;border-radius:9px;padding:9px 11px;">
+              <div style="font-size:7px;color:#bbb;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;">Jue, 22 may</div>
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
+                <div style="background:#f0f0f0;border-radius:3px;padding:2px 5px;font-size:6px;font-weight:600;color:#555;text-transform:uppercase;">Conferencia</div>
+                <div style="font-size:7px;color:#aaa;">03:30 PM</div>
+              </div>
+              <div style="font-size:8px;font-weight:600;color:#171717;">Arte y Tecnología</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="grid-area:notifs;background:#fff;border:1px solid #e8e8e8;border-radius:14px;padding:14px 18px;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.04);">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+            <div style="font-size:9px;font-weight:600;color:#171717;">Notificaciones <span style="display:inline-flex;align-items:center;justify-content:center;background:#171717;color:#fff;font-size:7px;font-weight:700;border-radius:9px;width:16px;height:16px;vertical-align:middle;margin-left:4px;">2</span></div>
+            <div style="font-size:8px;color:#bbb;cursor:pointer;">Ver todas</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:2px;">
+            <div style="display:flex;align-items:flex-start;gap:8px;padding:6px 7px;background:#fafafa;border-radius:7px;">
+              <span style="font-size:11px;">💬</span>
+              <div style="flex:1;min-width:0;">
+                <div style="font-size:7px;font-weight:600;color:#171717;">Nuevo comentario</div>
+                <div style="font-size:7px;color:#888;">Carlos comentó en 'Astronauta Neon'</div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0;">
+                <div style="font-size:6px;color:#ccc;">5 min</div>
+                <div style="width:5px;height:5px;background:#171717;border-radius:50%;"></div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:8px;padding:6px 7px;background:#fafafa;border-radius:7px;">
+              <span style="font-size:11px;">📅</span>
+              <div style="flex:1;min-width:0;">
+                <div style="font-size:7px;font-weight:600;color:#171717;">Recordatorio evento</div>
+                <div style="font-size:7px;color:#888;">Taller de Pintura mañana 10:00 AM</div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0;">
+                <div style="font-size:6px;color:#ccc;">1h</div>
+                <div style="width:5px;height:5px;background:#171717;border-radius:50%;"></div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:8px;padding:6px 7px;border-radius:7px;">
+              <span style="font-size:11px;">📢</span>
+              <div style="flex:1;min-width:0;">
+                <div style="font-size:7px;font-weight:600;color:#171717;">Nuevo anuncio</div>
+                <div style="font-size:7px;color:#888;">Convocatoria exposición fin semestre</div>
+              </div>
+              <div style="font-size:6px;color:#ccc;flex-shrink:0;">3h</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile -->
+  <div>
+    <p class="label">MOBILE (&lt;750px) — scroll vertical</p>
+    <div style="background:#f0f0f0;border-radius:16px;padding:16px;margin-top:8px;display:flex;justify-content:center;">
+      <div style="width:240px;background:#fff;border:2px solid #ccc;border-radius:32px;padding:12px;box-shadow:0 6px 24px rgba(0,0,0,.15);">
+        <div style="width:50px;height:5px;background:#ccc;border-radius:3px;margin:0 auto 12px;"></div>
+        <div style="display:flex;flex-direction:column;gap:7px;">
+          <div style="background:#fff;border:1px solid #e8e8e8;border-radius:12px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 2px rgba(0,0,0,.04);">
+            <div>
+              <div style="font-size:8px;color:#bbb;">Bienvenida,</div>
+              <div style="font-size:13px;font-weight:700;color:#171717;">Oscar C.</div>
+              <div style="font-size:7px;color:#999;margin-top:1px;">Explora tus obras y eventos.</div>
+            </div>
+            <div style="width:36px;height:36px;background:#f5f5f5;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">🎨</div>
+          </div>
+          <div style="background:#171717;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px;">
+            <div style="flex:1;">
+              <div style="font-size:7px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;">Asistencia</div>
+              <div style="font-size:22px;font-weight:700;color:#fff;line-height:1;letter-spacing:-.02em;">09:45</div>
+              <div style="display:flex;align-items:center;gap:3px;margin-top:2px;">
+                <div style="width:5px;height:5px;background:#4ade80;border-radius:50%;"></div>
+                <div style="font-size:7px;color:rgba(255,255,255,.5);">Clase en curso</div>
+              </div>
+            </div>
+            <div style="background:#fff;border-radius:8px;padding:8px 12px;flex-shrink:0;">
+              <div style="font-size:7px;font-weight:700;color:#171717;">✓ Tomar</div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;">
+            <div style="background:#fff;border:1px solid #e8e8e8;border-radius:12px;padding:9px;">
+              <div style="font-size:7px;font-weight:600;color:#171717;margin-bottom:6px;">Mis Obras</div>
+              <div style="display:flex;gap:4px;">
+                <div style="width:32px;height:38px;background:#ebebeb;border-radius:6px;flex-shrink:0;"></div>
+                <div style="width:32px;height:38px;background:#e4e4e4;border-radius:6px;flex-shrink:0;"></div>
+              </div>
+            </div>
+            <div style="background:#fafafa;border:1px solid #e8e8e8;border-radius:12px;padding:9px;">
+              <div style="font-size:7px;font-weight:600;color:#171717;margin-bottom:5px;">Eventos</div>
+              <div style="display:flex;flex-direction:column;gap:3px;">
+                <div style="background:#fff;border:1px solid #ebebeb;border-radius:5px;padding:4px 5px;"><div style="height:5px;background:#e0e0e0;border-radius:2px;width:80%;"></div></div>
+                <div style="background:#fff;border:1px solid #ebebeb;border-radius:5px;padding:4px 5px;"><div style="height:5px;background:#e0e0e0;border-radius:2px;width:65%;"></div></div>
+              </div>
+            </div>
+          </div>
+          <div style="background:#fff;border:1px solid #e8e8e8;border-radius:12px;padding:9px 11px;">
+            <div style="font-size:7px;font-weight:600;color:#171717;margin-bottom:6px;">Notificaciones</div>
+            <div style="display:flex;flex-direction:column;gap:4px;">
+              <div style="display:flex;align-items:center;gap:6px;padding:5px 6px;background:#fafafa;border-radius:6px;">
+                <span style="font-size:9px;">💬</span>
+                <div style="flex:1;min-width:0;"><div style="height:5px;background:#e0e0e0;border-radius:2px;width:85%;"></div></div>
+                <div style="width:5px;height:5px;background:#171717;border-radius:50%;flex-shrink:0;"></div>
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;padding:5px 6px;background:#fafafa;border-radius:6px;">
+                <span style="font-size:9px;">📅</span>
+                <div style="flex:1;min-width:0;"><div style="height:5px;background:#e0e0e0;border-radius:2px;width:75%;"></div></div>
+                <div style="width:5px;height:5px;background:#171717;border-radius:50%;flex-shrink:0;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Approve -->
+  <div class="options" style="justify-content:center;">
+    <div class="option" data-choice="approve" onclick="toggleSelect(this)" style="max-width:280px;">
+      <div class="letter">✓</div>
+      <div class="content"><h3>Aprobar</h3><p>Implementar este diseño</p></div>
+    </div>
+    <div class="option" data-choice="changes" onclick="toggleSelect(this)" style="max-width:280px;">
+      <div class="letter">✎</div>
+      <div class="content"><h3>Cambios</h3><p>Dime qué ajustar</p></div>
+    </div>
+  </div>
+
+</div>
