@@ -8,6 +8,8 @@ import type {
   UpdateStudentsDto,
   DeleteStudentDto,
   AddStudentToGroupsResult,
+  GroupStats,
+  GroupMembersResult,
 } from "../interfaces/groups";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -209,4 +211,31 @@ export async function updateStudentsInGroup(
     response,
     "Error al actualizar estudiantes del grupo",
   );
+}
+
+// ─── Panel de Control — Stats ────────────────────────────────────────────────
+
+export async function getGroupStats(groupId: string): Promise<GroupStats> {
+  const response = await fetch(`${API_URL}/groups/${groupId}/stats`, {
+    headers: getHeaders(),
+    credentials: 'include',
+  });
+
+  return handleResponse<GroupStats>(response, 'Error al obtener estadísticas del grupo');
+}
+
+// ─── Panel de Control — Members (paginated) ──────────────────────────────────
+
+export async function getGroupMembers(
+  groupId: string,
+  page: number,
+  limit: number,
+): Promise<GroupMembersResult> {
+  const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+  const response = await fetch(`${API_URL}/groups/${groupId}/members?${params}`, {
+    headers: getHeaders(),
+    credentials: 'include',
+  });
+
+  return handleResponse<GroupMembersResult>(response, 'Error al obtener estudiantes del grupo');
 }
