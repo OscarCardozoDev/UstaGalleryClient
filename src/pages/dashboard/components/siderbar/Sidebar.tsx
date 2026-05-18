@@ -1,43 +1,20 @@
-import { useState } from "react";
 import { useAuth } from "../../../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import styles from "./Sidebar.module.css";
+import GroupSelector from "../../../../components/GroupSelector/GroupSelector";
 
 interface Props {
-  groups: { uid: string; name: string }[];
   open: boolean;
   onClose: () => void;
 }
 
 export default function Sidebar({ open, onClose }: Props) {
   const navigate = useNavigate();
-  const { user, currentGroup, setCurrentGroup, logout } = useAuth();
-  const groups = user?.groups || [];
-  const [isHovered, setIsHovered] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
-
-  const sortedGroups = [...groups].sort((a, b) => {
-    if (a.uid === currentGroup) return -1;
-    if (b.uid === currentGroup) return 1;
-    return 0;
-  });
-
-  const handleGroupClick = (group: { uid: string }) => {
-    setCurrentGroup(group.uid);
-  };
+  const { user, logout } = useAuth();
 
   const handleNavigation = (path: string) => {
     navigate(path);
     onClose();
-  };
-
-  const getGroupImage = (groupName: string): string => {
-    const imgName = {
-      "Musica Instrumental": "musica.jpg",
-      "Grupo de artes y fotografía": "artes.jpg",
-      "Tecnica Vocal": "vocal.jpg",
-    };
-    return `/groups/${imgName[groupName as keyof typeof imgName]}`;
   };
 
   const handleLogout = async () => {
@@ -241,6 +218,28 @@ export default function Sidebar({ open, onClose }: Props) {
               <li>
                 <button
                   className={styles.listItem}
+                  onClick={() => handleNavigation("/dashboard/panel-control")}
+                >
+                  <svg
+                    className={styles.icon}
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <rect x="3" y="3" width="7" height="7" rx="1" />
+                    <rect x="14" y="3" width="7" height="7" rx="1" />
+                    <rect x="3" y="14" width="7" height="7" rx="1" />
+                    <rect x="14" y="14" width="7" height="7" rx="1" />
+                  </svg>
+                  <span>Panel de Control</span>
+                </button>
+              </li>
+              <li>
+                <button
+                  className={styles.listItem}
                   onClick={() => handleNavigation("/dashboard/professors")}
                 >
                   <svg
@@ -316,39 +315,7 @@ export default function Sidebar({ open, onClose }: Props) {
         </ul>
       </nav>
 
-      <div
-        className={styles.groupsContainer}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        {sortedGroups.map((group, index) => (
-          <div
-            className={`${styles.groupsCard} ${currentGroup === group.uid ? styles.selected : ""}`}
-            onClick={() => handleGroupClick(group)}
-            key={group.uid}
-            style={{
-              zIndex: `${100 - index}`,
-              transform: isOpen
-                ? `translateY(${index * -165}px) rotate(0deg)`
-                : isHovered
-                  ? `translateY(${index * -(3 ** 2)}px) rotate(${index % 2 === 0 ? -6 : 6}deg)`
-                  : "translateY(0)",
-            }}
-          >
-            <img
-              src={getGroupImage(group.name)}
-              className={styles.groupsBg}
-              alt="gruposBg"
-            />
-            <h2
-              className={`${styles.groupsName} text-[#171717] text-2xl font-semibold`}
-            >
-              {group.name}
-            </h2>
-          </div>
-        ))}
-      </div>
+      <GroupSelector />
 
       <button className={`${styles.attendanceButton}`} onClick={handleLogout}>
         <svg
