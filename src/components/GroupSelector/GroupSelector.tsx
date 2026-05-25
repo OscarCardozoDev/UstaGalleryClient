@@ -34,8 +34,7 @@ export default function GroupSelector() {
       {sortedGroups.map((group, index) => (
         <div
           className={`${styles.groupsCard} ${currentGroup === group.uid ? styles.selected : ''}`}
-          onClick={(e) => {
-            e.stopPropagation();
+          onClick={() => {
             setCurrentGroup(group.uid);
           }}
           key={group.uid}

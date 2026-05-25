@@ -136,7 +136,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // ── setCurrentGroup ───────────────────────────────────────
   const setCurrentGroup = (groupId: string) => {
-    if (!user) return;
+    if (!user || groupId === currentGroup) return;
 
     if (user.groups.some(g => g.uid === groupId)) {
       setCurrentGroupState(groupId);
