@@ -12,6 +12,8 @@ import ImageViewer from "../../../components/ImageViewer";
 import GalleryCard from "../../components/GalleryCard/GalleryCard";
 import styles from "./ShowImage.module.css";
 
+const artistLogoImg = '../../../../../public/logos/artist.public.png';
+const artLogoImg = '../../../../../public/logos/art.public.png';
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 // ─────────────────────────────────────────────────────────────
@@ -163,7 +165,7 @@ export default function ShowImage() {
             onClick={() => setActiveView('artwork')}
             title="Ver información de la obra"
           >
-            <span className={styles.railIcon}><img src="/public/logos/art.public.png" alt="obra-de-adrte" width={40} height={40} /></span>
+            <span className={styles.railIcon}><img src={artLogoImg} alt="obra-de-adrte" width={40} height={40} /></span>
             <span className={styles.railLabel}>Obra</span>
           </button>
 
@@ -172,7 +174,7 @@ export default function ShowImage() {
             onClick={() => setActiveView('artist')}
             title="Ver información del artista"
           >
-            <span className={styles.railIcon}><img src="/public/logos/artist.public.png" alt="artista-de-adrte" width={40} height={40} /></span>
+            <span className={styles.railIcon}><img src={artistLogoImg} alt="artista-de-adrte" width={40} height={40} /></span>
             <span className={styles.railLabel}>Artista</span>
           </button>
         </div>
