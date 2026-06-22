@@ -127,7 +127,7 @@ export async function deleteGroup(uid: string): Promise<{ success: boolean }> {
 // ─── Agregar estudiante a varios grupos ────────────────────────────────────────────
 
 export async function addStudentToGroups(
-  dto: CreateGroupDto,
+  dto: AddStudentDto,
 ): Promise<AddStudentToGroupsResult> {
   const response = await fetch(`${API_URL}/groups/student/add`, {
     method: "POST",

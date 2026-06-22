@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import type { Variants } from "framer-motion";
 import { useAuth } from "../../../../context/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import styles from "./Topbar.module.css";
@@ -29,13 +30,13 @@ interface Props {
 }
 
 /* ── Animaciones ─────────────────────────────────────────── */
-const dropdownVariants = {
+const dropdownVariants: Variants = {
   hidden: { opacity: 0, scale: 0.95, y: -6 },
   visible: {
     opacity: 1,
     scale: 1,
     y: 0,
-    transition: { duration: 0.2, ease: [0.16, 1, 0.3, 1] },
+    transition: { duration: 0.2, ease: [0.16, 1, 0.3, 1] as const },
   },
   exit: {
     opacity: 0,

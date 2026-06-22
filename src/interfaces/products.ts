@@ -47,7 +47,7 @@ export interface Product {
   isSold: boolean;
   isActive: boolean;
   status: ProductStatus;
-  feedback: string | null;    
+  feedback: string | null;
   madeAt: string;
   groupId: string;
   createdAt: string;

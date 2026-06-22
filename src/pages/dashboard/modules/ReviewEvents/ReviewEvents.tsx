@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { sileo } from "sileo";
 import { getAllEvents } from "../../../../services/events";
 import type { EventSummary, EventStatus, EventType } from "../../../../interfaces/events";
-import EventCard from "../../components/eventCard/EventCard";
+import EventCard from "../../components/EventCard/EventCard";
 import styles from "./ReviewEvents.module.css";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────

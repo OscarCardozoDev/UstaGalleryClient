@@ -62,7 +62,6 @@ describe('useColorMixingGame — easy mode', () => {
     // Ensure used indices grows
     expect(result.current.state.usedIndices.length).toBeGreaterThanOrEqual(2)
     // First target not equal to current (probabilistic but reliable with 30 colors)
-    const secondTarget = result.current.state.targetColor
     // usedIndices should contain both
     expect(result.current.state.usedIndices).toContain(
       TARGET_COLORS.findIndex(c => c.name === firstTarget.name)

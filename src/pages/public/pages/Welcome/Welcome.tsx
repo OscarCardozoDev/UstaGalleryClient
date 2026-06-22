@@ -17,7 +17,7 @@ const fadeUp = {
   hidden:  { opacity: 0, y: 32 },
   visible: (delay = 0) => ({
     opacity: 1, y: 0,
-    transition: { delay, duration: 0.9, ease: [0.16, 1, 0.3, 1] },
+    transition: { delay, duration: 0.9, ease: [0.16, 1, 0.3, 1] as const },
   }),
 };
 
@@ -25,7 +25,7 @@ const fadeIn = {
   hidden:  { opacity: 0 },
   visible: (delay = 0) => ({
     opacity: 1,
-    transition: { delay, duration: 1.1, ease: "easeOut" },
+    transition: { delay, duration: 1.1, ease: "easeOut" as const },
   }),
 };
 
@@ -33,7 +33,7 @@ const slideLeft = {
   hidden:  { opacity: 0, x: -40 },
   visible: (delay = 0) => ({
     opacity: 1, x: 0,
-    transition: { delay, duration: 0.85, ease: [0.16, 1, 0.3, 1] },
+    transition: { delay, duration: 0.85, ease: [0.16, 1, 0.3, 1] as const },
   }),
 };
 
@@ -41,7 +41,7 @@ const slideRight = {
   hidden:  { opacity: 0, x: 40 },
   visible: (delay = 0) => ({
     opacity: 1, x: 0,
-    transition: { delay, duration: 0.85, ease: [0.16, 1, 0.3, 1] },
+    transition: { delay, duration: 0.85, ease: [0.16, 1, 0.3, 1] as const },
   }),
 };
 
@@ -49,7 +49,7 @@ const scaleIn = {
   hidden:  { opacity: 0, scale: 0.94 },
   visible: (delay = 0) => ({
     opacity: 1, scale: 1,
-    transition: { delay, duration: 1.0, ease: [0.16, 1, 0.3, 1] },
+    transition: { delay, duration: 1.0, ease: [0.16, 1, 0.3, 1] as const },
   }),
 };
 

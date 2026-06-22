@@ -11,7 +11,7 @@ export default function ImageViewer({ images, baseUrl = "" }: Props) {
   const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [showTooltip, setShowTooltip] = useState<number | null>(null);
-  const [tooltipTimer, setTooltipTimer] = useState<NodeJS.Timeout | null>(null);
+  const [tooltipTimer, setTooltipTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
 
   const sortedImages = [...images].sort((a, b) => {
     if (a.isMain) return -1;
