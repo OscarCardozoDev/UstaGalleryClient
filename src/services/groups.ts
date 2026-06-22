@@ -8,6 +8,7 @@ import type {
   UpdateStudentsDto,
   DeleteStudentDto,
   AddStudentToGroupsResult,
+  AddStudentDto,
   GroupStats,
   GroupMembersResult,
 } from "../interfaces/groups";
