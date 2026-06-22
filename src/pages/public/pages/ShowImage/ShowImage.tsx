@@ -165,7 +165,7 @@ export default function ShowImage() {
             onClick={() => setActiveView('artwork')}
             title="Ver información de la obra"
           >
-            <span className={styles.railIcon}><img src="/public/logos/art.public.png" alt="obra-de-adrte" width={40} height={40} /></span>
+            <span className={styles.railIcon}><img src="/logos/art.public.png" alt="obra-de-adrte" width={40} height={40} /></span>
             <span className={styles.railLabel}>Obra</span>
           </button>
 
@@ -174,7 +174,7 @@ export default function ShowImage() {
             onClick={() => setActiveView('artist')}
             title="Ver información del artista"
           >
-            <span className={styles.railIcon}><img src="/public/logos/artist.public.png" alt="artista-de-adrte" width={40} height={40} /></span>
+            <span className={styles.railIcon}><img src="/logos/artist.public.png" alt="artista-de-adrte" width={40} height={40} /></span>
             <span className={styles.railLabel}>Artista</span>
           </button>
         </div>
@@ -192,12 +192,14 @@ export default function ShowImage() {
                 <p className="text-tertiary-500">No hay imagen disponible</p>
               </div>
             )}
-            <div className={styles.imageLabel}>
-              <span className="text-primary-950 font-sans">Vista Principal</span>
-            </div>
+            {/* Supporting Info Bar Title
+              <div className={styles.imageLabel}>
+                <span className="text-primary-950 font-sans">Vista Principal</span>
+              </div>
+            */}
           </div>
 
-          {/* Supporting Info Bar */}
+          {/* Supporting Info Bar 
           <div className={styles.supportingInfo}>
             <div className={styles.infoGroup}>
               <p className={styles.infoLabel}>Técnica</p>
@@ -216,6 +218,7 @@ export default function ShowImage() {
               <p className={styles.infoValue}>#{product.uid.slice(0, 8)}</p>
             </div>
           </div>
+          */}
         </section>
 
         {/* Information Panel */}

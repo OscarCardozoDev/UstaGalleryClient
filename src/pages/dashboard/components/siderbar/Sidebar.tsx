@@ -82,7 +82,7 @@ export default function Sidebar({ open, onClose }: Props) {
             >
               <img
                 className={styles.icon}
-                src="../../../../../public/logos/art_gallery.dashboard.svg"
+                src="/logos/art_gallery.dashboard.svg"
                 alt=""
                 width="25"
                 height="25"
@@ -98,7 +98,7 @@ export default function Sidebar({ open, onClose }: Props) {
             >
               <img
                 className={styles.icon}
-                src="../../../../../public/logos/calendar.dashboard.svg"
+                src="/logos/calendar.dashboard.svg"
                 alt=""
                 width="25"
                 height="25"
@@ -141,7 +141,7 @@ export default function Sidebar({ open, onClose }: Props) {
                 >
                   <img
                     className={styles.icon}
-                    src="../../../../../public/logos/art_gallery.dashboard.svg"
+                    src="/logos/art_gallery.dashboard.svg"
                     alt=""
                     width="20"
                     height="20"
@@ -157,7 +157,7 @@ export default function Sidebar({ open, onClose }: Props) {
                 >
                   <img
                     className={styles.icon}
-                    src="../../../../../public/logos/event.dashboard.svg"
+                    src="/logos/event.dashboard.svg"
                     alt=""
                     width="20"
                     height="20"
@@ -266,7 +266,7 @@ export default function Sidebar({ open, onClose }: Props) {
                 >
                   <img
                     className={styles.icon}
-                    src="../../../../../public/logos/event.dashboard.svg"
+                    src="/logos/event.dashboard.svg"
                     alt=""
                     width="20"
                     height="20"
@@ -281,7 +281,7 @@ export default function Sidebar({ open, onClose }: Props) {
                 >
                   <img
                     className={styles.icon}
-                    src="../../../../../public/logos/event.dashboard.svg"
+                    src="/logos/event.dashboard.svg"
                     alt=""
                     width="20"
                     height="20"
