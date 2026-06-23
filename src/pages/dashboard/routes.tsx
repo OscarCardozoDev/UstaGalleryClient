@@ -13,6 +13,7 @@ import MyEventsPage from "./modules/MyEvents/MyEvents";
 import ClasesPage from "./modules/Clases/Clases";
 import ProfessorsPage from "./modules/Professors/Professors";
 import GamesModule from "./modules/Games";
+import ControlPanelPage from "./modules/ControlPanel/ControlPanel";
 
 export default function DashboardRoutes() {
   return (
@@ -32,6 +33,7 @@ export default function DashboardRoutes() {
       <Route path="/my-events" element={<MyEventsPage />} />
       <Route path="/clases" element={<ClasesPage />} />
       <Route path="/professors" element={<ProfessorsPage />} />
+      <Route path="/panel-control" element={<ControlPanelPage />} />
       <Route path="/games/*" element={<GamesModule />} />
 
       {/* futuras rutas */}

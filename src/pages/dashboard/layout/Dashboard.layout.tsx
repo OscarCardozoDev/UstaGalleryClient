@@ -71,7 +71,7 @@ function DashboardContent({ children }: Props) {
         />
       )}
 
-      <Sidebar groups={user.groups} open={open} onClose={() => setOpen(false)} />
+      <Sidebar open={open} onClose={() => setOpen(false)} />
 
       <div className={`${styles.mainWrapper} ${open ? styles.mainShifted : ""}`}>
         <div style={{
